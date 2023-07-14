@@ -5,6 +5,7 @@ export default function App() {
         <>
         <h1>Home</h1>
         <Link href="/dashboard">Dashboard</Link>
+        <Link href="/product">Procut</Link>
         </>
     );
 }

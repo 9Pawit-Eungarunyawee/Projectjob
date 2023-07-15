@@ -296,7 +296,7 @@
   resolved "https://registry.yarnpkg.com/@mui/types/-/types-7.2.4.tgz#b6fade19323b754c5c6de679a38f068fd50b9328"
   integrity sha512-LBcwa8rN84bKF+f5sDyku42w1NTxaPgPyYKODsh01U1fVstTClbUoSA96oyRBnSNyEiAVjKm6Gwx9vjR+xyqHA==
 
-"@mui/utils@^5.13.7":
+"@mui/utils@^5.13.6", "@mui/utils@^5.13.7":
   version "5.13.7"
   resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.13.7.tgz#7e6a8336e05eb2642667a5c02eb605351e27ec20"
   integrity sha512-/3BLptG/q0u36eYED7Nhf4fKXmcKb6LjjT7ZMwhZIZSdSxVqDqSTmATW3a56n3KEPQUXCU9TpxAfCBQhs6brVA==
@@ -306,6 +306,39 @@
     "@types/react-is" "^18.2.1"
     prop-types "^15.8.1"
     react-is "^18.2.0"
+
+"@mui/x-date-pickers-pro@^6.10.0":
+  version "6.10.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers-pro/-/x-date-pickers-pro-6.10.0.tgz#5c3be3e61ac4d81a0a5bc19950cd04bf49109784"
+  integrity sha512-namDYD4aKSrAU2S9raV+oxWR8vw8G2Om+CmyycPhNIt8BW/qNHBrOv48IrSrzsm26Krh+3zk+3pV5uhF+xD56A==
+  dependencies:
+    "@babel/runtime" "^7.22.5"
+    "@mui/utils" "^5.13.6"
+    "@mui/x-date-pickers" "6.10.0"
+    "@mui/x-license-pro" "6.10.0"
+    clsx "^1.2.1"
+    prop-types "^15.8.1"
+    react-transition-group "^4.4.5"
+
+"@mui/x-date-pickers@6.10.0", "@mui/x-date-pickers@^6.10.0":
+  version "6.10.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-6.10.0.tgz#d7c1a17b92311119aa8dd7dc56f43423362122d2"
+  integrity sha512-tp0i65JqZarIRyyTyQy5OjOPgjJv5cO7oQAbOrAePIHn7UEYPXe3k4ISiUzEAjBBXy1HhwQxGRJslVp4BXe3MA==
+  dependencies:
+    "@babel/runtime" "^7.22.5"
+    "@mui/utils" "^5.13.6"
+    "@types/react-transition-group" "^4.4.6"
+    clsx "^1.2.1"
+    prop-types "^15.8.1"
+    react-transition-group "^4.4.5"
+
+"@mui/x-license-pro@6.10.0":
+  version "6.10.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-license-pro/-/x-license-pro-6.10.0.tgz#22ceb48dfded0a6bbdcd640e45c73d124e78cab1"
+  integrity sha512-Dvvn2U/P0rjHdiEWKWU77DrboZMXyNSj0S2009Mylot9oc1JK70wIKF9rIMHS4OkMtfZWetu11+HQKUY4tVkrQ==
+  dependencies:
+    "@babel/runtime" "^7.22.5"
+    "@mui/utils" "^5.13.6"
 
 "@next/env@13.4.9":
   version "13.4.9"
@@ -821,6 +854,11 @@ damerau-levenshtein@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz#b43d286ccbd36bc5b2f7ed41caf2d0aba1f8a6e7"
   integrity sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==
+
+dayjs@^1.11.9:
+  version "1.11.9"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.9.tgz#9ca491933fadd0a60a2c19f6c237c03517d71d1a"
+  integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
 
 debug@^3.2.7:
   version "3.2.7"

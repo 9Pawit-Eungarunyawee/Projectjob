@@ -81,6 +81,7 @@ export default function Sidebar() {
           boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
           borderRadius: "0px 50px 50px 0px",
           textAlign: "center",
+          position:"fixed"
         }}
       >
         <Box

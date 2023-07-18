@@ -6,7 +6,7 @@ export default function Homelayout({ children }) {
     <React.Fragment>
       <CssBaseline />
       <Navbar />
-      <Container maxWidth="sx" sx={{ padding: 0 }}>
+      <Container maxWidth="sx" sx={{bgcolor:"#FAF8F1"}}>
         {children}
       </Container>
     </React.Fragment>

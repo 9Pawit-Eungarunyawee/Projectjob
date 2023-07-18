@@ -55,6 +55,7 @@ export default function Navbar() {
       },
     },
   });
+
   const styles = {
     Box: {
       transition: "0.2s",
@@ -97,7 +98,10 @@ export default function Navbar() {
   };
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        sx={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
+      >
         <Container
           maxWidth="false"
           sx={{
@@ -107,6 +111,16 @@ export default function Navbar() {
         >
           <Box sx={{ width: "70vw" }}>
             <Toolbar disableGutters>
+              <Image
+                src={Logo}
+                alt="logo"
+                style={{
+                  objectFit: "cover",
+                  width: "4vw",
+                  height: "100%",
+                }}
+                sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+              />
               <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
                 <IconButton
                   size="large"
@@ -138,24 +152,11 @@ export default function Navbar() {
                 >
                   {pages.map((page) => (
                     <MenuItem key={page.label} onClick={handleCloseNavMenu}>
-                      <Link href={page.url} passHref>
-                        <Typography textAlign="center">
-                          <Box>{page.label}</Box>
-                        </Typography>
-                      </Link>
+                      <Typography textAlign="center">{page.label}</Typography>
                     </MenuItem>
                   ))}
                 </Menu>
               </Box>
-              <Image
-                src={Logo}
-                alt="logo"
-                style={{
-                  width: "4vw",
-                  height: "100%",
-                }}
-                sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-              />
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 {pages.map((page) => (
                   <Link
@@ -198,7 +199,7 @@ export default function Navbar() {
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                      src={Profile}
+                      src="/profile.png"
                       alt="profile"
                       sx={{ width: 32, height: 32, ml: 1 }}
                     />

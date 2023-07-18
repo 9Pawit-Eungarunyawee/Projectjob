@@ -152,7 +152,15 @@ export default function Navbar() {
                 >
                   {pages.map((page) => (
                     <MenuItem key={page.label} onClick={handleCloseNavMenu}>
-                      <Typography textAlign="center">{page.label}</Typography>
+                      <Typography
+                        textAlign="center"
+                        style={{
+                          color:
+                            activeLink === page.label ? "#018294" : "inherit",
+                        }}
+                      >
+                        {page.label}
+                      </Typography>
                     </MenuItem>
                   ))}
                 </Menu>
@@ -175,8 +183,10 @@ export default function Navbar() {
                           ? styles.BoxActive
                           : styles.Box),
                         my: 2,
-                        color: "black",
                         display: "block",
+                      }}
+                      style={{
+                        color: activeLink === page.url ? "#018294" : "black", // แก้ไขที่นี่
                       }}
                     >
                       {page.label}

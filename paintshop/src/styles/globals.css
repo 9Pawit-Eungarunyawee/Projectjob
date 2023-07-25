@@ -9,3 +9,9 @@ body {
   padding: 0;
   margin: 0;
 }
+.MuiTypography-root{
+  font-family: 'Prompt', sans-serif;
+}
+.MuiTab-root{
+  font-family: 'Prompt', sans-serif;
+}

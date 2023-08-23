@@ -6,6 +6,7 @@ const nextConfig = {
       "www.beger.co.th",
       "d1an7elaqzcblb.cloudfront.net",
       "www.dohome.co.th",
+      "images.akzonobel.com",
     ],
   },
 };

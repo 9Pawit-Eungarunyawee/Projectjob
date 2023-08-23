@@ -146,7 +146,7 @@ export default function Productsdetail() {
                     }}
                   />
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+                <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
                   <Button
                     sx={{
                       color: "white",
@@ -158,14 +158,17 @@ export default function Productsdetail() {
                       ...styles.btnHover,
                     }}
                   >
-                    <Typography> ออกแบบกับผนัง</Typography>
+                    <Typography variant="h4" sx={{ pl: 2, pr: 2 }}>
+                      {" "}
+                      ออกแบบกับผนัง
+                    </Typography>
                   </Button>
                   <IconButton
                     sx={{
                       alignSelf: "flex-end",
                     }}
                   >
-                    <ShoppingBagOutlinedIcon />
+                    <ShoppingBagOutlinedIcon sx={{ fontSize: "2vw" }} />
                   </IconButton>
                 </Box>
               </Grid>

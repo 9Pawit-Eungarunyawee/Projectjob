@@ -19,8 +19,8 @@ import Link from "next/link";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 const pages = [
-  { label: "หน้าแรก", url: "" },
-  { label: "ผลิตภัณฑ์", url: "/product" },
+  { label: "หน้าแรก", url: "/" },
+  { label: "ผลิตภัณฑ์", url: "/products" },
   { label: "ออกแบบ", url: "/designs" },
 ];
 const settings = ["จัดการสินค้า", "ออกจากระบบ"];

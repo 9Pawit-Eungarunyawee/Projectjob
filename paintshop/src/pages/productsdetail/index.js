@@ -13,8 +13,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  IconButton,
 } from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -31,6 +33,20 @@ export default function Productsdetail() {
       },
     },
   });
+  const styles = {
+    btnHover: {
+      "&:hover": {
+        cursor: "pointer",
+        bgcolor: "#018294",
+      },
+    },
+    filterHover: {
+      "&:hover": {
+        color: "red",
+        transition: "0.2s",
+      },
+    },
+  };
   const features = [
     "เหมาะกับงานไม้แนวตั้งทั้งภายนอกและภายใน",
     "ฟิล์มสีเงาโปร่งแสงโชว์ลายไม้ 100%",
@@ -52,8 +68,8 @@ export default function Productsdetail() {
             <div role="presentation" onClick={handleClick}>
               <Breadcrumbs aria-label="Beger">
                 <Link
+                  style={{ textDecoration: "none", color: "inherit" }}
                   sx={{
-                    textDecoration: "none",
                     color: "inherit",
                     "&:hover": { textDecoration: "underline" },
                   }}
@@ -62,8 +78,8 @@ export default function Productsdetail() {
                   หน้าแรก
                 </Link>
                 <Link
+                  style={{ textDecoration: "none", color: "inherit" }}
                   sx={{
-                    textDecoration: "none",
                     color: "inherit",
                     "&:hover": { textDecoration: "underline" },
                   }}
@@ -76,20 +92,29 @@ export default function Productsdetail() {
                 </Typography>
               </Breadcrumbs>
             </div>
-            <Box sx={{ pt: 2 }}>
-              <Button
-                sx={{
-                  color: "#018294",
-                  bgcolor: "white",
-                  fontWeight: "bold",
-                  borderRadius: "50px",
-                  boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                }}
-              >
-                <ArrowBackOutlinedIcon />
-                <Typography> ย้อนกลับ</Typography>
-              </Button>
-            </Box>
+            <Link
+              style={{ textDecoration: "none" }}
+              sx={{
+                color: "inherit",
+                "&:hover": { textDecoration: "underline" },
+              }}
+              href="/products/beger"
+            >
+              <Box sx={{ pt: 2 }}>
+                <Button
+                  sx={{
+                    color: "#018294",
+                    bgcolor: "white",
+                    fontWeight: "bold",
+                    borderRadius: "50px",
+                    boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                  }}
+                >
+                  <ArrowBackOutlinedIcon />
+                  <Typography> ย้อนกลับ</Typography>
+                </Button>
+              </Box>
+            </Link>
           </Box>
         </Container>
 
@@ -120,6 +145,28 @@ export default function Productsdetail() {
                       mt: 2,
                     }}
                   />
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+                  <Button
+                    sx={{
+                      color: "white",
+                      bgcolor: "#018294",
+                      p: 1,
+                      fontWeight: "bold",
+                      borderRadius: "50px",
+                      boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                      ...styles.btnHover,
+                    }}
+                  >
+                    <Typography> ออกแบบกับผนัง</Typography>
+                  </Button>
+                  <IconButton
+                    sx={{
+                      alignSelf: "flex-end",
+                    }}
+                  >
+                    <ShoppingBagOutlinedIcon />
+                  </IconButton>
                 </Box>
               </Grid>
               <Grid item xs={12} md={6}>

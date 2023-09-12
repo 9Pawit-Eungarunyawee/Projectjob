@@ -18,14 +18,26 @@ import Image from "next/image";
 import Link from "next/link";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import { getAuth, signOut } from "firebase/auth";
+import { useAuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 const pages = [
   { label: "หน้าแรก", url: "/" },
   { label: "ผลิตภัณฑ์", url: "/products" },
   { label: "ออกแบบ", url: "/designs" },
 ];
-const settings = ["จัดการสินค้า", "ออกจากระบบ"];
+
+let settings = ["จัดการสินค้า", "ออกจากระบบ"];
 
 export default function Navbar() {
+  const { isAdmin, user } = useAuthContext();
+  if (isAdmin == true) {
+    settings = ["จัดการสินค้า", "แดชบอร์ด", "ออกจากระบบ"];
+    console.log(user);
+  } else {
+    settings = ["จัดการสินค้า", "ออกจากระบบ"];
+    console.log(user);
+  }
   const [activeLink, SetActiveLink] = React.useState("");
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -43,6 +55,25 @@ export default function Navbar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+  const auth = getAuth();
+  const handlelogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User signed out");
+    } catch (error) {
+      console.error("An error occurred while signing out:", error);
+    }
+  };
+  const router = useRouter();
+  const handleUserMenu = (setting) => {
+    if (setting == "ออกจากระบบ") {
+      handlelogout();
+    } else if (setting == "จัดการสินค้า") {
+      console.log("จัดการสินค้า");
+    }else if (setting == "แดชบอร์ด"){
+      router.push("/dashboard")
+    }
   };
   const theme = createTheme({
     typography: {
@@ -232,7 +263,10 @@ export default function Navbar() {
                   onClose={handleCloseUserMenu}
                 >
                   {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <MenuItem
+                      key={setting}
+                      onClick={() => handleUserMenu(setting)}
+                    >
                       <Typography textAlign="center">{setting}</Typography>
                     </MenuItem>
                   ))}

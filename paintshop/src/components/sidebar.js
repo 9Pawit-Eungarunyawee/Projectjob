@@ -17,15 +17,22 @@ import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-
-
+import { getAuth, signOut } from "firebase/auth";
 export default function Sidebar() {
-  const [activeLink,SetActiveLink] = useState("")
+  const [activeLink, SetActiveLink] = useState("");
   const router = useRouter();
   useEffect(() => {
     SetActiveLink(router.pathname);
   }, [router.pathname]);
-
+  const auth = getAuth();
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User signed out");
+    } catch (error) {
+      console.error("An error occurred while signing out:", error);
+    }
+  };
   const theme = createTheme({
     typography: {
       title: {
@@ -48,7 +55,7 @@ export default function Sidebar() {
     Box: {
       width: "90%",
       transition: "0.1s",
-      mb:1,
+      mb: 1,
       "&:hover": {
         transition: "0.1s",
         borderRadius: "5px",
@@ -60,14 +67,14 @@ export default function Sidebar() {
     BoxActive: {
       width: "90%",
       transition: "0.1s",
-      mb:1,
+      mb: 1,
       backgroundColor: "#FE616A",
       borderRadius: "5px",
       boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
       "&:hover": {
         transition: "0.1s",
         transform: "translateY(-1.5px)",
-      }
+      },
     },
   };
 
@@ -81,7 +88,7 @@ export default function Sidebar() {
           boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
           borderRadius: "0px 50px 50px 0px",
           textAlign: "center",
-          position:"fixed"
+          position: "fixed",
         }}
       >
         <Box
@@ -103,7 +110,9 @@ export default function Sidebar() {
           />
         </Box>
         <Typography variant="title">ส.วัสดุภัณฑ์</Typography>
-        <Box><hr style={{width:"90%"}}/></Box>
+        <Box>
+          <hr style={{ width: "90%" }} />
+        </Box>
         <Box>
           <ul
             style={{
@@ -121,9 +130,13 @@ export default function Sidebar() {
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e)=>SetActiveLink("/dashboard")}
+                onClick={(e) => SetActiveLink("/dashboard")}
               >
-                <Box sx={activeLink === "/dashboard" ? styles.BoxActive : styles.Box}>
+                <Box
+                  sx={
+                    activeLink === "/dashboard" ? styles.BoxActive : styles.Box
+                  }
+                >
                   <Typography variant="menu">
                     <DashboardIcon sx={{ pr: 2 }} />
                     แดชบอร์ด
@@ -139,10 +152,11 @@ export default function Sidebar() {
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e)=>SetActiveLink("/product")}
-               
+                onClick={(e) => SetActiveLink("/product")}
               >
-                <Box sx={activeLink === "/product" ? styles.BoxActive : styles.Box}>
+                <Box
+                  sx={activeLink === "/product" ? styles.BoxActive : styles.Box}
+                >
                   <Typography variant="menu">
                     <AppsIcon sx={{ pr: 2 }} />
                     จัดการสินค้า
@@ -158,9 +172,13 @@ export default function Sidebar() {
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e)=>SetActiveLink("/category")}
+                onClick={(e) => SetActiveLink("/category")}
               >
-                <Box sx={activeLink === "/category" ? styles.BoxActive : styles.Box}>
+                <Box
+                  sx={
+                    activeLink === "/category" ? styles.BoxActive : styles.Box
+                  }
+                >
                   <Typography variant="menu">
                     <PhotoLibraryIcon sx={{ pr: 2 }} />
                     หมวดหมู่สินค้า
@@ -176,9 +194,11 @@ export default function Sidebar() {
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e)=>SetActiveLink("/order")}
+                onClick={(e) => SetActiveLink("/order")}
+              >
+                <Box
+                  sx={activeLink === "/order" ? styles.BoxActive : styles.Box}
                 >
-                  <Box sx={activeLink === "/order" ? styles.BoxActive : styles.Box}>
                   <Typography variant="menu">
                     <StarBorderIcon sx={{ pr: 2 }} />
                     จัดการคำสั่งซื้อ
@@ -194,9 +214,11 @@ export default function Sidebar() {
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e)=>SetActiveLink("/claim")}
+                onClick={(e) => SetActiveLink("/claim")}
+              >
+                <Box
+                  sx={activeLink === "/claim" ? styles.BoxActive : styles.Box}
                 >
-                  <Box sx={activeLink === "/claim" ? styles.BoxActive : styles.Box}>
                   <Typography variant="menu">
                     <AutorenewIcon sx={{ pr: 2 }} />
                     การเคลมสินค้า
@@ -212,15 +234,46 @@ export default function Sidebar() {
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e)=>SetActiveLink("/employee")}
+                onClick={(e) => SetActiveLink("/employee")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/employee" ? styles.BoxActive : styles.Box
+                  }
                 >
-                  <Box sx={activeLink === "/employee" ? styles.BoxActive : styles.Box}>
                   <Typography variant="menu">
                     <PersonIcon sx={{ pr: 2 }} />
                     จัดการพนักงาน
                   </Typography>
                 </Box>
               </Link>
+            </li>
+            <li>
+              {/* <Link
+                href="/"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                onClick={(e) => SetActiveLink("/employee")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/employee" ? styles.BoxActive : styles.Box
+                  }
+                >
+                  <Typography variant="menu">
+                    <PersonIcon sx={{ pr: 2 }} />
+                    จัดการพนักงาน
+                  </Typography>
+                </Box>
+              </Link> */}
+              <Button onClick={handleLogout}>
+                <Box>
+                  <Typography variant="menu">ออกจากระบบ</Typography>
+                </Box>
+              </Button>
             </li>
           </ul>
         </Box>

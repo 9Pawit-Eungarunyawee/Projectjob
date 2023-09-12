@@ -9,6 +9,7 @@ const nextConfig = {
       "images.akzonobel.com",
     ],
   },
+
 };
 
 module.exports = nextConfig;

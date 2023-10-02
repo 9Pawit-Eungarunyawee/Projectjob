@@ -10,9 +10,6 @@ export default function Homelayout({ children }) {
   React.useEffect(() => {
     if (user == null) router.push("/");
   }, [user]);
-  if (!user) {
-    return null;
-  }
   return (
     <React.Fragment>
       <CssBaseline />

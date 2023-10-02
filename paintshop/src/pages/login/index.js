@@ -25,7 +25,7 @@ export default function Login() {
     fetchData();
     fetchAllData();
     console.log(documentData);
-  }, []);
+  }, []);  
   const handleForm = async (event) => {
     event.preventDefault();
 

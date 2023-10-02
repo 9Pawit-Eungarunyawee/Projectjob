@@ -11,11 +11,17 @@ export default function Layout({ children }) {
     if (user == null) {
       router.push("/");
     }
-    if(isAdmin == false){
-        router.push("/homepage")
+    if (isAdmin == false) {
+      router.push("/homepage");
+     
     }
-    
   }, [user]);
+  if (!user) {
+    return null;
+  }
+  if (isAdmin == false) {
+    return null;
+  }
   return (
     <React.Fragment>
       <Container maxWidth="sx" style={{ padding: 0 }}>

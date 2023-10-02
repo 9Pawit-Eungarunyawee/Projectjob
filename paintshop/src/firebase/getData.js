@@ -17,7 +17,6 @@ export default async function getDoument(collection, id) {
 
   return { result, error };
 }
-
 import { getDocs, collection } from "firebase/firestore";
 
 const getCollection = async (collectionName) => {
@@ -26,4 +25,3 @@ const getCollection = async (collectionName) => {
 };
 
 export { getCollection };
-

@@ -2,6 +2,7 @@ import React from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import firebase_app from "@/firebase/config";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -28,10 +29,7 @@ export const AuthContextProvider = ({ children }) => {
         } else {
           setIsAdmin(false);
           console.log("USER");
-          
         }
-
-        console.log("haveuser");
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -43,8 +41,19 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user ,isAdmin}}>
-      {loading ? <div>Loading...</div> : children}
+    <AuthContext.Provider value={{ user, isAdmin }}>
+      {loading ? (
+        <div>
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={true}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

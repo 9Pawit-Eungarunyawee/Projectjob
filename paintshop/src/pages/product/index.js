@@ -28,8 +28,8 @@ export default function Product() {
   return (
     <Layout>
       <ThemeProvider theme={theme}>
-        <Box sx={{ height: "100vh", width: "100%", mt: 1 }}>
-          <Typography sx={{ fontSize: "1.4vw", fontWeight: "600" }}>
+        <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
+          <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
             การจัดการสินค้า
           </Typography>
           <Box sx={{ mt: 1 }}>

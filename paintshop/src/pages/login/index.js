@@ -32,7 +32,7 @@ export default function Login() {
     const { result, error } = await signIn(email, password);
 
     if (error) {
-      return console.log("รหัสผ่านไม่ถูต้อง");
+      return window.alert("รหัสผ่านไม่ถูกต้อง");
     }
 
     // else successful
@@ -122,7 +122,7 @@ export default function Login() {
                     alt="loginbanner"
                   />
                 </Grid>
-                <Grid item xs={12} xl={6} sm={6} sx={{}}>
+                <Grid item xs={12} xl={6} sm={6} >
                   <Box sx={{ padding: "5vw" }}>
                     <Typography
                       sx={{

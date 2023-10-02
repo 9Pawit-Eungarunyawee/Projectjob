@@ -22,7 +22,7 @@ import { getAuth, signOut } from "firebase/auth";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 const pages = [
-  { label: "หน้าแรก", url: "/" },
+  { label: "หน้าแรก", url: "/homepage" },
   { label: "ผลิตภัณฑ์", url: "/products" },
   { label: "ออกแบบ", url: "/designs" },
 ];

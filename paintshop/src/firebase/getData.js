@@ -27,15 +27,3 @@ const getCollection = async (collectionName) => {
 
 export { getCollection };
 
-async function getCatalog(db) {
-  const catalog = collection(db, "catalog");
-  const catalogSnap = await getDocs(catalog);
-  return catalogSnap;
-}
-function showData(catalogs) {
-  console.log(catalogs);
-}
-const data = await getCatalog(db);
-data.forEach((catalogs) => {
-  showData(catalogs);
-});

@@ -16,11 +16,6 @@ import React, { useEffect, useState } from "react";
 import signUp from "@/firebase/auth/signup";
 import addData from "@/firebase/addData";
 import { useRouter } from "next/router";
-const districts = [
-  { key: "1", label: "ตำบล 1" },
-  { key: "2", label: "ตำบล 2" },
-  { key: "3", label: "ตำบล 3" },
-];
 
 export default function AddEmployee() {
   const [profileUrl, setProfileUrl] = useState(
@@ -28,10 +23,52 @@ export default function AddEmployee() {
   );
   const [name, setName] = useState(null);
   const [tel, setTel] = useState(null);
-  const [salary, setSalary] = useState(null);
+  const [address, setAddress] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [provinces, setProvinces] = useState([]);
+  const [amphures, setAmphures] = useState([]);
+  const [tambons, setTambons] = useState([]);
+  const [provinceName, setProvinceName] = useState(undefined);
+  const [amphureName, setAmphureName] = useState(undefined);
+  const [tambonName, setTambonName] = useState(undefined);
+  const [selected, setSelected] = useState({
+    province_id: undefined,
+    amphure_id: undefined,
+    tambon_id: undefined,
+  });
+  useEffect(() => {
+    console.log(selected);
+    if (provinces) {
+      const allAmphures = provinces.find(
+        (province) => province.id === selected.province_id
+      )?.amphure;
+      setAmphures(allAmphures);
+      const nameProvince = provinces.find(
+        (province) => province.id === selected.province_id
+      )?.name_th;
+      setProvinceName(nameProvince);
+    }
+    if (amphures) {
+      const allTambons = amphures.find(
+        (amphure) => amphure.id === selected.amphure_id
+      )?.tambon;
+      setTambons(allTambons);
+      const nameAmphure = amphures.find(
+        (amphure) => amphure.id === selected.amphure_id
+      )?.name_th;
+      setAmphureName(nameAmphure);
+    }
+    if (tambons) {
+      const nameTambon = tambons.find(
+        (tambon) => tambon.id === selected.tambon_id
+      )?.name_th;
+      setTambonName(nameTambon);
+    }
+  }, [selected, provinces, amphures, tambons]);
+
   const router = useRouter();
+  //อ่านไฟล์ภาพ
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -48,13 +85,42 @@ export default function AddEmployee() {
     reader.readAsDataURL(file);
     console.log(profileUrl);
   };
+  //api ประเทศไทย
+  useEffect(() => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
 
+    fetch(
+      "https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province_with_amphure_tambon.json",
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        setProvinces(result);
+      })
+      .catch((error) => console.log("error", error));
+  }, []);
+
+  //กดสมัคร
   const handleForm = async (event) => {
     event.preventDefault();
-    await signUp(email, password);
-    
-    return router.push("/homepage")
+    await signUp(
+      email,
+      password,
+      address,
+      tel,
+      name,
+      profileUrl,
+      provinceName,
+      amphureName,
+      tambonName
+    );
+
+    return router.push("/homepage");
   };
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -159,6 +225,7 @@ export default function AddEmployee() {
                       required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
+                      onChange={(e) => setTel(e.target.value)}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -169,12 +236,22 @@ export default function AddEmployee() {
                       required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
+                      onChange={(e) => setAddress(e.target.value)}
                     />
                     <Autocomplete
                       disablePortal
-                      options={districts}
-                      getOptionLabel={(option) => option.label}
+                      options={provinces}
+                      getOptionLabel={(option) => option.name_th}
+                      onChange={(e, newValue) => {
+                        setSelected((prevState) => ({
+                          ...prevState,
+                          province_id: newValue ? newValue.id : undefined,
+                          amphure_id: undefined,
+                          tambon_id: undefined,
+                        }));
+                      }}
                       fullWidth
+                      required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
                       renderInput={(params) => (
@@ -183,8 +260,15 @@ export default function AddEmployee() {
                     />
                     <Autocomplete
                       disablePortal
-                      options={districts}
-                      getOptionLabel={(option) => option.label}
+                      options={amphures || []}
+                      getOptionLabel={(option) => option.name_th}
+                      onChange={(e, newValue) => {
+                        setSelected((prevState) => ({
+                          ...prevState,
+                          amphure_id: newValue ? newValue.id : undefined,
+                          tambon_id: undefined,
+                        }));
+                      }}
                       fullWidth
                       size="small"
                       sx={{ mt: 2, mb: 1 }}
@@ -194,8 +278,14 @@ export default function AddEmployee() {
                     />
                     <Autocomplete
                       disablePortal
-                      options={districts}
-                      getOptionLabel={(option) => option.label}
+                      options={tambons || []}
+                      getOptionLabel={(option) => option.name_th}
+                      onChange={(e, newValue) => {
+                        setSelected((prevState) => ({
+                          ...prevState,
+                          tambon_id: newValue ? newValue.id : undefined,
+                        }));
+                      }}
                       fullWidth
                       size="small"
                       sx={{ mt: 2, mb: 1 }}

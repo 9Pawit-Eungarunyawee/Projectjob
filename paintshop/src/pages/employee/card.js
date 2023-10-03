@@ -7,6 +7,7 @@ import { Box, CardActionArea } from "@mui/material";
 import Image from "next/image";
 
 export default function CardEmployee() {
+  
   return (
     <Card sx={{ borderRadius: "20px",mb:2 }}>
       <CardActionArea>

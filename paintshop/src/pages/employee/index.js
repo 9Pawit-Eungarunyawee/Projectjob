@@ -4,11 +4,29 @@ import Layout from "@/components/layout";
 import { Button, Grid, Typography } from "@mui/material";
 import CardEmployee from "./card";
 import { useRouter } from "next/router";
+import { getCollection } from "../../firebase/getData";
 export default function Employee() {
+  const [documentData, setDocumentData] = React.useState(null);
   const router = useRouter();
-  function handleAdd (){
-    router.push("/employee/add")
+  function handleAdd() {
+    router.push("/employee/add");
   }
+  React.useEffect(() => {
+    fetchData();
+   
+  }, []);
+  const fetchData = async () => {
+    const collectionName = "users";
+    const { result, error } = await getCollection(collectionName);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else {
+      result.forEach((doc) => {
+        console.log("Document ID:", doc.id);
+        console.log("Document data:", doc.data());
+      });
+    }
+  };
   return (
     <>
       <Layout>
@@ -35,10 +53,6 @@ export default function Employee() {
               </Button>
             </Grid>
             <Grid item sm={8} xs={12}>
-              <CardEmployee />
-              <CardEmployee />
-              <CardEmployee />
-              <CardEmployee />
               <CardEmployee />
             </Grid>
             <Grid item sm={4} xs={12}>

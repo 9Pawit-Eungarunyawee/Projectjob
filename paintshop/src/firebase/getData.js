@@ -10,7 +10,6 @@ export default async function getDoument(collection, id) {
 
   try {
     result = await getDoc(docRef);
-    console.log("Document data:", result.data());
   } catch (e) {
     error = e;
   }

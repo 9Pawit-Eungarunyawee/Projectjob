@@ -115,7 +115,7 @@ export default function AddEmployee() {
       profileUrl,
       provinceName,
       amphureName,
-      tambonName
+      tambonName,
     );
 
     return router.push("/homepage");

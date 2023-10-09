@@ -5,36 +5,57 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Box, CardActionArea } from "@mui/material";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
-export default function CardEmployee() {
-  
+export default function CardEmployee(props) {
+  const { data } = props;
+  let salary = "ยังไม่เพิ่มเงินเดือน"
+  if(data.salary){
+    salary = data.salary
+  }
+  const formattedInt = salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const router = useRouter();
+  function handleCard() {
+    router.push({
+      pathname: '/employee/edit',
+      query: { employeeData: JSON.stringify(data.id) },
+    });
+  }
+  React.useEffect(() => {
+    console.log(data);
+  }, []);
   return (
-    <Card sx={{ borderRadius: "20px",mb:2 }}>
+    <Card sx={{ borderRadius: "20px", mb: 2 }} onClick={handleCard}>
       <CardActionArea>
         <CardContent>
-          <Box sx={{ display: "flex", alignItems: "center",justifyContent:"space-between" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Image
-                src="/profile2.jpg"
+                src={data.profileUrl}
                 alt="profile"
                 width={60}
                 height={60}
-                style={{ borderRadius: "100px"}}
+                style={{ borderRadius: "100px" }}
               ></Image>
-              <Typography  sx={{pl:2,fontWeight:600,fontSize:"1.2vw"}}>
-              นายสายรุ้ง สีฟ้า
+              <Typography sx={{ pl: 2, fontWeight: 600, fontSize: "1.2vw" }}>
+                {data.name}
               </Typography>
             </Box>
             <Box>
-              <Typography  sx={{color:"#7A7A7A"}}>
-              ฿15,000
-              </Typography>
+              {console.log(salary)}
+              <Typography sx={{ color: "#7A7A7A" }}>{formattedInt}</Typography>
             </Box>
           </Box>
-          <Box sx={{mt:5}}>
-            <hr/>
+          <Box sx={{ mt: 5 }}>
+            <hr />
             <Box>
-                <Typography>14 มิถุนายน 2566</Typography>
+              <Typography>{data.tel}</Typography>
             </Box>
           </Box>
         </CardContent>

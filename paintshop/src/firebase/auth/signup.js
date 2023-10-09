@@ -1,6 +1,7 @@
 import firebase_app from "../config";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import addData from "../addData";
+import editData from "../editData";
 const auth = getAuth(firebase_app);
 
 export default async function signUp(
@@ -12,7 +13,8 @@ export default async function signUp(
   profileUrl,
   provinceName,
   amphureName,
-  tambonName
+  tambonName,
+  selected
 ) {
   let result = null;
   let error = null;

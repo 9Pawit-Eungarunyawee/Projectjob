@@ -7,26 +7,51 @@ import { useRouter } from "next/router";
 import { getCollection } from "../../firebase/getData";
 export default function Employee() {
   const [documentData, setDocumentData] = React.useState(null);
+  const [count, setCount] = React.useState(0);
   const router = useRouter();
   function handleAdd() {
-    router.push("/employee/add");
+    router.push("/employee/edit");
   }
+
   React.useEffect(() => {
     fetchData();
-   
   }, []);
+  React.useEffect(() => {
+    console.log(documentData);
+  }, [documentData]);
   const fetchData = async () => {
     const collectionName = "users";
     const { result, error } = await getCollection(collectionName);
     if (error) {
       console.error("Error fetching document:", error);
-    } else {
-      result.forEach((doc) => {
-        console.log("Document ID:", doc.id);
-        console.log("Document data:", doc.data());
-      });
+    } else if (result) {
+      const userData = result.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name, // ปรับให้เป็นชื่อฟิลด์ของคุณ
+        profileUrl: doc.data().profileUrl,
+        tel: doc.data().tel,
+        province: doc.data().province,
+        amphure: doc.data().amphure,
+        tambon: doc.data().tambon,
+        address: doc.data().address,
+        email: doc.data().email,
+        selected: doc.data().selected,
+        salary: doc.data().salary,
+      }));
+      setDocumentData(userData);
+      setCount(result.docs.length);
     }
   };
+  //เงินเดือนรวม
+  let total = 0;
+  if(documentData){
+    documentData.map((data) => {
+      if(data.salary){
+        total += parseInt(data.salary);
+      }  
+    });
+  }
+  const formattedInt = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return (
     <>
       <Layout>
@@ -53,7 +78,10 @@ export default function Employee() {
               </Button>
             </Grid>
             <Grid item sm={8} xs={12}>
-              <CardEmployee />
+              {documentData &&
+                documentData.map((item) => (
+                  <CardEmployee key={item.id} data={item} />
+                ))}
             </Grid>
             <Grid item sm={4} xs={12}>
               <Box
@@ -87,7 +115,7 @@ export default function Employee() {
                           color: "#FE616A",
                         }}
                       >
-                        1
+                        {count}
                       </span>
                       คน
                     </Typography>
@@ -111,7 +139,7 @@ export default function Employee() {
                           color: "#FE616A",
                         }}
                       >
-                        15,000
+                        {formattedInt}
                       </span>
                       บาท
                     </Typography>

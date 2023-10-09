@@ -2,7 +2,7 @@ import firebase_app from "../firebase/config";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
-export default async function addData(colllection, id, data) {
+export default async function editData(colllection, id, data) {
   let result = null;
   let error = null;
 
@@ -10,10 +10,10 @@ export default async function addData(colllection, id, data) {
     result = await setDoc(doc(db, colllection, id), data, {
       merge: true,
     });
-    console.log("เพิ่มข้อมูลสำเร็จ",result)
+    console.log("แก้ไขสำเร็จ",result)
   } catch (e) {
     error = e;
-    console.error("เกิดข้อผิดพลาดในการเพิ่มข้อมูล:", error);
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
   }
 
   return { result, error };

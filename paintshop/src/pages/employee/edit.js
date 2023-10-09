@@ -39,6 +39,7 @@ export default function EditEmployee() {
 
   const [alert, setAlert] = useState(null);
 
+  //ดึงข้อมูลuser
   const fetchData = async () => {
     const collectionName = "users";
     const { result, error } = await getDoument(collectionName, employeeData);

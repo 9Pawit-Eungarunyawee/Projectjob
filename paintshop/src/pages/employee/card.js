@@ -13,6 +13,7 @@ export default function CardEmployee(props) {
   if(data.salary){
     salary = data.salary
   }
+  //แปลงเงิน
   const formattedInt = salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   const router = useRouter();
   function handleCard() {

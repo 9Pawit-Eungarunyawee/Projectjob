@@ -16,12 +16,20 @@ import { getCollection } from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
 export default function Catalog() {
   const [documentData, setDocumentData] = React.useState(null);
+  const router = useRouter();
+  function handleCard(data) {
+    router.push({
+      pathname: "/productpage/",
+      query: { catalogData: JSON.stringify(data) },
+    });
+  }
   React.useEffect(() => {
     fetchAllData();
     console.log(documentData);
@@ -120,7 +128,10 @@ export default function Catalog() {
               {documentData &&
                 documentData.map((item) => (
                   <Grid key={item.id} item xs={12} sm={6} md={4}>
-                    <Card sx={{ maxWidth: 400 }}>
+                    <Card
+                      sx={{ maxWidth: 400 }}
+                      onClick={() => handleCard(item.id)}
+                    >
                       <CardActionArea>
                         <CardMedia
                           component="img"

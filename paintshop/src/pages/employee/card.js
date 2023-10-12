@@ -39,6 +39,7 @@ export default function CardEmployee(props) {
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Image
                 src={data.profileUrl}
+                priority
                 alt="profile"
                 width={60}
                 height={60}

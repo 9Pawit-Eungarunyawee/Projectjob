@@ -167,6 +167,7 @@ export default function AddEmployee() {
                           <Image
                             src={profileUrl}
                             alt="Uploaded Image"
+                            priority
                             height="150"
                             width="150"
                             style={{

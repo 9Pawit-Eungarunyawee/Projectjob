@@ -10,7 +10,7 @@ import Paper from "@mui/material/Paper";
 import { Button, Checkbox, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
-export default function TableProduct() {
+export default function TableProduct(documentData) {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const CheckboxTheme = createTheme({
     palette: {
@@ -42,6 +42,8 @@ export default function TableProduct() {
     },
   }));
 
+    console.log("doc มา table: ",documentData)
+
   function createData(
     No,
     img,
@@ -56,52 +58,19 @@ export default function TableProduct() {
     return { No, img, p_id, p_name, p_stock, p_sell, p_left, p_price, status };
   }
 
-  const rows = [
+  const rows = documentData.map((dataItem) => (
     createData(
       1,
       "img",
-      "T001",
+      dataItem.id,
       "TOA Supermatex",
       "30",
       "20",
       "10",
       "1000",
-      "raedy"
-    ),
-    createData(
-      1,
-      "img",
-      "T001",
-      "TOA Supermatex",
-      "30",
-      "20",
-      "10",
-      "1000",
-      "raedy"
-    ),
-    createData(
-      1,
-      "img",
-      "T001",
-      "TOA Supermatex",
-      "30",
-      "20",
-      "10",
-      "1000",
-      "raedy"
-    ),
-    createData(
-      1,
-      "img",
-      "T001",
-      "TOA Supermatex",
-      "30",
-      "20",
-      "10",
-      "1000",
-      "raedy"
-    ),
-  ];
+      "ready"
+    )
+  ));
   return (
     <ThemeProvider theme={CheckboxTheme}>
       <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>

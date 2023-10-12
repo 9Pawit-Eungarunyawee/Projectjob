@@ -180,6 +180,7 @@ export default function EditEmployee() {
                       <Image
                         src={profileUrl}
                         alt="Uploaded Image"
+                        priority
                         height="150"
                         width="150"
                         style={{
@@ -206,7 +207,7 @@ export default function EditEmployee() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   variant="outlined"
-                  value={name}
+                  value={String(name)}
                   label="ชื่อ"
                   fullWidth
                   required
@@ -216,7 +217,7 @@ export default function EditEmployee() {
                 />
                 <TextField
                   variant="outlined"
-                  value={email}
+                  value={String(email)}
                   label="อีเมล"
                   fullWidth
                   required
@@ -233,7 +234,7 @@ export default function EditEmployee() {
                   size="small"
                   sx={{ mt: 1, mb: 1 }}
                   onChange={(e) => setTel(e.target.value)}
-                  value={tel}
+                  value={String(tel)}
                 />
                 <TextField
                   variant="outlined"
@@ -243,7 +244,7 @@ export default function EditEmployee() {
                   size="small"
                   sx={{ mt: 1, mb: 1 }}
                   onChange={(e) => setSalary(e.target.value)}
-                  value={salary}
+                  value={String(salary)}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -255,7 +256,7 @@ export default function EditEmployee() {
                   size="small"
                   sx={{ mt: 1, mb: 1 }}
                   onChange={(e) => setaddress(e.target.value)}
-                  value={address}
+                  value={String(address)}
                 />
                 <FormControl fullWidth>
                   <TextField
@@ -263,12 +264,12 @@ export default function EditEmployee() {
                     label="จังหวัด"
                     select
                     sx={{ mt: 1, mb: 1 }}
-                    value={selectedProvince}
+                    value={String(selectedProvince)}
                     onChange={handleProvinceChange}
                   >
                     <MenuItem value="">กรุณาเลือกจังหวัด</MenuItem>
                     {provinces.map((province) => (
-                      <MenuItem key={province.id} value={province.name_th}>
+                      <MenuItem key={province.id} value={String(province.name_th)}>
                         {province.name_th}
                       </MenuItem>
                     ))}
@@ -279,7 +280,7 @@ export default function EditEmployee() {
                     label="อำเภอ"
                     select
                     sx={{ mt: 1, mb: 1 }}
-                    value={selectedAmphure}
+                    value={String(selectedAmphure)}
                     onChange={handleAmphureChange}
                   >
                     <MenuItem value="">กรุณาเลือกอำเภอ</MenuItem>
@@ -289,7 +290,7 @@ export default function EditEmployee() {
                           (province) => province.name_th === selectedProvince
                         )
                         ?.amphure.map((amphure) => (
-                          <MenuItem key={amphure.id} value={amphure.name_th}>
+                          <MenuItem key={amphure.id} value={String(amphure.name_th)}>
                             {amphure.name_th}
                           </MenuItem>
                         ))}
@@ -298,7 +299,7 @@ export default function EditEmployee() {
                     size="small"
                     label="ตำบล"
                     select
-                    value={selectedTambon}
+                    value={String(selectedTambon)}
                     onChange={handleTambonChange}
                     sx={{ mt: 1, mb: 1 }}
                   >
@@ -312,7 +313,7 @@ export default function EditEmployee() {
                           (amphure) => amphure.name_th === selectedAmphure
                         )
                         ?.tambon.map((tambon) => (
-                          <MenuItem key={tambon.id} value={tambon.name_th}>
+                          <MenuItem key={tambon.id} value={String(tambon.name_th)}>
                             {tambon.name_th}
                           </MenuItem>
                         ))}

@@ -48,6 +48,10 @@ export default function Product() {
       const productData = result.docs.map((doc) => ({
         id: doc.id,
         name: doc.data().name,
+        cost:doc.data().cost,
+        amount:doc.data().amount,
+        price:doc.data().price,
+        img:doc.data().img
       }));
       setDocumentData(productData);
     }

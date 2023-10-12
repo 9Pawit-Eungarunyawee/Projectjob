@@ -12,16 +12,24 @@ import {
   CardMedia,
   CardActionArea,
 } from "@mui/material";
-import { getCollection, showData } from "../../firebase/getData";
+import { getCollection } from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
-export default function Products() {
+export default function Catalog() {
   const [documentData, setDocumentData] = React.useState(null);
+  const router = useRouter();
+  function handleCard(data) {
+    router.push({
+      pathname: "/productpage/",
+      query: { catalogData: JSON.stringify(data) },
+    });
+  }
   React.useEffect(() => {
     fetchAllData();
     console.log(documentData);
@@ -64,7 +72,7 @@ export default function Products() {
                     color: "inherit",
                     "&:hover": { textDecoration: "underline" },
                   }}
-                  href="/"
+                  href="/homepage"
                 >
                   หน้าแรก
                 </Link>
@@ -77,7 +85,7 @@ export default function Products() {
                 color: "inherit",
                 "&:hover": { textDecoration: "underline" },
               }}
-              href="/"
+              href="/homepage"
             >
               <Box sx={{ pt: 2 }}>
                 <Button
@@ -119,8 +127,11 @@ export default function Products() {
             <Grid container spacing={2}>
               {documentData &&
                 documentData.map((item) => (
-                  <Grid key={item.id} item xs={12} md={4}>
-                    <Card sx={{ maxWidth: 400 }}>
+                  <Grid key={item.id} item xs={12} sm={6} md={4}>
+                    <Card
+                      sx={{ maxWidth: 400 }}
+                      onClick={() => handleCard(item.id)}
+                    >
                       <CardActionArea>
                         <CardMedia
                           component="img"

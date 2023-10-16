@@ -14,7 +14,6 @@ import {
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import signUp from "@/firebase/auth/signup";
-import addData from "@/firebase/addData";
 import { useRouter } from "next/router";
 
 export default function AddEmployee() {
@@ -167,6 +166,7 @@ export default function AddEmployee() {
                           <Image
                             src={profileUrl}
                             alt="Uploaded Image"
+                            priority
                             height="150"
                             width="150"
                             style={{

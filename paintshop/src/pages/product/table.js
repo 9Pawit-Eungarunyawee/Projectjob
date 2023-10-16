@@ -7,10 +7,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button, Checkbox, IconButton } from "@mui/material";
+import { Box, Button, Checkbox, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import Image from "next/image";
 
-export default function TableProduct() {
+export default function TableProduct(documentData) {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const CheckboxTheme = createTheme({
     palette: {
@@ -42,10 +43,16 @@ export default function TableProduct() {
     },
   }));
 
+  const [docuData, setDocData] = React.useState([]);
+  React.useEffect(() => {
+    if (documentData && documentData.data) {
+      setDocData(documentData.data);
+    }
+    console.log("doc มา table: ", docuData);
+  }, [documentData, docuData]);
   function createData(
     No,
     img,
-    p_id,
     p_name,
     p_stock,
     p_sell,
@@ -53,55 +60,23 @@ export default function TableProduct() {
     p_price,
     status
   ) {
-    return { No, img, p_id, p_name, p_stock, p_sell, p_left, p_price, status };
+    return { No, img, p_name, p_stock, p_sell, p_left, p_price, status };
   }
 
-  const rows = [
+  const rows = docuData.map((dataItem, index) =>
     createData(
-      1,
-      "img",
-      "T001",
-      "TOA Supermatex",
-      "30",
-      "20",
-      "10",
-      "1000",
-      "raedy"
-    ),
-    createData(
-      1,
-      "img",
-      "T001",
-      "TOA Supermatex",
-      "30",
-      "20",
-      "10",
-      "1000",
-      "raedy"
-    ),
-    createData(
-      1,
-      "img",
-      "T001",
-      "TOA Supermatex",
-      "30",
-      "20",
-      "10",
-      "1000",
-      "raedy"
-    ),
-    createData(
-      1,
-      "img",
-      "T001",
-      "TOA Supermatex",
-      "30",
-      "20",
-      "10",
-      "1000",
-      "raedy"
-    ),
-  ];
+      index + 1,
+      dataItem.img,
+      dataItem.name,
+      null,
+      null,
+      dataItem.productSizes[0].quantity,
+      dataItem.productSizes[0].price
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      dataItem.status === true ? "พร้อมขาย" : "ไม่พร้อมขาย"
+    )
+  );
   return (
     <ThemeProvider theme={CheckboxTheme}>
       <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
@@ -109,17 +84,17 @@ export default function TableProduct() {
           <TableHead>
             <TableRow>
               <StyledTableCell>No.</StyledTableCell>
-              <StyledTableCell align="right">รูปภาพ</StyledTableCell>
-              <StyledTableCell align="right">รหัสสินค้า</StyledTableCell>
-              <StyledTableCell align="right">ชื่อสินค้า</StyledTableCell>
-              <StyledTableCell align="right">สต๊อก</StyledTableCell>
-              <StyledTableCell align="right">ขาย</StyledTableCell>
-              <StyledTableCell align="right">เหลือ</StyledTableCell>
-              <StyledTableCell align="right">ราคา</StyledTableCell>
-              <StyledTableCell align="right">สถานะสินค้า</StyledTableCell>
-              <StyledTableCell align="right">แก้ไข</StyledTableCell>
-              <StyledTableCell align="right"></StyledTableCell>
-              <StyledTableCell align="right">
+              <StyledTableCell align="center">รูปภาพ</StyledTableCell>
+
+              <StyledTableCell align="">ชื่อสินค้า</StyledTableCell>
+              <StyledTableCell align="">สต๊อก</StyledTableCell>
+              <StyledTableCell align="">ขาย</StyledTableCell>
+              <StyledTableCell align="">เหลือ</StyledTableCell>
+              <StyledTableCell align="">ราคา</StyledTableCell>
+              <StyledTableCell align="center">สถานะสินค้า</StyledTableCell>
+              <StyledTableCell align="center">แก้ไข</StyledTableCell>
+              <StyledTableCell align=""></StyledTableCell>
+              <StyledTableCell align="">
                 <Checkbox {...label} color="success" sx={{ color: "#fff" }} />
               </StyledTableCell>
             </TableRow>
@@ -130,21 +105,47 @@ export default function TableProduct() {
                 <StyledTableCell component="th" scope="row">
                   {row.No}
                 </StyledTableCell>
-                <StyledTableCell align="right">{row.img}</StyledTableCell>
-                <StyledTableCell align="right">{row.p_id}</StyledTableCell>
-                <StyledTableCell align="right">{row.p_name}</StyledTableCell>
-                <StyledTableCell align="right">{row.p_stock}</StyledTableCell>
-                <StyledTableCell align="right">{row.p_sell}</StyledTableCell>
-                <StyledTableCell align="right">{row.p_left}</StyledTableCell>
-                <StyledTableCell align="right">{row.p_price}</StyledTableCell>
-                <StyledTableCell align="right">{row.status}</StyledTableCell>
-                <StyledTableCell align="right">
+                <StyledTableCell align="">
+                  {
+                    <Image
+                      src={row.img}
+                      alt="Product Image"
+                      priority
+                      height="75"
+                      width="75"
+                    />
+                  }
+                </StyledTableCell>
+                
+                <StyledTableCell align="">{row.p_name}</StyledTableCell>
+                <StyledTableCell align="">{row.p_stock}</StyledTableCell>
+                <StyledTableCell align="">{row.p_sell}</StyledTableCell>
+                <StyledTableCell align="">{row.p_left}</StyledTableCell>
+                <StyledTableCell align="">{row.p_price}</StyledTableCell>
+
+                <StyledTableCell align="center">
+                  <Box
+                    sx={{
+                      backgroundColor:
+                        row.status === "พร้อมขาย" ? "rgba(169, 196, 112, 0.61)" : "rgba(254, 97, 106, 0.50)",
+                      p: 1,
+                      borderRadius: "10px",
+                    }}
+                  >
+                    {row.status}
+                  </Box>
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   <IconButton color="primary">
                     <EditIcon />
                   </IconButton>
                 </StyledTableCell>
-                <StyledTableCell align="right"><Button variant="contained" size="small">ปรับสต็อก</Button></StyledTableCell>
-                <StyledTableCell align="right">
+                <StyledTableCell align="center">
+                  <Button variant="contained" size="small">
+                    ปรับสต็อก
+                  </Button>
+                </StyledTableCell>
+                <StyledTableCell align="">
                   <Checkbox {...label} />
                 </StyledTableCell>
               </StyledTableRow>

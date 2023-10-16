@@ -1,6 +1,6 @@
 import firebase_app from "../config";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import addData from "../addData";
+import addDataUser from "../addDataUser";
 import editData from "../editData";
 const auth = getAuth(firebase_app);
 
@@ -34,7 +34,7 @@ export default async function signUp(
       profileUrl: profileUrl,
       isAdmin: false,
     };
-    await addData("users", user.uid, newUser);
+    await addDataUser("users", user.uid, newUser);
     console.log("สร้างผู้ใช้สำเร็จ:" + user.uid);
   } catch (error) {
     console.error("เกิดข้อผิดพลาดในการเพิ่มข้อมูลผู้ใช้:", error);

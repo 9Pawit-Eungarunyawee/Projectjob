@@ -7,9 +7,9 @@ const nextConfig = {
       "d1an7elaqzcblb.cloudfront.net",
       "www.dohome.co.th",
       "images.akzonobel.com",
+      "www.toagroup.com",
     ],
   },
-
 };
 
 module.exports = nextConfig;

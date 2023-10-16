@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button, Checkbox, IconButton } from "@mui/material";
+import { Box, Button, Checkbox, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Image from "next/image";
 
@@ -42,7 +42,7 @@ export default function TableProduct(documentData) {
       border: 0,
     },
   }));
- 
+
   const [docuData, setDocData] = React.useState([]);
   React.useEffect(() => {
     if (documentData && documentData.data) {
@@ -53,7 +53,6 @@ export default function TableProduct(documentData) {
   function createData(
     No,
     img,
-    p_id,
     p_name,
     p_stock,
     p_sell,
@@ -61,20 +60,21 @@ export default function TableProduct(documentData) {
     p_price,
     status
   ) {
-    return { No, img, p_id, p_name, p_stock, p_sell, p_left, p_price, status };
+    return { No, img, p_name, p_stock, p_sell, p_left, p_price, status };
   }
 
   const rows = docuData.map((dataItem, index) =>
     createData(
       index + 1,
       dataItem.img,
-      dataItem.id,
       dataItem.name,
       null,
       null,
-      dataItem.amount,
-      dataItem.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-      null
+      dataItem.productSizes[0].quantity,
+      dataItem.productSizes[0].price
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      dataItem.status === true ? "พร้อมขาย" : "ไม่พร้อมขาย"
     )
   );
   return (
@@ -85,14 +85,14 @@ export default function TableProduct(documentData) {
             <TableRow>
               <StyledTableCell>No.</StyledTableCell>
               <StyledTableCell align="center">รูปภาพ</StyledTableCell>
-              <StyledTableCell align="">รหัสสินค้า</StyledTableCell>
+
               <StyledTableCell align="">ชื่อสินค้า</StyledTableCell>
               <StyledTableCell align="">สต๊อก</StyledTableCell>
               <StyledTableCell align="">ขาย</StyledTableCell>
               <StyledTableCell align="">เหลือ</StyledTableCell>
               <StyledTableCell align="">ราคา</StyledTableCell>
-              <StyledTableCell align="">สถานะสินค้า</StyledTableCell>
-              <StyledTableCell align="">แก้ไข</StyledTableCell>
+              <StyledTableCell align="center">สถานะสินค้า</StyledTableCell>
+              <StyledTableCell align="center">แก้ไข</StyledTableCell>
               <StyledTableCell align=""></StyledTableCell>
               <StyledTableCell align="">
                 <Checkbox {...label} color="success" sx={{ color: "#fff" }} />
@@ -106,7 +106,7 @@ export default function TableProduct(documentData) {
                   {row.No}
                 </StyledTableCell>
                 <StyledTableCell align="">
-                  {(
+                  {
                     <Image
                       src={row.img}
                       alt="Product Image"
@@ -114,21 +114,33 @@ export default function TableProduct(documentData) {
                       height="75"
                       width="75"
                     />
-                  )}
+                  }
                 </StyledTableCell>
-                <StyledTableCell align="">{row.p_id}</StyledTableCell>
+                
                 <StyledTableCell align="">{row.p_name}</StyledTableCell>
                 <StyledTableCell align="">{row.p_stock}</StyledTableCell>
                 <StyledTableCell align="">{row.p_sell}</StyledTableCell>
                 <StyledTableCell align="">{row.p_left}</StyledTableCell>
                 <StyledTableCell align="">{row.p_price}</StyledTableCell>
-                <StyledTableCell align="">{row.status}</StyledTableCell>
-                <StyledTableCell align="">
+
+                <StyledTableCell align="center">
+                  <Box
+                    sx={{
+                      backgroundColor:
+                        row.status === "พร้อมขาย" ? "rgba(169, 196, 112, 0.61)" : "rgba(254, 97, 106, 0.50)",
+                      p: 1,
+                      borderRadius: "10px",
+                    }}
+                  >
+                    {row.status}
+                  </Box>
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   <IconButton color="primary">
                     <EditIcon />
                   </IconButton>
                 </StyledTableCell>
-                <StyledTableCell align="">
+                <StyledTableCell align="center">
                   <Button variant="contained" size="small">
                     ปรับสต็อก
                   </Button>

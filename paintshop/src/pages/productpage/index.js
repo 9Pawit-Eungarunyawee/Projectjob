@@ -25,9 +25,18 @@ export default function Productpage() {
   const [documentData, setDocumentData] = React.useState(null);
   const router = useRouter();
   const catalogId = JSON.parse(router.query.catalogData);
-
+  function handleCard(productId) {
+    router.push({
+      pathname: "/colorselect/",
+      query: {
+        catalogData: JSON.stringify(catalogId),
+        productId: JSON.stringify(productId),
+      },
+    });
+  }
   React.useEffect(() => {
     fetchAllData();
+    console.log(documentData);
   }, []);
   const fetchAllData = async () => {
     const collection = "products";
@@ -90,7 +99,7 @@ export default function Productpage() {
                   }}
                   href="/catalog"
                 >
-                  แค็ตตาล็อก
+                  แคตตาล็อก
                 </Link>
                 <Typography color="text.primary">ผลิตภัณฑ์</Typography>
               </Breadcrumbs>
@@ -180,6 +189,7 @@ export default function Productpage() {
                             display: "flex",
                             flexDirection: "column",
                           }}
+                          onClick={() => handleCard(item.id)}
                         >
                           <CardActionArea>
                             <CardMedia
@@ -221,7 +231,10 @@ export default function Productpage() {
                                   mt: 1,
                                 }}
                               >
-                                {item.price}
+                                {item.productSizes[0].price
+                                  .toString()
+                                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                บาท
                               </Typography>
                             </CardContent>
                           </CardActionArea>

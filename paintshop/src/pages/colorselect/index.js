@@ -26,7 +26,17 @@ export default function colorselect() {
   const [selectedColorId, setSelectedColorId] = React.useState(null);
   const [colorshadeData, setColorshadeData] = React.useState(null);
   const catalogId = JSON.parse(router.query.catalogData);
-
+  const productId = JSON.parse(router.query.productId);
+  function handleCard(colorId) {
+    router.push({
+      pathname: "/productsdetail/",
+      query: {
+        catalogData: JSON.stringify(catalogId),
+        productId: JSON.stringify(productId),
+        colorId: JSON.stringify(colorId),
+      },
+    });
+  }
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -281,7 +291,10 @@ export default function colorselect() {
                       >
                         {selectedColorId &&
                         color.colorshade_id === selectedColorId ? (
-                          <Card sx={{ maxWidth: 300 }}>
+                          <Card
+                            sx={{ maxWidth: 300 }}
+                            onClick={() => handleCard(color.id)}
+                          >
                             <CardActionArea>
                               <CardContent
                                 sx={{

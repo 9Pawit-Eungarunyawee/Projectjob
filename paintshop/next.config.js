@@ -10,7 +10,6 @@ const nextConfig = {
       "www.toagroup.com"
     ],
   },
-
 };
 
 module.exports = nextConfig;

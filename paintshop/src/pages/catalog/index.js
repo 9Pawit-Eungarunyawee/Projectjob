@@ -54,6 +54,7 @@ export default function Catalog() {
 
   return (
     <Homelayout>
+      
       <Box sx={{ height: "100vh", width: "100%" }}>
         <Container
           maxWidth="false"
@@ -76,7 +77,7 @@ export default function Catalog() {
                 >
                   หน้าแรก
                 </Link>
-                <Typography color="text.primary">ผลิตภัณฑ์</Typography>
+                <Typography color="text.primary">แค็ตตาล็อก</Typography>
               </Breadcrumbs>
             </div>
             <Link

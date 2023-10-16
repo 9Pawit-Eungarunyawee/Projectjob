@@ -23,7 +23,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 const pages = [
   { label: "หน้าแรก", url: "/homepage" },
-  { label: "ผลิตภัณฑ์", url: "/products" },
+  { label: "ผลิตภัณฑ์", url: "/catalog" },
   { label: "ออกแบบ", url: "/designs" },
 ];
 
@@ -71,8 +71,8 @@ export default function Navbar() {
       handlelogout();
     } else if (setting == "จัดการสินค้า") {
       console.log("จัดการสินค้า");
-    }else if (setting == "แดชบอร์ด"){
-      router.push("/dashboard")
+    } else if (setting == "แดชบอร์ด") {
+      router.push("/dashboard");
     }
   };
   const theme = createTheme({

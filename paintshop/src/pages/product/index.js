@@ -11,6 +11,9 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
 import Table from "./table";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { getCollection } from "@/firebase/getData";
 export default function Product() {
   const theme = createTheme({
     palette: {
@@ -25,6 +28,33 @@ export default function Product() {
       },
     },
   });
+  const [documentData, setDocumentData] = useState(null);
+  const router = useRouter();
+  function handleAdd() {
+    router.push("/product/addproduct");
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+  useEffect(() => {
+    // console.log(documentData);
+  }, [documentData]);
+  const fetchData = async () => {
+    const collectionName = "products";
+    const { result, error } = await getCollection(collectionName);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const productData = result.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        productSizes:doc.data().productSizes,
+        img: doc.data().img,
+        status:doc.data().status
+      }));
+      setDocumentData(productData);
+    }
+  };
   return (
     <Layout>
       <ThemeProvider theme={theme}>
@@ -53,14 +83,19 @@ export default function Product() {
 
           <Box sx={{ pr: 3 }}>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button variant="contained" color="success" sx={{mr:2,mb:2,mt:2}}>
+              <Button
+                variant="contained"
+                color="success"
+                sx={{ mr: 2, mb: 2, mt: 2 }}
+                onClick={handleAdd}
+              >
                 เพิ่มสินค้า
               </Button>
-              <Button variant="contained" color="error" sx={{mb:2,mt:2}}>
+              <Button variant="contained" color="error" sx={{ mb: 2, mt: 2 }}>
                 ลบรายการ
               </Button>
             </Box>
-            <Table />
+            <Table data={documentData} />
           </Box>
         </Box>
       </ThemeProvider>

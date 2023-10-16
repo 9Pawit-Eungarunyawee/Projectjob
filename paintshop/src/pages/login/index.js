@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -118,7 +119,13 @@ export default function Login() {
                           fullWidth
                         />
                       </Box>
-                      <Typography sx={{ mb: 4 }}>ลืมรหัสผ่าน?</Typography>
+                      <Box sx={{display:"flex"}}>
+                        <Typography sx={{ mb: 4 }}>ลืมรหัสผ่าน?</Typography>
+                        <Link href={"/register"}>
+                          <Typography sx={{ mb: 4,ml:2 }}>สมัครสมาชิก</Typography>
+                        </Link>
+                      </Box>
+
                       <Box>
                         <Button
                           variant="contained"

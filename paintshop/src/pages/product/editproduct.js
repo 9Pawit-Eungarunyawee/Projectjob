@@ -1,7 +1,6 @@
 import Layout from "@/components/layout";
 import { getCollection } from "@/firebase/getData";
-import addData from "@/firebase/addData";
-
+import getDoument from "@/firebase/getData";
 import {
   Alert,
   Box,
@@ -10,15 +9,18 @@ import {
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   MenuItem,
   Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-
-export default function AddProduct() {
+import { Fragment, useEffect, useState } from "react";
+import editData from "@/firebase/editData";
+import { useRouter } from "next/router";
+import CloseIcon from "@mui/icons-material/Close";
+export default function EditProduct() {
   const [imageUrl, setImageUrl] = useState("");
 
   const [productSizes, setProductSizes] = useState([
@@ -79,6 +81,7 @@ export default function AddProduct() {
 
   useEffect(() => {
     fetchDataCatalog();
+    fetchProductData();
   }, []);
 
   const [catalogData, setCatalogData] = useState(null);
@@ -95,8 +98,30 @@ export default function AddProduct() {
       setCatalogData(catalog);
     }
   };
+  const router = useRouter();
+  const product_id = JSON.parse(router.query.product_id);
+  const fetchProductData = async () => {
+    const collectionName = "products";
+    const { result, error } = await getDoument(collectionName, product_id);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const productData = result.data();
+      setName(productData.name);
+      setArea(productData.area);
+      setFlim(productData.flim);
+      setGrade(productData.grade);
+      setDetail(productData.detail);
+      setProductSizes(productData.productSizes);
+      setImageUrl(productData.img);
+      setLot(productData.lot);
+      setStatus(productData.status);
+      setCatalogId(productData.catalog_id.id);
+    }
+  };
   const handleForm = async (event) => {
     event.preventDefault();
+
     const product = {
       name: name,
       catalog_id: catalogId,
@@ -109,13 +134,19 @@ export default function AddProduct() {
       img: imageUrl,
       productSizes: productSizes,
     };
-    const result = await addData("products", product);
+    const result = await editData("products", product_id, product);
     if (result) {
-      setAlert(<Alert severity="success" onClose={handleClose}>เพิ่มข้อมูลสำเร็จ</Alert>);
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          แก้ไขข้อมูลสำเร็จ{" "}
+        </Alert>
+      );
       setOpen(true);
     } else {
       setAlert(
-        <Alert severity="error" onClose={handleClose}>ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้</Alert>
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถแก้ไขข้อมูลได้
+        </Alert>
       );
       setOpen(true);
     }
@@ -128,12 +159,14 @@ export default function AddProduct() {
 
     setOpen(false);
   };
+
   return (
     <Layout>
       <Typography sx={{ mt: 5 }}>เพิ่มสินค้า</Typography>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         {alert}
       </Snackbar>
+
       <Grid
         container
         spacing={1}
@@ -180,7 +213,7 @@ export default function AddProduct() {
               />
 
               <TextField
-                value={area}
+                value={String(area)}
                 onChange={(e) => setArea(e.target.value)}
                 size="small"
                 select
@@ -355,6 +388,7 @@ export default function AddProduct() {
                 value={lot}
                 onChange={(e) => setLot(e.target.value)}
                 variant="outlined"
+                disabled
                 fullWidth
                 required
                 size="small"
@@ -378,7 +412,7 @@ export default function AddProduct() {
               sx={{ mr: 2, mb: 2, mt: 2 }}
               type="submit"
             >
-              เพิ่มสินค้า
+              แก้ไขสินค้า
             </Button>
           </form>
         </Grid>

@@ -211,6 +211,7 @@ export default function AddEmployee() {
                     />
                     <TextField
                       variant="outlined"
+                      type="password"
                       label="รหัสผ่าน"
                       fullWidth
                       required

@@ -233,9 +233,11 @@ export default function Navbar() {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Shopping Cart">
-                  <IconButton color="inherit">
-                    <ShoppingBagOutlinedIcon />
-                  </IconButton>
+                  <Link href={"/cart"}>
+                    <IconButton color="black">
+                      <ShoppingBagOutlinedIcon />
+                    </IconButton>
+                  </Link>
                 </Tooltip>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

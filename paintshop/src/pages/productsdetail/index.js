@@ -14,6 +14,8 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
@@ -21,6 +23,7 @@ import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { useRouter } from "next/router";
 import { getCollection } from "../../firebase/getData";
+import addCart from "@/firebase/addCart";
 import { Numbers } from "@mui/icons-material";
 function handleClick(event) {
   event.preventDefault();
@@ -30,12 +33,68 @@ function handleClick(event) {
 export default function Productsdetail() {
   const [documentData, setDocumentData] = React.useState(null);
   const [colorData, setColorData] = React.useState(null);
+  const [priceData, setPriceData] = React.useState("");
   const [sizeData, setSizeData] = React.useState("");
   const router = useRouter();
   const catalogId = JSON.parse(router.query.catalogData);
   const productId = JSON.parse(router.query.productId);
   const colorId = JSON.parse(router.query.colorId);
   const [number, setNumber] = React.useState(1);
+  const [selectedPrice, setSelectedPrice] = React.useState(null);
+  const [alert, setAlert] = React.useState(null);
+
+  React.useEffect(() => {
+    // ตรวจสอบว่ามีไซส์ที่ตรงกับ sizeData หรือไม่
+    if (documentData) {
+      const matchingSize = documentData[0].productSizes.find(
+        (price) => price.size === sizeData
+      );
+
+      // ถ้ามีไซส์ที่ตรงกับ sizeData ก็กำหนดราคาให้กับ state
+      if (matchingSize) {
+        setSelectedPrice(matchingSize.price);
+      } else {
+        // ถ้าไม่มีไซส์ที่ตรงกับ sizeData ก็กำหนดให้ selectedPrice เป็น null
+        setSelectedPrice(null);
+      }
+    }
+  }, [documentData, sizeData]);
+
+  // นำค่าราคาที่เลือกไปใช้ที่ไหนก็ได้
+  React.useEffect(() => {
+    console.log(selectedPrice);
+  }, [selectedPrice]);
+  const updatecart = async (product_id) => {
+    const cart = {
+      product_id: product_id, // ใช้อ้างอิง
+      price: selectedPrice,
+      amount: number,
+    };
+    const result = await addCart("cart", cart);
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          เพิ่มสินค้าลงตะกร้าเรียบร้อย
+        </Alert>
+      );
+      setOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถเพิ่มสินค้าลงตะกร้าได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
+  const [open, setOpen] = React.useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
@@ -126,7 +185,7 @@ export default function Productsdetail() {
             }
           });
           setDocumentData(data);
-          console.log(data);
+          console.log("test1111", documentData);
         }
       } catch (error) {
         console.error("Error fetching collection:", error);
@@ -169,6 +228,9 @@ export default function Productsdetail() {
             bgcolor: "#FAF8F1",
           }}
         >
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            {alert}
+          </Snackbar>
           <Box sx={{ width: "70vw", pt: 2, pb: 2 }}>
             <div role="presentation" onClick={handleClick}>
               <Breadcrumbs aria-label="Beger">
@@ -468,6 +530,7 @@ export default function Productsdetail() {
                         ...styles.btnHover,
                         mr: 1,
                       }}
+                      onClick={() => updatecart(item.id)}
                     >
                       <ShoppingBagOutlinedIcon />
                       <Typography

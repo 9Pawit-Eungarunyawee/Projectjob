@@ -9,16 +9,16 @@ import { useRouter } from "next/router";
 
 export default function CardEmployee(props) {
   const { data } = props;
-  let salary = "ยังไม่เพิ่มเงินเดือน"
-  if(data.salary){
-    salary = data.salary
+  let salary = "ยังไม่เพิ่มเงินเดือน";
+  if (data.salary) {
+    salary = data.salary;
   }
   //แปลงเงิน
   const formattedInt = salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   const router = useRouter();
   function handleCard() {
     router.push({
-      pathname: '/employee/edit',
+      pathname: "/employee/edit",
       query: { employeeData: JSON.stringify(data.id) },
     });
   }
@@ -51,13 +51,15 @@ export default function CardEmployee(props) {
             </Box>
             <Box>
               {console.log(salary)}
-              <Typography sx={{ color: "#7A7A7A" }}>{formattedInt}</Typography>
+              <Typography sx={{ color: "#7A7A7A" }}>
+                เงินเดือน: {formattedInt}
+              </Typography>
             </Box>
           </Box>
           <Box sx={{ mt: 5 }}>
             <hr />
             <Box>
-              <Typography>{data.tel}</Typography>
+              <Typography>เบอร์ติดต่อ: {data.tel}</Typography>
             </Box>
           </Box>
         </CardContent>

@@ -12,7 +12,6 @@ import {
   Select,
   TextField,
   Typography,
-  
 } from "@mui/material";
 
 import Image from "next/image";
@@ -46,7 +45,6 @@ export default function EditEmployee() {
     if (error) {
       console.error("Error fetching document:", error);
     } else if (result) {
-      
       const userData = result.data();
       setName(userData.name);
       setEmail(userData.email);
@@ -56,8 +54,8 @@ export default function EditEmployee() {
       setSelectedProvince(userData.province);
       setSelectedAmphure(userData.amphure);
       setSelectedTambon(userData.tambon);
-      if(userData.salary){
-        setSalary(userData.salary)
+      if (userData.salary) {
+        setSalary(userData.salary);
       }
     }
   };
@@ -118,7 +116,7 @@ export default function EditEmployee() {
   //แก้ไขพนักงาน
   const handleForm = async (event) => {
     event.preventDefault();
-    const employeeUser ={
+    const employeeUser = {
       email: email,
       name: name,
       address: address,
@@ -127,13 +125,15 @@ export default function EditEmployee() {
       tambon: selectedTambon,
       tel: tel,
       profileUrl: profileUrl,
-      salary:salary,
+      salary: salary,
     };
     const result = await editData("users", employeeData, employeeUser);
-    if(result){
-      setAlert(<Alert severity="success">แก้ไข้ข้อมูลสำเร็จ</Alert>)
-    }else{
-      setAlert(<Alert severity="error">ผิดพลาด! ไม่สามารถแก้ไข้ข้อมูลได้</Alert>)
+    if (result) {
+      setAlert(<Alert severity="success">แก้ไข้ข้อมูลสำเร็จ</Alert>);
+    } else {
+      setAlert(
+        <Alert severity="error">ผิดพลาด! ไม่สามารถแก้ไข้ข้อมูลได้</Alert>
+      );
     }
   };
 
@@ -269,7 +269,10 @@ export default function EditEmployee() {
                   >
                     <MenuItem value="">กรุณาเลือกจังหวัด</MenuItem>
                     {provinces.map((province) => (
-                      <MenuItem key={province.id} value={String(province.name_th)}>
+                      <MenuItem
+                        key={province.id}
+                        value={String(province.name_th)}
+                      >
                         {province.name_th}
                       </MenuItem>
                     ))}
@@ -290,7 +293,10 @@ export default function EditEmployee() {
                           (province) => province.name_th === selectedProvince
                         )
                         ?.amphure.map((amphure) => (
-                          <MenuItem key={amphure.id} value={String(amphure.name_th)}>
+                          <MenuItem
+                            key={amphure.id}
+                            value={String(amphure.name_th)}
+                          >
                             {amphure.name_th}
                           </MenuItem>
                         ))}
@@ -313,7 +319,10 @@ export default function EditEmployee() {
                           (amphure) => amphure.name_th === selectedAmphure
                         )
                         ?.tambon.map((tambon) => (
-                          <MenuItem key={tambon.id} value={String(tambon.name_th)}>
+                          <MenuItem
+                            key={tambon.id}
+                            value={String(tambon.name_th)}
+                          >
                             {tambon.name_th}
                           </MenuItem>
                         ))}

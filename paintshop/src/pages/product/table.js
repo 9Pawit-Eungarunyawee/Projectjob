@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import { Box, Button, Checkbox, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function TableProduct(documentData) {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -23,6 +24,14 @@ export default function TableProduct(documentData) {
       },
     },
   });
+  const router = useRouter();
+  const handleClick = (id) => {
+    router.push({
+      pathname: "/product/editproduct",
+      query: { product_id: JSON.stringify(id) },
+    });
+    // console.log("handleClick")
+  };
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#018294",
@@ -52,6 +61,7 @@ export default function TableProduct(documentData) {
   }, [documentData, docuData]);
   function createData(
     No,
+    id,
     img,
     p_name,
     p_stock,
@@ -60,12 +70,13 @@ export default function TableProduct(documentData) {
     p_price,
     status
   ) {
-    return { No, img, p_name, p_stock, p_sell, p_left, p_price, status };
+    return { No, id, img, p_name, p_stock, p_sell, p_left, p_price, status };
   }
 
   const rows = docuData.map((dataItem, index) =>
     createData(
       index + 1,
+      dataItem.id,
       dataItem.img,
       dataItem.name,
       null,
@@ -86,15 +97,15 @@ export default function TableProduct(documentData) {
               <StyledTableCell>No.</StyledTableCell>
               <StyledTableCell align="center">รูปภาพ</StyledTableCell>
 
-              <StyledTableCell align="">ชื่อสินค้า</StyledTableCell>
-              <StyledTableCell align="">สต๊อก</StyledTableCell>
-              <StyledTableCell align="">ขาย</StyledTableCell>
-              <StyledTableCell align="">เหลือ</StyledTableCell>
-              <StyledTableCell align="">ราคา</StyledTableCell>
+              <StyledTableCell>ชื่อสินค้า</StyledTableCell>
+              <StyledTableCell>สต๊อก</StyledTableCell>
+              <StyledTableCell>ขาย</StyledTableCell>
+              <StyledTableCell>เหลือ</StyledTableCell>
+              <StyledTableCell>ราคา</StyledTableCell>
               <StyledTableCell align="center">สถานะสินค้า</StyledTableCell>
               <StyledTableCell align="center">แก้ไข</StyledTableCell>
-              <StyledTableCell align=""></StyledTableCell>
-              <StyledTableCell align="">
+              <StyledTableCell></StyledTableCell>
+              <StyledTableCell>
                 <Checkbox {...label} color="success" sx={{ color: "#fff" }} />
               </StyledTableCell>
             </TableRow>
@@ -105,7 +116,7 @@ export default function TableProduct(documentData) {
                 <StyledTableCell component="th" scope="row">
                   {row.No}
                 </StyledTableCell>
-                <StyledTableCell align="">
+                <StyledTableCell>
                   {
                     <Image
                       src={row.img}
@@ -116,18 +127,20 @@ export default function TableProduct(documentData) {
                     />
                   }
                 </StyledTableCell>
-                
-                <StyledTableCell align="">{row.p_name}</StyledTableCell>
-                <StyledTableCell align="">{row.p_stock}</StyledTableCell>
-                <StyledTableCell align="">{row.p_sell}</StyledTableCell>
-                <StyledTableCell align="">{row.p_left}</StyledTableCell>
-                <StyledTableCell align="">{row.p_price}</StyledTableCell>
+
+                <StyledTableCell>{row.p_name}</StyledTableCell>
+                <StyledTableCell>{row.p_stock}</StyledTableCell>
+                <StyledTableCell>{row.p_sell}</StyledTableCell>
+                <StyledTableCell>{row.p_left}</StyledTableCell>
+                <StyledTableCell>{row.p_price}</StyledTableCell>
 
                 <StyledTableCell align="center">
                   <Box
                     sx={{
                       backgroundColor:
-                        row.status === "พร้อมขาย" ? "rgba(169, 196, 112, 0.61)" : "rgba(254, 97, 106, 0.50)",
+                        row.status === "พร้อมขาย"
+                          ? "rgba(169, 196, 112, 0.61)"
+                          : "rgba(254, 97, 106, 0.50)",
                       p: 1,
                       borderRadius: "10px",
                     }}
@@ -136,16 +149,16 @@ export default function TableProduct(documentData) {
                   </Box>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <IconButton color="primary">
+                  <IconButton color="primary"  onClick={() => handleClick(row.id)}>
                     <EditIcon />
                   </IconButton>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <Button variant="contained" size="small">
+                  <Button variant="contained" size="small" >
                     ปรับสต็อก
                   </Button>
                 </StyledTableCell>
-                <StyledTableCell align="">
+                <StyledTableCell >
                   <Checkbox {...label} />
                 </StyledTableCell>
               </StyledTableRow>

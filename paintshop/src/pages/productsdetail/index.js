@@ -20,7 +20,7 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useRouter } from "next/router";
 import { getCollection } from "../../firebase/getData";
 import addCart from "@/firebase/addCart";
@@ -532,7 +532,7 @@ export default function Productsdetail() {
                       }}
                       onClick={() => updatecart(item.id)}
                     >
-                      <ShoppingBagOutlinedIcon />
+                      <ShoppingCartOutlinedIcon />
                       <Typography
                         variant="h4"
                         sx={{
@@ -540,7 +540,7 @@ export default function Productsdetail() {
                           fontSize: { xs: "3vw", sm: "2vw", md: "1vw" },
                         }}
                       >
-                        เพิ่มไปยังตะกร้า
+                        เพิ่มไปยังรถเข็น
                       </Typography>
                     </Button>
                     <hr />

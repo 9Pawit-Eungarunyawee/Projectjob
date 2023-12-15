@@ -7,7 +7,8 @@ const nextConfig = {
       "d1an7elaqzcblb.cloudfront.net",
       "www.dohome.co.th",
       "images.akzonobel.com",
-      "www.toagroup.com"
+      "www.toagroup.com",
+      "upload.wikimedia.org",
     ],
   },
 };

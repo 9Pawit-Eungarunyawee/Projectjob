@@ -35,12 +35,19 @@ function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
+
 export default function Cart() {
   const router = useRouter();
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
   const [productIds, setProductIds] = React.useState(null);
   const [total, setTotal] = React.useState(0);
+  const handleConfirmOrder = () => {
+    router.push({
+      pathname: "/cart/QR",
+      query: { total },
+    });
+  };
   React.useEffect(() => {
     fetchAllData();
   }, []);
@@ -301,8 +308,9 @@ export default function Cart() {
                           </Box>
                           <Button
                             variant="contained"
-                            sx={{ p: 2, bgcolor: "#FE616A" }}
+                            sx={{ p: 1, bgcolor: "#FE616A" }}
                             fullWidth
+                            onClick={handleConfirmOrder}
                           >
                             ยืนยันคำสั่งซื้อ
                           </Button>

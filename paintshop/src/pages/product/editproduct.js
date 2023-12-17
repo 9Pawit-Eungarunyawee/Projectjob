@@ -183,16 +183,16 @@ export default function EditProduct() {
         <Grid item xs={12} sm={7}>
           <form onSubmit={handleForm} className="form">
             <FormControl fullWidth>
-              <Typography>แคตตาล๊อค:</Typography>
+              <Typography>แคตตาล็อก:</Typography>
               <TextField
                 value={catalogId}
                 onChange={(e) => setCatalogId(e.target.value)}
                 size="small"
                 select
-                label="เลือกแคตตาล๊อค"
+                label="เลือกแคตตาล็อก"
                 required
               >
-                <MenuItem value="">กรุณาเลือกแคตตาล๊อค</MenuItem>
+                <MenuItem value="">กรุณาเลือกแคตตาล็อก</MenuItem>
                 {catalogData &&
                   catalogData.map((catalog) => (
                     <MenuItem key={catalog.id} value={catalog.id}>

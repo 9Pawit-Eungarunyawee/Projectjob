@@ -6,6 +6,8 @@ import signIn from "@/firebase/auth/signin";
 import {
   Button,
   Grid,
+  IconButton,
+  InputAdornment,
   TextField,
   ThemeProvider,
   Typography,
@@ -14,6 +16,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -39,6 +42,10 @@ export default function Login() {
       },
     },
   });
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
   return (
     <ThemeProvider theme={theme}>
       <React.Fragment>
@@ -113,10 +120,19 @@ export default function Login() {
                           id="password"
                           label="รหัสผ่าน"
                           variant="outlined"
-                          type="password"
+                          type={showPassword ? 'text' : 'password'}
                           onChange={(e) => setPassword(e.target.value)}
                           required
                           fullWidth
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                         />
                       </Box>
                       <Box sx={{display:"flex"}}>

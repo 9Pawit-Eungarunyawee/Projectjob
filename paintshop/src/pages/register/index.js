@@ -5,6 +5,8 @@ import {
   Container,
   CssBaseline,
   Grid,
+  IconButton,
+  InputAdornment,
   Stack,
   TextField,
   ThemeProvider,
@@ -15,6 +17,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import signUp from "@/firebase/auth/signup";
 import { useRouter } from "next/router";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function AddEmployee() {
   const [profileUrl, setProfileUrl] = useState(
@@ -25,6 +28,7 @@ export default function AddEmployee() {
   const [address, setAddress] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [conpassword, setConpassword] = useState(null);
   const [provinces, setProvinces] = useState([]);
   const [amphures, setAmphures] = useState([]);
   const [tambons, setTambons] = useState([]);
@@ -119,7 +123,14 @@ export default function AddEmployee() {
 
     return router.push("/homepage");
   };
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConPassword, setConShowPassword] = useState(false);
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+  const handleToggleConPasswordVisibility = () => {
+    setConShowPassword((prevShowPassword) => !prevShowPassword);
+  };
   const theme = createTheme({
     palette: {
       primary: {
@@ -211,13 +222,41 @@ export default function AddEmployee() {
                     />
                     <TextField
                       variant="outlined"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       label="รหัสผ่าน"
                       fullWidth
                       required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
                       onChange={(e) => setPassword(e.target.value)}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <TextField
+                      variant="outlined"
+                      type={showConPassword ? 'text' : 'password'}
+                      label="ยืนยันรหัสผ่าน"
+                      fullWidth
+                      required
+                      size="small"
+                      sx={{ mt: 1, mb: 1 }}
+                      onChange={(e) => setConpassword(e.target.value)}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={handleToggleConPasswordVisibility} edge="end">
+                              {showConPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                     <TextField
                       variant="outlined"

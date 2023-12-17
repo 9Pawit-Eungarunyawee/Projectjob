@@ -13,7 +13,6 @@ export default function Layout({ children }) {
     }
     if (isAdmin == false) {
       router.push("/homepage");
-     
     }
   }, [user]);
   if (!user) {

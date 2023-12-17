@@ -14,6 +14,8 @@ import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import PersonIcon from "@mui/icons-material/Person";
+import HomeIcon from "@mui/icons-material/Home";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -124,6 +126,28 @@ export default function Sidebar() {
           >
             <li>
               <Link
+                href="/homepage"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                onClick={(e) => SetActiveLink("/homepage")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/homepage" ? styles.BoxActive : styles.Box
+                  }
+                >
+                  <Typography variant="menu">
+                    <HomeIcon sx={{ pr: 2 }} />
+                    หน้าหลัก
+                  </Typography>
+                </Box>
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/dashboard"
                 style={{
                   textDecoration: "none",
@@ -166,22 +190,24 @@ export default function Sidebar() {
             </li>
             <li>
               <Link
-                href="/category"
+                href="/catalogadmin"
                 style={{
                   textDecoration: "none",
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e) => SetActiveLink("/category")}
+                onClick={(e) => SetActiveLink("/catalogadmin")}
               >
                 <Box
                   sx={
-                    activeLink === "/category" ? styles.BoxActive : styles.Box
+                    activeLink === "/catalogadmin"
+                      ? styles.BoxActive
+                      : styles.Box
                   }
                 >
                   <Typography variant="menu">
                     <PhotoLibraryIcon sx={{ pr: 2 }} />
-                    หมวดหมู่สินค้า
+                    แคตตาล็อคสี
                   </Typography>
                 </Box>
               </Link>

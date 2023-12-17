@@ -20,11 +20,13 @@ import {
   IconButton,
   createTheme,
   ThemeProvider,
+  Icon,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { getCollection } from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
+import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -33,12 +35,19 @@ function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
+
 export default function Cart() {
   const router = useRouter();
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
   const [productIds, setProductIds] = React.useState(null);
   const [total, setTotal] = React.useState(0);
+  const handleConfirmOrder = () => {
+    router.push({
+      pathname: "/cart/QR",
+      query: { total },
+    });
+  };
   React.useEffect(() => {
     fetchAllData();
   }, []);
@@ -127,7 +136,7 @@ export default function Cart() {
                   >
                     หน้าแรก
                   </Link>
-                  <Typography color="text.primary">ตะกร้าสินค้า</Typography>
+                  <Typography color="text.primary">รถเข็น</Typography>
                 </Breadcrumbs>
               </div>
               <Link
@@ -164,139 +173,168 @@ export default function Cart() {
             }}
           >
             <Box sx={{ p: 3, width: "70vw" }}>
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: "bold",
-                  pb: 2,
-                  color: "#018294",
-                  fontSize: "30px",
-                }}
-              >
-                ตะกร้าสินค้า
-              </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={8}>
-                  <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>รูปภาพ</TableCell>
-                          <TableCell>สินค้า</TableCell>
-                          <TableCell>ราคา(บาท)</TableCell>
-                          <TableCell>จำนวน</TableCell>
-                          <TableCell></TableCell>
-                        </TableRow>
-                      </TableHead>
-                      {productData &&
-                        productData.map((item, index) => (
-                          <TableBody>
-                            <TableRow
-                              key={index}
-                              sx={{
-                                "&:last-child td, &:last-child th": {
-                                  border: 0,
-                                },
-                              }}
-                            >
-                              <TableCell component="th" scope="row">
-                                <img
-                                  src={item.img}
-                                  alt={item.name}
-                                  width={60}
-                                  height={60}
-                                />
-                              </TableCell>
-                              <TableCell>{item.name}</TableCell>
-                              <TableCell>
-                                ฿
-                                {cartData &&
-                                  format(
-                                    cartData
-                                      .filter(
-                                        (cartItem) =>
-                                          cartItem.product_id === item.id
-                                      )
-                                      .reduce(
-                                        (totalPrice, carts) =>
-                                          totalPrice +
-                                          carts.price * carts.amount,
-                                        0
-                                      )
-                                  )}
-                              </TableCell>
-                              <TableCell>
-                                {cartData &&
-                                  cartData
-                                    .filter(
-                                      (cartItem) =>
-                                        cartItem.product_id === item.id
-                                    )
-                                    .reduce(
-                                      (totalAmount, carts) =>
-                                        totalAmount + carts.amount,
-                                      0
-                                    )}
-                              </TableCell>
-                              <TableCell>
-                                <IconButton>
-                                  <DeleteOutlineIcon />
-                                </IconButton>
-                              </TableCell>
-                            </TableRow>
-                          </TableBody>
-                        ))}
-                    </Table>
-                  </TableContainer>
-                </Grid>
-
-                <Grid item xs={12} md={4}>
-                  <Card>
-                    <CardContent>
-                      {" "}
+                {cartData && cartData.length > 0 ? (
+                  <>
+                    <Grid item xs={12} md={9}>
                       <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        sx={{ color: "#018294", fontWeight: "bold" }}
-                      >
-                        สรุปรายการสั่งซื้อ
-                      </Typography>
-                      {productData &&
-                        productData.map((item, index) => (
-                          <Typography
-                            key={index}
-                            gutterBottom
-                            variant="h8"
-                            component="div"
-                          >
-                            {item.name}
-                          </Typography>
-                        ))}
-                      <hr />
-                      <Box
+                        variant="h4"
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
+                          fontWeight: "bold",
+                          pb: 2,
+                          color: "#018294",
+                          fontSize: "30px",
                         }}
                       >
-                        <Typography gutterBottom variant="h8" component="div">
-                          ยอดรวมสินค้า
-                        </Typography>
-                        <Typography gutterBottom variant="h8" component="div">
-                          ฿{format(total)}
-                        </Typography>
-                      </Box>
-                      <Button
-                        variant="contained"
-                        sx={{ p: 2, bgcolor: "#FE616A" }}
-                        fullWidth
-                      >
-                        ยืนยันคำสั่งซื้อ
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                        รถเข็นของฉัน
+                      </Typography>
+                      <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>รูปภาพ</TableCell>
+                              <TableCell>สินค้า</TableCell>
+                              <TableCell>ราคา(บาท)</TableCell>
+                              <TableCell>จำนวน</TableCell>
+                              <TableCell></TableCell>
+                            </TableRow>
+                          </TableHead>
+                          {productData &&
+                            productData.map((item, index) => (
+                              <TableBody>
+                                <TableRow
+                                  key={index}
+                                  sx={{
+                                    "&:last-child td, &:last-child th": {
+                                      border: 0,
+                                    },
+                                  }}
+                                >
+                                  <TableCell component="th" scope="row">
+                                    <img
+                                      src={item.img}
+                                      alt={item.name}
+                                      width={60}
+                                      height={60}
+                                    />
+                                  </TableCell>
+                                  <TableCell>{item.name}</TableCell>
+                                  <TableCell>
+                                    ฿
+                                    {cartData &&
+                                      format(
+                                        cartData
+                                          .filter(
+                                            (cartItem) =>
+                                              cartItem.product_id === item.id
+                                          )
+                                          .reduce(
+                                            (totalPrice, carts) =>
+                                              totalPrice +
+                                              carts.price * carts.amount,
+                                            0
+                                          )
+                                      )}
+                                  </TableCell>
+                                  <TableCell>
+                                    {cartData &&
+                                      cartData
+                                        .filter(
+                                          (cartItem) =>
+                                            cartItem.product_id === item.id
+                                        )
+                                        .reduce(
+                                          (totalAmount, carts) =>
+                                            totalAmount + carts.amount,
+                                          0
+                                        )}
+                                  </TableCell>
+                                  <TableCell>
+                                    <IconButton>
+                                      <DeleteOutlineIcon />
+                                    </IconButton>
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            ))}
+                        </Table>
+                      </TableContainer>
+                    </Grid>
+
+                    <Grid item xs={12} md={3}>
+                      <Card>
+                        <CardContent>
+                          {" "}
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            sx={{ color: "#018294", fontWeight: "bold" }}
+                          >
+                            สรุปรายการสั่งซื้อ
+                          </Typography>
+                          {productData &&
+                            productData.map((item, index) => (
+                              <Typography
+                                key={index}
+                                gutterBottom
+                                variant="h8"
+                                component="div"
+                              >
+                                {item.name}
+                              </Typography>
+                            ))}
+                          <hr />
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="h8"
+                              component="div"
+                            >
+                              ยอดรวมสินค้า
+                            </Typography>
+                            <Typography
+                              gutterBottom
+                              variant="h8"
+                              component="div"
+                            >
+                              ฿{format(total)}
+                            </Typography>
+                          </Box>
+                          <Button
+                            variant="contained"
+                            sx={{ p: 1, bgcolor: "#FE616A" }}
+                            fullWidth
+                            onClick={handleConfirmOrder}
+                          >
+                            ยืนยันคำสั่งซื้อ
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </>
+                ) : (
+                  <Grid
+                    container
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{ height: "50vh" }}
+                  >
+                    <Grid item xs={12} textAlign="center">
+                      <AddShoppingCartOutlinedIcon
+                        style={{ fontSize: 80, color: "gray" }}
+                      />
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        ไม่มีสินค้าอยู่ในรถเข็น
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
               </Grid>
             </Box>
           </Container>

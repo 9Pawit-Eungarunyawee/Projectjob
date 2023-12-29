@@ -16,7 +16,7 @@ export default async function getDoument(collection, id) {
 
   return { result, error };
 }
-import { getDocs, collection } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const getCollection = async (collectionName) => {
   const querySnapshot = await getDocs(collection(db, collectionName));
@@ -24,3 +24,19 @@ const getCollection = async (collectionName) => {
 };
 
 export { getCollection };
+
+
+const getCart = async (collectionName, uid) => {
+  const q = query(collection(db, collectionName), where("user_id", "==", String(uid)));
+  
+  const querySnapshot = await getDocs(q);
+  
+  querySnapshot.forEach((doc) => {
+    // Access data using doc.data()
+    console.log(doc.id, " => ", doc.data());
+  });
+
+  return { result: querySnapshot, error: null };
+};
+
+export { getCart };

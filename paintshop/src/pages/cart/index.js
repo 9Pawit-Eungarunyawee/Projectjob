@@ -24,13 +24,14 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { getCollection } from "../../firebase/getData";
+import { getCart, getCollection } from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Product from "../product";
+import { useAuthContext } from "@/context/AuthContext";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -41,7 +42,10 @@ export default function Cart() {
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
   const [productIds, setProductIds] = React.useState(null);
+  const [colorData, setColorData] = React.useState(null);
+  const [colorIds, setColorIds] = React.useState(null);
   const [total, setTotal] = React.useState(0);
+  const user = useAuthContext();
   const handleConfirmOrder = () => {
     router.push({
       pathname: "/cart/QR",
@@ -61,10 +65,11 @@ export default function Cart() {
       },
     },
   });
+  //ดึงข้อมูล
   const fetchAllData = async () => {
     const collection = "cart";
-
-    const { result, error } = await getCollection(collection);
+    const uid = user.user.uid;
+    const { result, error } = await getCart(collection, uid);
 
     if (error) {
       console.error("Error fetching collection:", error);
@@ -72,6 +77,7 @@ export default function Cart() {
       const cart = result.docs.map((doc) => ({
         id: doc.id,
         amount: doc.data().amount,
+        color_id: doc.data().color_id.id,
         price: doc.data().price,
         product_id: doc.data().product_id.id,
       }));
@@ -82,13 +88,41 @@ export default function Cart() {
       setTotal(cartTotal);
       console.log("คำนวณเงิน", total);
       const productIds = cart.map((item) => item.product_id);
+      const colorIds = cart.map((item) => item.color_id);
+      setColorIds(colorIds);
       setProductIds(productIds);
       console.log("testttttt :", productIds);
+      console.log("ทดสอบ :", colorIds);
       setCartData(cart);
       fetchProductData(productIds);
+      fetchcolorData(colorIds);
     }
   };
 
+  //ดึงสี
+  const fetchcolorData = async (selectedColorIds) => {
+    const collection = "colors";
+
+    const { result: querySnapshot, error } = await getCollection(collection);
+
+    if (error) {
+      console.error("Error fetching collection:", error);
+    } else {
+      const data = [];
+
+      querySnapshot.forEach((doc) => {
+        const colorId = doc.id;
+
+        if (selectedColorIds.includes(colorId)) {
+          console.log("Matching color found:", doc.data());
+          data.push({ id: colorId, ...doc.data() });
+        }
+      });
+      setColorData(data);
+    }
+  };
+
+  //ดึงสินค้า
   const fetchProductData = async (selectedProductIds) => {
     const collection = "products";
 
@@ -194,6 +228,7 @@ export default function Cart() {
                             <TableRow>
                               <TableCell>รูปภาพ</TableCell>
                               <TableCell>สินค้า</TableCell>
+                              <TableCell>สี</TableCell>
                               <TableCell>ราคา(บาท)</TableCell>
                               <TableCell>จำนวน</TableCell>
                               <TableCell></TableCell>
@@ -201,9 +236,8 @@ export default function Cart() {
                           </TableHead>
                           {productData &&
                             productData.map((item, index) => (
-                              <TableBody>
+                              <TableBody key={index}>
                                 <TableRow
-                                  key={index}
                                   sx={{
                                     "&:last-child td, &:last-child th": {
                                       border: 0,
@@ -219,6 +253,18 @@ export default function Cart() {
                                     />
                                   </TableCell>
                                   <TableCell>{item.name}</TableCell>
+                                  {colorData &&
+                                    colorData.map((color, colorIndex) => (
+                                      <TableCell key={colorIndex}>
+                                        <Box
+                                          sx={{
+                                            width: "50px",
+                                            height: "50px",
+                                            bgcolor: color.code,
+                                          }}
+                                        ></Box>
+                                      </TableCell>
+                                    ))}
                                   <TableCell>
                                     ฿
                                     {cartData &&

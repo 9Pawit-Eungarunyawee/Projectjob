@@ -22,6 +22,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
 import { getCollection } from "../../firebase/getData";
 import addCart from "@/firebase/addCart";
 import { Numbers } from "@mui/icons-material";
@@ -42,7 +43,7 @@ export default function Productsdetail() {
   const [number, setNumber] = React.useState(1);
   const [selectedPrice, setSelectedPrice] = React.useState(null);
   const [alert, setAlert] = React.useState(null);
-
+  const user  = useAuthContext();
   React.useEffect(() => {
     // ตรวจสอบว่ามีไซส์ที่ตรงกับ sizeData หรือไม่
     if (documentData) {
@@ -64,9 +65,11 @@ export default function Productsdetail() {
   React.useEffect(() => {
     console.log(selectedPrice);
   }, [selectedPrice]);
-  const updatecart = async (product_id) => {
+  const updatecart = async (product_id,) => {
     const cart = {
       product_id: product_id, // ใช้อ้างอิง
+      color_id: colorId,
+      user_id: user.user.uid,
       price: selectedPrice,
       amount: number,
     };
@@ -113,6 +116,8 @@ export default function Productsdetail() {
     fetchAllData();
     fetchColorData();
   }, [productId, colorId]);
+
+  //ดึงสีจากลิ้งค์
   const fetchColorData = async () => {
     const collection = "colors";
 
@@ -149,6 +154,8 @@ export default function Productsdetail() {
       }
     }
   };
+
+  //ตรวจสอบ product  ว่าตรงกับ catalog ไหม
   const fetchAllData = async () => {
     const collection = "products";
 
@@ -217,6 +224,7 @@ export default function Productsdetail() {
       },
     },
   };
+  console.log("User:", user.user.uid);
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>

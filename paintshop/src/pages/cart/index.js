@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { getCart, getCollection } from "../../firebase/getData";
+import { getCart, getCollection, updateAmount } from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import Link from "next/link";
@@ -32,6 +32,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Product from "../product";
 import { useAuthContext } from "@/context/AuthContext";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -44,6 +46,7 @@ export default function Cart() {
   const [productIds, setProductIds] = React.useState(null);
   const [colorData, setColorData] = React.useState(null);
   const [colorIds, setColorIds] = React.useState(null);
+  const [cartIds, setCartIds] = React.useState(null);
   const [total, setTotal] = React.useState(0);
   const user = useAuthContext();
   const handleConfirmOrder = () => {
@@ -89,11 +92,14 @@ export default function Cart() {
       console.log("คำนวณเงิน", total);
       const productIds = cart.map((item) => item.product_id);
       const colorIds = cart.map((item) => item.color_id);
+      const cartIds = cart.map((item) => item.id);
+      setCartIds(cartIds);
       setColorIds(colorIds);
       setProductIds(productIds);
-      console.log("testttttt :", productIds);
-      console.log("ทดสอบ :", colorIds);
+      console.log("ตรวจสอบผลิตภัณฑ์ :", productIds);
+      console.log("ตรวจสอบสี :", colorIds);
       setCartData(cart);
+      console.log("ตรวจสอบตะกร้า :", cartIds);
       fetchProductData(productIds);
       fetchcolorData(colorIds);
     }
@@ -102,7 +108,6 @@ export default function Cart() {
   //ดึงสี
   const fetchcolorData = async (selectedColorIds) => {
     const collection = "colors";
-
     const { result: querySnapshot, error } = await getCollection(collection);
 
     if (error) {
@@ -118,6 +123,7 @@ export default function Cart() {
           data.push({ id: colorId, ...doc.data() });
         }
       });
+
       setColorData(data);
     }
   };
@@ -144,6 +150,32 @@ export default function Cart() {
       setProductData(data);
     }
   };
+
+  // บวก ลบ
+  const [amount, setAmount] = React.useState(0);
+
+  const handleIncrement = () => {
+    const newAmount = amount + 1;
+    setAmount(newAmount);
+    console.log("Updating amount for cartIds:", cartIds);
+    updateAmount(cartIds, newAmount);
+  };
+
+  const handleDecrement = () => {
+    if (amount > 0) {
+      const newAmount = amount - 1;
+      setAmount(newAmount);
+      console.log("Updating amount for cartIds:", cartIds);
+      updateAmount(cartIds, newAmount);
+    }
+  };
+
+  React.useEffect(() => {
+    if (cartData) {
+      const totalAmount = cartData.reduce((acc, item) => acc + item.amount, 0);
+      setAmount(totalAmount);
+    }
+  }, [cartData]);
 
   return (
     <Homelayout>
@@ -253,18 +285,27 @@ export default function Cart() {
                                     />
                                   </TableCell>
                                   <TableCell>{item.name}</TableCell>
-                                  {colorData &&
-                                    colorData.map((color, colorIndex) => (
-                                      <TableCell key={colorIndex}>
-                                        <Box
-                                          sx={{
-                                            width: "50px",
-                                            height: "50px",
-                                            bgcolor: color.code,
-                                          }}
-                                        ></Box>
-                                      </TableCell>
-                                    ))}
+                                  <TableCell>
+                                    {colorData &&
+                                      colorData
+                                        .filter(
+                                          (color) =>
+                                            color.id ===
+                                            cartData[index].color_id
+                                        )
+                                        .map((filteredColor, colorIndex) => {
+                                          return (
+                                            <Box
+                                              key={colorIndex}
+                                              sx={{
+                                                width: "50px",
+                                                height: "50px",
+                                                bgcolor: filteredColor.code,
+                                              }}
+                                            ></Box>
+                                          );
+                                        })}
+                                  </TableCell>
                                   <TableCell>
                                     ฿
                                     {cartData &&

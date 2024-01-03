@@ -16,7 +16,7 @@ export default async function getDoument(collection, id) {
 
   return { result, error };
 }
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs,updateDoc } from "firebase/firestore";
 
 const getCollection = async (collectionName) => {
   const querySnapshot = await getDocs(collection(db, collectionName));
@@ -40,3 +40,29 @@ const getCart = async (collectionName, uid) => {
 };
 
 export { getCart };
+
+
+const updateAmount = async (cartIds, newAmount) => {
+
+    console.log('Updating amount for cartId:', cartIds);
+
+    const q = query(collection(db, 'cart'), where('id', '==', String(cartIds)));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.size > 0) {
+      const docRef = querySnapshot.docs[0].ref;
+
+      try {
+        await updateDoc(docRef, {
+          amount: newAmount,
+        });
+
+        console.log('Document successfully updated for cart ID:', cartIds);
+      } catch (error) {
+        console.error('Error updating document for cart ID:', cartIds, error);
+      }
+    } else {
+      console.error('Document not found for cart ID:', cartIds);
+    }
+  };
+export { updateAmount };

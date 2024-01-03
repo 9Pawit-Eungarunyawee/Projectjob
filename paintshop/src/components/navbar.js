@@ -1,41 +1,44 @@
 import * as React from "react";
 import { createTheme, ThemeProvider } from "@mui/material";
-import AppBar from "@mui/material/AppBar";
+import {
+  AppBar,
+  Button,
+  Tab,
+  Tabs,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  IconButton,
+  Menu,
+  Avatar,
+  MenuItem,
+} from "@mui/material";
+import AddBusinessRoundedIcon from "@mui/icons-material/AddBusinessRounded";
+import DrawerComp from "./drawer";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import Logo from "../../public/Logo.png";
 import Profile from "../../public/Profile.png";
 import Image from "next/image";
 import Link from "next/link";
 import SearchIcon from "@mui/icons-material/Search";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { getAuth, signOut } from "firebase/auth";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-const pages = [
-  { label: "หน้าแรก", url: "/homepage" },
-  { label: "ผลิตภัณฑ์", url: "/catalog" },
-  { label: "ออกแบบ", url: "/designs" },
-];
 
-let settings = ["จัดการสินค้า", "ออกจากระบบ"];
+let settings = ["โปรไฟล์", "ออกจากระบบ"];
 
 export default function Navbar() {
   const { isAdmin, user } = useAuthContext();
   if (isAdmin == true) {
-    settings = ["จัดการสินค้า", "แดชบอร์ด", "ออกจากระบบ"];
+    settings = ["โปรไฟล์", "แดชบอร์ด", "ออกจากระบบ"];
     console.log(user);
   } else {
-    settings = ["จัดการสินค้า", "ออกจากระบบ"];
+    settings = ["โปรไฟล์", "ออกจากระบบ"];
     console.log(user);
   }
   const [activeLink, SetActiveLink] = React.useState("");
@@ -69,12 +72,25 @@ export default function Navbar() {
   const handleUserMenu = (setting) => {
     if (setting == "ออกจากระบบ") {
       handlelogout();
-    } else if (setting == "จัดการสินค้า") {
-      console.log("จัดการสินค้า");
+    } else if (setting == "โปรไฟล์") {
+      router.push("/account/profile");
     } else if (setting == "แดชบอร์ด") {
       router.push("/dashboard");
     }
   };
+
+  console.log("ทดสอบpath", router.pathname);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    console.log("ทดสอบค่า", newValue); // Log the updated value
+  };
+
+  const themes = useTheme();
+  console.log(themes);
+  const isMatch = useMediaQuery(themes.breakpoints.down("md"));
+  console.log(isMatch);
+
   const theme = createTheme({
     typography: {
       fontFamily: "Prompt",
@@ -86,197 +102,109 @@ export default function Navbar() {
       },
     },
   });
-
+  console.log('Current Path:', router.pathname);
   const styles = {
-    Box: {
-      transition: "0.2s",
-      mb: 1,
-      position: "relative",
-      "&:after": {
-        content: '""',
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        width: "100%",
-        height: "3px",
-        backgroundColor: "transparent",
-        transition: "0.3s linear",
-      },
-      "&:hover:after": {
-        backgroundColor: "#018294",
-      },
-      "&:hover": {
-        color: "#018294",
-      },
-    },
-    BoxActive: {
-      transition: "0.2s",
-      mb: 1,
-      position: "relative",
-      "&:after": {
-        content: '""',
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        width: "100%",
-        height: "3px",
-        backgroundColor: "#018294",
-      },
-      "&:hover": {
-        color: "#018294",
-      },
+    activeLink: {
+      fontWeight: "bold",
+      textDecoration: "underline",
+      color: "#018294",
     },
   };
   return (
     <ThemeProvider theme={theme}>
-      <AppBar
-        position="static"
-        sx={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
-      >
-        <Container
-          maxWidth="false"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Box sx={{ width: "70vw" }}>
-            <Toolbar disableGutters>
-              <Image
-                src={Logo}
-                alt="logo"
-                style={{
-                  objectFit: "cover",
-                  width: "4vw",
-                  height: "100%",
-                }}
-                sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-              />
-              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                <IconButton
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleOpenNavMenu}
+      <AppBar position="static" sx={{ background: "white" }}>
+        <Toolbar>
+          <Image
+            src={Logo}
+            alt="logo"
+            style={{
+              objectFit: "cover",
+              width: "4vw",
+              height: "100%",
+            }}
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+          />
+          {isMatch ? (
+            <>
+              <DrawerComp />
+            </>
+          ) : (
+            <>
+              <Link style={{color:"black"}} href="/homepage" passHref>
+                <Button
+                  style={
+                    router.pathname === "/homepage" ? styles.activeLink : {}
+                  }
                   color="inherit"
                 >
-                  <MenuIcon />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorElNav}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  open={Boolean(anchorElNav)}
-                  onClose={handleCloseNavMenu}
-                  sx={{
-                    display: { xs: "block", md: "none" },
-                  }}
-                >
-                  {pages.map((page) => (
-                    <MenuItem key={page.label} onClick={handleCloseNavMenu}>
-                      <Typography
-                        textAlign="center"
-                        style={{
-                          color:
-                            activeLink === page.label ? "#018294" : "inherit",
-                        }}
-                      >
-                        {page.label}
-                      </Typography>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {pages.map((page) => (
-                  <Link
-                    key={page.label}
-                    href={page.url}
-                    passHref
-                    style={{
-                      textDecoration: "none",
-                    }}
-                    onClick={(e) => SetActiveLink(page.url)}
-                  >
-                    <Button
-                      onClick={handleCloseNavMenu}
-                      sx={{
-                        ...(activeLink === page.url
-                          ? styles.BoxActive
-                          : styles.Box),
-                        my: 2,
-                        display: "block",
-                      }}
-                      style={{
-                        color: activeLink === page.url ? "#018294" : "black", // แก้ไขที่นี่
-                      }}
-                    >
-                      {page.label}
-                    </Button>
-                  </Link>
-                ))}
-              </Box>
+                  หน้าแรก
+                </Button>
+              </Link>
 
-              <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
-                <Tooltip title="Search">
-                  <IconButton color="inherit">
-                    <SearchIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Shopping Cart">
-                  <Link href={"/cart"}>
-                    <IconButton color="black">
-                      <ShoppingBagOutlinedIcon />
-                    </IconButton>
-                  </Link>
-                </Tooltip>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      src="/profile.png"
-                      alt="profile"
-                      sx={{ width: 32, height: 32, ml: 1 }}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
+              <Link style={{color:"black"}} href="/catalog" passHref>
+                <Button
+                  style={
+                    router.pathname === "/catalog" ? styles.activeLink : {}
+                  }
+                  color="inherit"
                 >
-                  {settings.map((setting) => (
-                    <MenuItem
-                      key={setting}
-                      onClick={() => handleUserMenu(setting)}
-                    >
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Box>
-            </Toolbar>
-          </Box>
-        </Container>
+                  ผลิตภัณฑ์
+                </Button>
+              </Link>
+
+              <Link style={{color:"black"}} href="/designs" passHref>
+                <Button
+                  style={
+                    router.pathname === "/designs" ? styles.activeLink : {}
+                  }
+                  color="inherit"
+                >
+                  ออกแบบ
+                </Button>
+              </Link>
+              <IconButton color="black" sx={{ marginLeft: "auto" }}>
+                <SearchIcon />
+              </IconButton>
+              <Link href={"/cart"}>
+                <IconButton color="black">
+                  <ShoppingCartOutlinedIcon />
+                </IconButton>
+              </Link>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar
+                  src="/profile.png"
+                  alt="profile"
+                  sx={{ width: 32, height: 32, ml: 1 }}
+                />
+              </IconButton>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem
+                    key={setting}
+                    onClick={() => handleUserMenu(setting)}
+                  >
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </>
+          )}
+        </Toolbar>
       </AppBar>
     </ThemeProvider>
   );

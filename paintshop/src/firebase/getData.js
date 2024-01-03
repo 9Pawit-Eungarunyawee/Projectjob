@@ -1,5 +1,5 @@
 import firebase_app from "../firebase/config";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc ,where,query} from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
 
@@ -25,6 +25,15 @@ const getCollection = async (collectionName) => {
 
 export { getCollection };
 
+const getColors= async (collectionName,catalog_id) => {
+  const catalogRef = doc(db, "catalog", catalog_id)
+  const q = query(collection(db, collectionName), where('catalog_id', '==', catalogRef));
+  const querySnapshot = await getDocs(q);
+  
+  return { result: querySnapshot, error: null };
+};
+
+export { getColors };
 
 const getCart = async (collectionName, uid) => {
   const q = query(collection(db, collectionName), where("user_id", "==", String(uid)));
@@ -40,3 +49,4 @@ const getCart = async (collectionName, uid) => {
 };
 
 export { getCart };
+

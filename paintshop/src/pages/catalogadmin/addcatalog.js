@@ -131,7 +131,7 @@ export default function AddCatalog() {
                   </Box>
                   <label htmlFor="upload-image">
                     <Button variant="contained" component="span">
-                      เพิ่มรูปภาพสินค้า
+                      เพิ่มรูปภาพแคตตาล็อก
                     </Button>
                     <input
                       id="upload-image"

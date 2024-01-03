@@ -70,7 +70,7 @@ export default function TableProduct(documentData) {
     p_price,
     status
   ) {
-    return { No, id, img, p_name, p_stock, p_sell, p_left, p_price, status };
+    return { No, id, img, p_name, p_sell, p_left, p_price, status };
   }
 
   const rows = docuData.map((dataItem, index) =>
@@ -98,7 +98,6 @@ export default function TableProduct(documentData) {
               <StyledTableCell align="center">รูปภาพ</StyledTableCell>
 
               <StyledTableCell>ชื่อสินค้า</StyledTableCell>
-              <StyledTableCell>สต๊อก</StyledTableCell>
               <StyledTableCell>ขาย</StyledTableCell>
               <StyledTableCell>เหลือ</StyledTableCell>
               <StyledTableCell>ราคา</StyledTableCell>
@@ -129,7 +128,6 @@ export default function TableProduct(documentData) {
                 </StyledTableCell>
 
                 <StyledTableCell>{row.p_name}</StyledTableCell>
-                <StyledTableCell>{row.p_stock}</StyledTableCell>
                 <StyledTableCell>{row.p_sell}</StyledTableCell>
                 <StyledTableCell>{row.p_left}</StyledTableCell>
                 <StyledTableCell>{row.p_price}</StyledTableCell>

@@ -1,6 +1,7 @@
 import Layout from "@/components/layout";
 import addCatalog from "@/firebase/addCatalog";
-import { getCollection } from "@/firebase/getData";
+import addColor from "@/firebase/addColor";
+import getDoument, { getCollection, getColors } from "@/firebase/getData";
 import {
   Alert,
   Box,
@@ -9,13 +10,14 @@ import {
   Snackbar,
   TextField,
   ThemeProvider,
+  Tooltip,
   Typography,
   createTheme,
 } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { CirclePicker } from "react-color";
+import { Fragment, useEffect, useState } from "react";
+import { BlockPicker, CirclePicker } from "react-color";
 
 export default function EditCatalog() {
   const theme = createTheme({
@@ -34,14 +36,20 @@ export default function EditCatalog() {
   const router = useRouter();
   const catalog_id = JSON.parse(router.query.catalog_id);
   const [name, setName] = useState("");
+  const [colorname, setColorName] = useState("");
+  const [code, setCode] = useState("");
+  const [codename, setCodeName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [open, setOpen] = useState(false);
   const [alert, setAlert] = useState(null);
-  const [background, setBackground] = useState("#ff3");
+  const [background, setBackground] = useState("#fff");
   const [colorShade, setColorShade] = useState([]);
+  const [allcolor, setAllColor] = useState([]);
   const [colorShadeID, setColorShadeID] = useState("");
   useEffect(() => {
     fetchAllColorShade();
+    fetchCatalog();
+    fetchAllColor();
   }, []);
 
   const fetchAllColorShade = async () => {
@@ -56,10 +64,39 @@ export default function EditCatalog() {
         code: doc.data().code,
       }));
       setColorShade(colorShade);
+      setBackground(colorShade[0].code);
       // console.log(colorShade);
     }
   };
+  const fetchCatalog = async () => {
+    const collectionName = "catalog";
+    const { result, error } = await getDoument(collectionName, catalog_id);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const catalog = result.data();
+      setName(catalog.name);
+      setImageUrl(catalog.img);
+    }
+  };
 
+  const fetchAllColor = async () => {
+    const collectionName = "colors";
+    const { result, error } = await getColors(collectionName, catalog_id);
+    if (error) {
+      console.error("Error fetching colors:", error);
+    } else if (result) {
+      const colors = result.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        code: doc.data().code,
+        codename:doc.data().code_name,
+        catalog_id: doc.data().catalog_id.id,
+      }));
+      // console.log(colors);
+      setAllColor(colors);
+    }
+  };
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -108,11 +145,68 @@ export default function EditCatalog() {
       setOpen(true);
     }
   };
-  const [isPressed, setIsPressed] = useState(false);
+
   const handleColorShade = (id, code) => {
     setColorShadeID(id);
     setBackground(code);
     console.log(colorShadeID);
+  };
+  const handleAddColor = async (event) => {
+    event.preventDefault();
+    console.log("colordata:", name, code, codename, catalog_id, colorShadeID);
+    if (colorShadeID === "") {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          กรุณาเลือกเฉดสีก่อนเพิ่มสี
+        </Alert>
+      );
+      setOpen(true);
+      return;
+    }
+    //เช็ค hex
+    const isValidHexColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(code);
+    if (!isValidHexColor) {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          กรุณากรอกโค้ดสีให้ถูกต้อง
+        </Alert>
+      );
+      setOpen(true);
+      return;
+    }
+    if (
+      colorname !== "" &&
+      code !== "" &&
+      codename !== "" &&
+      catalog_id &&
+      colorShadeID
+    ) {
+      const color = {
+        catalog_id: catalog_id,
+        code: code,
+        codename,
+        codename,
+        colorshade_id: colorShadeID,
+        name: colorname,
+      };
+      const result = await addColor("colors", color);
+      if (result) {
+        setAlert(
+          <Alert severity="success" onClose={handleClose}>
+            เพิ่มสีสำเร็จ
+          </Alert>
+        );
+        setOpen(true);
+        fetchAllColor();
+      } else {
+        setAlert(
+          <Alert severity="error" onClose={handleClose}>
+            ผิดพลาด! ไม่สามารถเพิ่มสีได้
+          </Alert>
+        );
+        setOpen(true);
+      }
+    }
   };
   return (
     <Layout>
@@ -124,21 +218,21 @@ export default function EditCatalog() {
           <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
             แก้ไขแคตตาล็อก
           </Typography>
-          <Grid
-            container
-            spacing={1}
-            sx={{
-              width: "100%",
-              mt: 3,
-              mb: 5,
-              backgroundColor: "#fff",
-              p: 1,
-              borderRadius: "10px",
-              boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-            }}
-          >
-            <Grid item xs={12} sm={7}>
-              <form onSubmit={handleForm} className="form">
+          <form onSubmit={handleForm} className="form">
+            <Grid
+              container
+              spacing={1}
+              sx={{
+                width: "100%",
+                mt: 3,
+                mb: 2,
+                backgroundColor: "#fff",
+                p: 1,
+                borderRadius: "10px",
+                boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+              }}
+            >
+              <Grid item xs={12} sm={7}>
                 <Typography sx={{ mt: 1 }}>ชื่อแคตตาล็อก:</Typography>
                 <TextField
                   variant="outlined"
@@ -170,7 +264,7 @@ export default function EditCatalog() {
                   </Box>
                   <label htmlFor="upload-image">
                     <Button variant="contained" component="span">
-                      เพิ่มรูปภาพสินค้า
+                      เปลี่ยนรูปภาพแคตตาล็อก
                     </Button>
                     <input
                       id="upload-image"
@@ -232,52 +326,92 @@ export default function EditCatalog() {
                   >
                     <TextField
                       variant="outlined"
-                      value={name}
+                      value={code}
                       label="โค้ดสี"
-                      required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => setCode(e.target.value)}
+                      placeholder="#RRGGBB หรือ #RGB"
                     />
                     <TextField
                       variant="outlined"
-                      value={name}
+                      value={colorname}
                       label="ชื่อสี"
-                      required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => setColorName(e.target.value)}
                     />
                     <TextField
                       variant="outlined"
-                      value={name}
+                      value={codename}
                       label="โค้ดเนม"
-                      required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => setCodeName(e.target.value)}
                     />
                     <Button
-                    
                       variant="contained"
-                      sx={{ mt: 1, mb: 1 ,width: "34ch",m: 1}     }
-                     
+                      sx={{ mt: 1, mb: 1, width: "34ch", m: 1 }}
+                      onClick={handleAddColor}
                     >
                       เพิ่มสี
                     </Button>
                   </Box>
                 </Box>
+              </Grid>
+              <Grid item xs={12} sm={5}>
+              <Typography sx={{ mt: 1 }}>สีที่มีในแคตตาล็อก:</Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                  {allcolor &&
+                    allcolor.map((color, index) => (
+                      <Tooltip
+                        key={index}
+                        arrow
+                        title={
+                          <Fragment>
+                            <Typography color="inherit">
+                              โค้ดสี: {color.code}
+                            </Typography> 
+                            <Typography color="inherit">
+                              ชื่อสี: {color.name}
+                            </Typography> 
+                            <Typography color="inherit">
+                              โค้ดเนม: {color.codename}
+                            </Typography> 
+                          </Fragment>
+                        }
+                      >
+                        <Box
+                          sx={{
+                            bgcolor: color.code,
+                            width: "3vw",
+                            height: "3vw",
+                            cursor: "pointer",
+                            borderRadius: "100px",
+                            transition: "0.1s",
+                            boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                            m: 1,
+                            ":hover": {
+                              transform: "scale(1.2)",
+                            },
+                          }}
+                        />
+                      </Tooltip>
+                    ))}
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
                 <Button
                   variant="contained"
                   color="success"
-                  sx={{ mr: 2, mb: 2, mt: 2 ,}}
+                  sx={{ mr: 2, mb: 2, mt: 2 }}
                   type="submit"
                 >
                   แก้ไขแค็ตตาล็อก
                 </Button>
-              </form>
+              </Grid>
             </Grid>
-          </Grid>
+          </form>
         </Box>
       </ThemeProvider>
     </Layout>

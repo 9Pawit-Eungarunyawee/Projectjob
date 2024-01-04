@@ -77,3 +77,17 @@ const updateAmount = async (cartIds, newAmount) => {
   };
 export { updateAmount };
 
+const getUser = async (collectionName, uid) => {
+  const q = query(collection(db, collectionName), where("uid", "==", String(uid)));
+  
+  const querySnapshot = await getDocs(q);
+  
+  querySnapshot.forEach((doc) => {
+    // Access data using doc.data()
+    console.log(doc.id, " => ", doc.data());
+  });
+
+  return { result: querySnapshot, error: null };
+};
+
+export { getUser };

@@ -10,6 +10,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AnnouncementOutlinedIcon from "@mui/icons-material/AnnouncementOutlined";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { getUser } from "../firebase/getData";
+import { useAuthContext } from "@/context/AuthContext";
 //ฟังก์ชั่น Accordion
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -45,15 +47,51 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 export default function Accordionlayout() {
   const [expanded, setExpanded] = React.useState("panel1");
   const router = useRouter();
+
+  const user = useAuthContext();
+  const [userData, setUserData] = React.useState(null);
+  React.useEffect(() => {
+    fetchAllData();
+  }, []);
+  const fetchAllData = async () => {
+    const collection = "users";
+    const uid = user.user.uid;
+    const { result, error } = await getUser(collection, uid);
+
+    if (error) {
+      console.error("Error fetching collection:", error);
+    } else {
+      const user = result.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        email: doc.data().email,
+        tel: doc.data().tel,
+      }));
+      console.log("ทดสอบรหัสผู้ใช้", uid);
+      setUserData(user);
+    }
+  };
+  console.log("ทดสอบผู้ใช้", userData);
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
   return (
     <>
+    {userData &&
+          userData.map((item, index) => (
+            <Box key={index} borderBottom={1} borderColor="grey.300" marginBottom={1} >
+              {" "}
+              <Typography sx={{p:2}}>
+                สวัสดี,<span style={{ fontWeight: "bold" }}>{item.name}</span>
+              </Typography>
+            </Box>
+          ))}
       <Accordion
         expanded={expanded === "panel1"}
         onChange={handleChange("panel1")}
       >
+        
+
         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
           <PersonOutlineIcon sx={{ color: "grey" }} />
           <Typography sx={{ pl: 2, fontWeight: "bold" }}>

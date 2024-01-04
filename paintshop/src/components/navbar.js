@@ -85,6 +85,9 @@ export default function Navbar() {
     setValue(newValue);
     console.log("ทดสอบค่า", newValue); // Log the updated value
   };
+  React.useEffect(() => {
+    SetActiveLink(router.pathname);
+  }, [router.pathname]);
 
   const themes = useTheme();
   console.log(themes);
@@ -102,11 +105,17 @@ export default function Navbar() {
       },
     },
   });
-  console.log('Current Path:', router.pathname);
+  console.log("Current Path:", activeLink);
   const styles = {
+    Box: {
+      transition: "0.1s",
+      "&:hover": {
+        transition: "0.1s",
+        color: "#018294",
+      },
+    },
     activeLink: {
       fontWeight: "bold",
-      textDecoration: "underline",
       color: "#018294",
     },
   };
@@ -130,37 +139,56 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link style={{color:"black"}} href="/homepage" passHref>
-                <Button
-                  style={
-                    router.pathname === "/homepage" ? styles.activeLink : {}
+              <Link
+                style={{ color: "black" }}
+                href="/homepage"
+                passHref
+                onClick={(e) => SetActiveLink("/homepage")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/homepage" ? styles.activeLink : styles.Box
                   }
-                  color="inherit"
                 >
-                  หน้าแรก
-                </Button>
+                  <Button color="inherit">หน้าแรก</Button>
+                </Box>
               </Link>
 
-              <Link style={{color:"black"}} href="/catalog" passHref>
-                <Button
-                  style={
-                    router.pathname === "/catalog" ? styles.activeLink : {}
+              <Link
+                style={{ color: "black" }}
+                href="/catalog"
+                passHref
+                onClick={(e) => SetActiveLink("/catalog")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/catalog" ? styles.activeLink : styles.Box
                   }
-                  color="inherit"
                 >
-                  ผลิตภัณฑ์
-                </Button>
+                  <Button color="inherit">ผลิตภัณฑ์</Button>
+                </Box>
               </Link>
 
-              <Link style={{color:"black"}} href="/designs" passHref>
-                <Button
-                  style={
-                    router.pathname === "/designs" ? styles.activeLink : {}
+              <Link
+                style={{ color: "black" }}
+                href="/designs"
+                passHref
+                onClick={(e) => SetActiveLink("/designs")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/designs" ? styles.activeLink : styles.Box
                   }
-                  color="inherit"
                 >
-                  ออกแบบ
-                </Button>
+                  <Button
+                    style={
+                      router.pathname === "/designs" ? styles.activeLink : {}
+                    }
+                    color="inherit"
+                  >
+                    ออกแบบ
+                  </Button>
+                </Box>
               </Link>
               <IconButton color="black" sx={{ marginLeft: "auto" }}>
                 <SearchIcon />

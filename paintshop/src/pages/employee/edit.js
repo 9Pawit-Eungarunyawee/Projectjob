@@ -239,6 +239,11 @@ export default function EditEmployee() {
                 <TextField
                   variant="outlined"
                   label="ค่าจ้าง"
+                  onKeyDown={(e) => {
+                    if (e.key === "-" || e.key === "e") {
+                      e.preventDefault();
+                    }
+                  }}
                   fullWidth
                   required
                   size="small"

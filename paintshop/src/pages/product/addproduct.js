@@ -1,7 +1,7 @@
 import Layout from "@/components/layout";
 import { getCollection } from "@/firebase/getData";
 import addData from "@/firebase/addData";
-
+import { useAuthContext } from "@/context/AuthContext";
 import {
   Alert,
   Box,
@@ -19,6 +19,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function AddProduct() {
+  const { user } = useAuthContext();
   const [imageUrl, setImageUrl] = useState("");
 
   const [productSizes, setProductSizes] = useState([
@@ -108,14 +109,21 @@ export default function AddProduct() {
       status: status,
       img: imageUrl,
       productSizes: productSizes,
+      user_id: user.uid,
     };
     const result = await addData("products", product);
     if (result) {
-      setAlert(<Alert severity="success" onClose={handleClose}>เพิ่มข้อมูลสำเร็จ</Alert>);
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          เพิ่มข้อมูลสำเร็จ
+        </Alert>
+      );
       setOpen(true);
     } else {
       setAlert(
-        <Alert severity="error" onClose={handleClose}>ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้</Alert>
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้
+        </Alert>
       );
       setOpen(true);
     }
@@ -272,7 +280,19 @@ export default function AddProduct() {
 
                   <TextField
                     value={productSizes.quantity}
-                    onChange={(e) => handleInputChange(e, index, "quantity")}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                      if (/^\d*$/.test(input) || input === "") {
+                        // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                        if (
+                          input === "" ||
+                          (parseInt(input) >= 0 && input[0] !== "0")
+                        ) {
+                          handleInputChange(e, index, "quantity");
+                        }
+                      }
+                    }}
                     variant="outlined"
                     label="จำนวน"
                     fullWidth
@@ -283,9 +303,21 @@ export default function AddProduct() {
 
                   <TextField
                     value={productSizes.price}
-                    onChange={(e) => handleInputChange(e, index, "price")}
                     variant="outlined"
                     label="ราคา"
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                      if (/^\d*$/.test(input) || input === "") {
+                        // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                        if (
+                          input === "" ||
+                          (parseInt(input) >= 0 && input[0] !== "0")
+                        ) {
+                          handleInputChange(e, index, "price");
+                        }
+                      }
+                    }}
                     fullWidth
                     required
                     size="small"
@@ -294,7 +326,19 @@ export default function AddProduct() {
 
                   <TextField
                     value={productSizes.cost}
-                    onChange={(e) => handleInputChange(e, index, "cost")}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                      if (/^\d*$/.test(input) || input === "") {
+                        // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                        if (
+                          input === "" ||
+                          (parseInt(input) >= 0 && input[0] !== "0")
+                        ) {
+                          handleInputChange(e, index, "cost");
+                        }
+                      }
+                    }}
                     variant="outlined"
                     label="ต้นทุน"
                     fullWidth

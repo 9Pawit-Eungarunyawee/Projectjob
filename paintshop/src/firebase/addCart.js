@@ -15,11 +15,13 @@ export default async function addCart(collectionName, data) {
 
   // สร้างอ้างอิงไปยังเอกสารในคอลเลคชัน "catalog"
   const productRef = doc(db, "products", data.product_id);
-
+  const colorRef = doc(db, "colors", data.color_id);
   try {
     // เตรียมข้อมูลที่ต้องการเพิ่ม
     const cartData = {
       product_id: productRef, // ใช้อ้างอิง
+      color_id: colorRef,
+      user_id:data.user_id,
       price: data.price,
       amount: data.amount,
     };

@@ -16,6 +16,7 @@ import Homelayout from "@/components/homelayout";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { FieldValue } from "firebase/firestore";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -53,14 +54,16 @@ export default function Productpage() {
         console.error("Error fetching collection:", error);
       } else {
         const data = [];
+
         querySnapshot.forEach((doc) => {
           console.log("Document ID:", doc.id);
           const catalogIdFromProduct = doc.data().catalog_id.id;
-
-          // Make sure to compare the right values
-          if (catalogIdFromProduct === catalogId) {
-            console.log("Matching product found:", doc.data());
-            data.push({ id: doc.id, ...doc.data() });
+          if (doc.data().delete == null) {
+            // Make sure to compare the right values
+            if (catalogIdFromProduct === catalogId) {
+              console.log("Matching product found:", doc.data());
+              data.push({ id: doc.id, ...doc.data() });
+            }
           }
         });
         setDocumentData(data);

@@ -179,7 +179,7 @@ export default function Homepage() {
     if (error) {
       console.error("Error fetching collection:", error);
     } else {
-      const products = querySnapshot.docs.map((doc) => ({
+      const products = querySnapshot.docs.filter((doc) => !doc.data().delete).map((doc) => ({
         id: doc.id,
         name: doc.data().name,
         image: doc.data().img,

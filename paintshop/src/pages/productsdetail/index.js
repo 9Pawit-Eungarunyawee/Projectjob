@@ -348,33 +348,7 @@ export default function Productsdetail() {
                       />
                     </Box>
 
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-evenly" }}
-                    >
-                      <Button
-                        sx={{
-                          color: "white",
-                          bgcolor: "#018294",
-                          p: 1,
-                          fontWeight: "bold",
-                          borderRadius: "50px",
-                          boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                          ...styles.btnHover,
-                          mr: 1,
-                        }}
-                      >
-                        <Typography
-                          variant="h4"
-                          sx={{
-                            pl: 2,
-                            pr: 2,
-                            fontSize: { xs: "4vw", sm: "3vw", md: "2vw" },
-                          }}
-                        >
-                          ออกแบบกับผนัง
-                        </Typography>
-                      </Button>
-                    </Box>
+                    
                   </Grid>
                 ))}
               {documentData &&

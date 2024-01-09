@@ -169,7 +169,7 @@ export default function Navbar() {
                 </Box>
               </Link>
 
-              <Link
+              {/* <Link
                 style={{ color: "black" }}
                 href="/designs"
                 passHref
@@ -189,7 +189,7 @@ export default function Navbar() {
                     ออกแบบ
                   </Button>
                 </Box>
-              </Link>
+              </Link> */}
               <IconButton color="black" sx={{ marginLeft: "auto" }}>
                 <SearchIcon />
               </IconButton>

@@ -1,6 +1,7 @@
 import Layout from "@/components/layout";
 import addCatalog from "@/firebase/addCatalog";
 import addColor from "@/firebase/addColor";
+import editCatalog from "@/firebase/editCatalog";
 import getDoument, { getCollection, getColors } from "@/firebase/getData";
 import {
   Alert,
@@ -128,7 +129,7 @@ export default function EditCatalog() {
       img: imageUrl,
     };
 
-    const result = await addCatalog("catalog", catalog);
+    const result = await editCatalog("catalog",catalog_id ,catalog);
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>

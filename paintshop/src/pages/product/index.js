@@ -1,8 +1,10 @@
 import Layout from "@/components/layout";
 import {
+  Alert,
   Box,
   Button,
   InputAdornment,
+  Snackbar,
   TextField,
   ThemeProvider,
   Typography,
@@ -10,10 +12,13 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
-import Table from "./table";
+import TableProduct from "./table";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getCollection } from "@/firebase/getData";
+import { softDeleteData } from "@/firebase/addData";
+import { useAuthContext } from "@/context/AuthContext";
+
 export default function Product() {
   const theme = createTheme({
     palette: {
@@ -28,7 +33,8 @@ export default function Product() {
       },
     },
   });
-  const [documentData, setDocumentData] = useState(null);
+  const { user } = useAuthContext();
+  const [documentData, setDocumentData] = useState([]);
   const router = useRouter();
   function handleAdd() {
     router.push("/product/addproduct");
@@ -45,18 +51,55 @@ export default function Product() {
     if (error) {
       console.error("Error fetching document:", error);
     } else if (result) {
-      const productData = result.docs.map((doc) => ({
+      const productData = result.docs.filter((doc) => !doc.data().delete).map((doc) => ({
         id: doc.id,
         name: doc.data().name,
-        productSizes:doc.data().productSizes,
+        productSizes: doc.data().productSizes,
         img: doc.data().img,
-        status:doc.data().status
+        status: doc.data().status,
       }));
       setDocumentData(productData);
     }
   };
+  const handleDelete = async (id) => {
+    const data = {
+      id:id,
+      user_id:user.uid
+    }
+    const result = await softDeleteData("products", data);
+    fetchData();
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          ลบข้อมูลสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถลบข้อมูลได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
+  const [alert, setAlert] = useState(null);
+  const [open, setOpen] = useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+  const openhistory = () => {
+    router.push("product/history");
+  };
   return (
     <Layout>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        {alert}
+      </Snackbar>
       <ThemeProvider theme={theme}>
         <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
           <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
@@ -91,11 +134,19 @@ export default function Product() {
               >
                 เพิ่มสินค้า
               </Button>
-              <Button variant="contained" color="error" sx={{ mb: 2, mt: 2 }}>
-                ลบรายการ
+              <Button
+                variant="contained"
+                color="error"
+                sx={{ mb: 2, mt: 2 }}
+                onClick={openhistory}
+              >
+                ประวัติการลบ
               </Button>
             </Box>
-            <Table data={documentData} />
+            <TableProduct
+              data={{ data: documentData }}
+              onDelete={handleDelete}
+            />
           </Box>
         </Box>
       </ThemeProvider>

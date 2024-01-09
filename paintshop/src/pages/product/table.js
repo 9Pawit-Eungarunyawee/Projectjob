@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -7,23 +7,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Button, Checkbox, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
-export default function TableProduct(documentData) {
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const CheckboxTheme = createTheme({
-    palette: {
-      success: {
-        main: "#fff",
-      },
-      primary: {
-        main: "#018294",
-      },
-    },
-  });
+import { Delete } from "@mui/icons-material";
+export default function TableProduct({ data, onDelete }) {
   const router = useRouter();
   const handleClick = (id) => {
     router.push({
@@ -32,6 +30,7 @@ export default function TableProduct(documentData) {
     });
     // console.log("handleClick")
   };
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#018294",
@@ -54,22 +53,12 @@ export default function TableProduct(documentData) {
 
   const [docuData, setDocData] = React.useState([]);
   React.useEffect(() => {
-    if (documentData && documentData.data) {
-      setDocData(documentData.data);
+    if (data && data.data) {
+      setDocData(data.data);
     }
     console.log("doc มา table: ", docuData);
-  }, [documentData, docuData]);
-  function createData(
-    No,
-    id,
-    img,
-    p_name,
-    p_stock,
-    p_sell,
-    p_left,
-    p_price,
-    status
-  ) {
+  }, [data, docuData]);
+  function createData(No, id, img, p_name, p_sell, p_left, p_price, status) {
     return { No, id, img, p_name, p_sell, p_left, p_price, status };
   }
 
@@ -80,7 +69,6 @@ export default function TableProduct(documentData) {
       dataItem.img,
       dataItem.name,
       null,
-      null,
       dataItem.productSizes[0].quantity,
       dataItem.productSizes[0].price
         .toString()
@@ -88,15 +76,50 @@ export default function TableProduct(documentData) {
       dataItem.status === true ? "พร้อมขาย" : "ไม่พร้อมขาย"
     )
   );
+  const [dialogopen, setDialogOpen] = React.useState(false);
+  const [deleteID, setDeleteID] = React.useState(null);
+  const handleDialogOpen = (id) => {
+    setDialogOpen(true);
+    setDeleteID(id);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+  const handleDialogDelete = () => {
+    onDelete(deleteID);
+    setDialogOpen(false);
+  };
   return (
-    <ThemeProvider theme={CheckboxTheme}>
+    <>
+      <Dialog
+        open={dialogopen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle>
+          {"ยืนยันที่จะลบหรือไม่?"}
+        </DialogTitle>
+        {/* <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Let Google help apps determine location. This means sending
+            anonymous location data to Google, even when no apps are running.
+          </DialogContentText>
+        </DialogContent> */}
+        <DialogActions>
+          <Button onClick={handleDialogClose}>ยกเลิก</Button>
+          <Button onClick={handleDialogDelete} autoFocus>
+            ยืนยัน
+          </Button>
+        </DialogActions>
+      </Dialog>
       <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell>No.</StyledTableCell>
               <StyledTableCell align="center">รูปภาพ</StyledTableCell>
-
               <StyledTableCell>ชื่อสินค้า</StyledTableCell>
               <StyledTableCell>ขาย</StyledTableCell>
               <StyledTableCell>เหลือ</StyledTableCell>
@@ -104,9 +127,7 @@ export default function TableProduct(documentData) {
               <StyledTableCell align="center">สถานะสินค้า</StyledTableCell>
               <StyledTableCell align="center">แก้ไข</StyledTableCell>
               <StyledTableCell></StyledTableCell>
-              <StyledTableCell>
-                <Checkbox {...label} color="success" sx={{ color: "#fff" }} />
-              </StyledTableCell>
+              <StyledTableCell align="center">ลบ</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -147,23 +168,31 @@ export default function TableProduct(documentData) {
                   </Box>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <IconButton color="primary"  onClick={() => handleClick(row.id)}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleClick(row.id)}
+                  >
                     <EditIcon />
                   </IconButton>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <Button variant="contained" size="small" >
+                  <Button variant="contained" size="small">
                     ปรับสต็อก
                   </Button>
                 </StyledTableCell>
-                <StyledTableCell >
-                  <Checkbox {...label} />
+                <StyledTableCell align="center">
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleDialogOpen(row.id)}
+                  >
+                    <Delete />
+                  </IconButton>
                 </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-    </ThemeProvider>
+    </>
   );
 }

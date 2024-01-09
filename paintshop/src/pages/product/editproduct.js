@@ -305,8 +305,20 @@ export default function EditProduct() {
 
                   <TextField
                     value={productSizes.quantity}
-                    onChange={(e) => handleInputChange(e, index, "quantity")}
                     variant="outlined"
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                      if (/^\d*$/.test(input) || input === "") {
+                        // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                        if (
+                          input === "" ||
+                          (parseInt(input) >= 0 && input[0] !== "0")
+                        ) {
+                          handleInputChange(e, index, "quantity");
+                        }
+                      }
+                    }}
                     label="จำนวน"
                     fullWidth
                     required
@@ -316,8 +328,18 @@ export default function EditProduct() {
 
                   <TextField
                     value={productSizes.price}
-                    onChange={(e) => handleInputChange(e, index, "price")}
                     variant="outlined"
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      if (/^\d*$/.test(input) || input === "") {
+                        if (
+                          input === "" ||
+                          (parseInt(input) >= 0 && input[0] !== "0")
+                        ) {
+                          handleInputChange(e, index, "price");
+                        }
+                      }
+                    }}
                     label="ราคา"
                     fullWidth
                     required
@@ -327,8 +349,18 @@ export default function EditProduct() {
 
                   <TextField
                     value={productSizes.cost}
-                    onChange={(e) => handleInputChange(e, index, "cost")}
                     variant="outlined"
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      if (/^\d*$/.test(input) || input === "") {
+                        if (
+                          input === "" ||
+                          (parseInt(input) >= 0 && input[0] !== "0")
+                        ) {
+                          handleInputChange(e, index, "cost");
+                        }
+                      }
+                    }}
                     label="ต้นทุน"
                     fullWidth
                     required

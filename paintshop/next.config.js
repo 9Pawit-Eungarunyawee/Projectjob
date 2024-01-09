@@ -9,6 +9,7 @@ const nextConfig = {
       "images.akzonobel.com",
       "www.toagroup.com",
       "upload.wikimedia.org",
+      "cx.lnwfile.com"
     ],
   },
 };

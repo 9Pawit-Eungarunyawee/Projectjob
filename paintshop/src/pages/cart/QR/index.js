@@ -8,20 +8,44 @@ import {
   Container,
   createTheme,
   ThemeProvider,
+  Alert,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import QRCode from "qrcode.react";
 import Image from "next/image";
+import { useAuthContext } from "@/context/AuthContext";
+import  addOrder  from "@/firebase/addOrder";
 const generate = require("promptpay-qr");
 export default function QR() {
   const router = useRouter();
+  const user = useAuthContext();
   const total = JSON.parse(router.query.total);
-  const [amount, setAmount] = React.useState(total);
+  const cartId = JSON.parse(router.query.cartId);
+  const [price, setPrice] = React.useState(total);
   const [phoneNumber, setphoneNumber] = React.useState("0960868037");
   const [qrCode, setqrCode] = React.useState("null");
   const [countdown, setCountdown] = React.useState(5 * 60);
+  const [imageUrl, setImageUrl] = React.useState("");
+  const [alert, setAlert] = React.useState(null);
+console.log("cartId",cartId)
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      console.error("No file selected.");
+      setImageUrl("");
+      return;
+    }
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImageUrl(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+    // console.log(imageUrl);
   };
   const handleCancel = () => {
     router.push({
@@ -30,12 +54,12 @@ export default function QR() {
   };
   //QR
   function generateQR() {
-    if (phoneNumber && amount !== null) {
-      const payload = generate(phoneNumber, { amount });
+    if (phoneNumber && price !== null) {
+      const payload = generate(phoneNumber, { price });
 
       setqrCode(payload);
     } else {
-      console.error("Missing phoneNumber or amount");
+      console.error("Missing phoneNumber or price");
     }
   }
   React.useEffect(() => {
@@ -66,6 +90,41 @@ export default function QR() {
       },
     },
   });
+  const updateorder = async (cart_id) => {
+    const currentDate = new Date();
+    const order = {
+      cart_id: cart_id, // ใช้อ้างอิง
+      user_id: user.user.uid,
+      price: price, 
+      date: currentDate,
+      img: imageUrl,
+      status:"disapprove"
+    };
+    const result = await addOrder("orders", order);
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          เพิ่มสินค้าลงตะกร้าเรียบร้อย
+        </Alert>
+      );
+      setOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถเพิ่มสินค้าลงตะกร้าได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
+  const [open, setOpen] = React.useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   return (
     <HomeLayout>
       <ThemeProvider theme={theme}>
@@ -101,20 +160,53 @@ export default function QR() {
                     height={150}
                   />
                 </Grid>
-                <Grid >
+                <Grid>
                   <QRCode value={qrCode} size={250} />
                 </Grid>
                 <Grid textAlign="center">
-                  <Typography>จำนวนเงิน : ฿{format(amount)}</Typography>
+                  <Typography>จำนวนเงิน : ฿{format(price)}</Typography>
                   <Typography>ระยะเวลาการชำระเงิน:</Typography>
                   <Typography>
                     {minutes} นาที {seconds} วินาที
                   </Typography>
                 </Grid>
               </Grid>
+              <Grid textAlign="center" mt={2}>
+                <Box>
+                  {imageUrl && (
+                    <Image
+                      src={imageUrl}
+                      alt="Uploaded Image"
+                      priority
+                      height="200"
+                      width="260"
+                      style={{
+                        border: "1px solid rgba(0, 0, 0, 0.50)",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
+                </Box>
+                <label htmlFor="upload-image">
+                  <Button variant="contained" component="span">
+                    เพิ่มรูปภาพหลักฐาน
+                  </Button>
+                  <input
+                    id="upload-image"
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={handleFileUpload}
+                  />
+                </label>
+              </Grid>
               <Grid container spacing={2} alignItems="center" sx={{ pt: 2 }}>
                 <Grid item xs={12} sm={6} sx={{ pr: 2, pl: 2 }}>
-                  <Button variant="contained" fullWidth>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => updateorder(cartId)}
+                  >
                     ยืนยัน
                   </Button>
                 </Grid>

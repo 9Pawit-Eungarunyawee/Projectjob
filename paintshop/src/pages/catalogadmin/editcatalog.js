@@ -185,12 +185,14 @@ export default function EditCatalog() {
       const color = {
         catalog_id: catalog_id,
         code: code,
-        codename,
-        codename,
+        codename:codename,
         colorshade_id: colorShadeID,
         name: colorname,
       };
       const result = await addColor("colors", color);
+      setCode("")
+      setCodeName("")
+      setColorName("")
       if (result) {
         setAlert(
           <Alert severity="success" onClose={handleClose}>
@@ -277,7 +279,7 @@ export default function EditCatalog() {
                   </label>
                 </Box>
 
-                <Typography sx={{ mt: 1 }}>สี:</Typography>
+                <Typography sx={{ mt: 1 }}>เพิ่มสี:</Typography>
                 <Box sx={{ ml: 2 }}>
                   <Box>
                     <Typography sx={{ mt: 1 }}>เฉดสี:</Typography>
@@ -319,12 +321,23 @@ export default function EditCatalog() {
                     </Box>
                   </Box>
                   <hr />
-                  <Typography sx={{ mt: 1 }}>เพิ่มสี:</Typography>
+                  <Typography sx={{ mt: 1 }}>สี:</Typography>
                   <Box
                     sx={{
                       "& .MuiTextField-root": { m: 1, width: "25ch" },
                     }}
                   >
+                    <Box
+                      sx={{
+                        width: "10vw",
+                        height: "3vw",
+                        bgcolor: code,
+                        transition: "0.2s",
+                        boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.20)",
+                        mb: 2,
+                        borderRadius: "5px",
+                      }}
+                    />
                     <TextField
                       variant="outlined"
                       value={code}
@@ -355,7 +368,7 @@ export default function EditCatalog() {
                       sx={{ mt: 1, mb: 1, width: "34ch", m: 1 }}
                       onClick={handleAddColor}
                     >
-                      เพิ่มสี
+                      เพิ่ม
                     </Button>
                   </Box>
                 </Box>

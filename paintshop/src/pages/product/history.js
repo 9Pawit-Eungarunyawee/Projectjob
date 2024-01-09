@@ -9,17 +9,16 @@ import Paper from "@mui/material/Paper";
 import Image from "next/image";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 import { use, useEffect, useState } from "react";
-import getDoument, { getCollection } from "@/firebase/getData";
+import getDoument, { getCollection, getUser } from "@/firebase/getData";
 import {
   Alert,
   Box,
   Button,
-  IconButton,
   Snackbar,
   Typography,
 } from "@mui/material";
 import { Delete, EditNotifications } from "@mui/icons-material";
-import { restoreData } from "@/firebase/addData";
+import { deleteData, restoreData } from "@/firebase/addData";
 
 export default function History() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -58,7 +57,6 @@ export default function History() {
   useEffect(() => {
     fetchData();
   }, []);
-
   const fetchData = async () => {
     const collectionName = "products";
     const { result, error } = await getCollection(collectionName);
@@ -97,6 +95,27 @@ export default function History() {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
           ผิดพลาด! ไม่สามารถกู้คืนข้อมูลได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    
+    const result = await deleteData("products", id);
+    fetchData();
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          ลบข้อมูลถาวรสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถลบข้อมูลถาวรได้
         </Alert>
       );
       setOpen(true);
@@ -188,7 +207,7 @@ export default function History() {
                       <StyledTableCell align="center">
                         <Button
                           color="primary"
-                          onClick={() => handleDialogOpen(row.id)}
+                          onClick={() => handleDelete(row.id)}
                         >
                           ลบถาวร
                         </Button>

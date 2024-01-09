@@ -95,8 +95,6 @@ export default function TableProduct({ data, onDelete }) {
       <Dialog
         open={dialogopen}
         onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
       >
         <DialogTitle>
           {"ยืนยันที่จะลบหรือไม่?"}

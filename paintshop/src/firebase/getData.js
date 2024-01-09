@@ -1,5 +1,8 @@
 import firebase_app from "../firebase/config";
-import { getFirestore, doc, getDoc, where, query } from "firebase/firestore";
+import { getFirestore, doc, getDoc, where, query , collection,
+
+  getDocs,
+  updateDoc,} from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
 
@@ -13,13 +16,6 @@ export default async function getDoument(collection, id) {
     return { result: null, error };
   }
 }
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-} from "firebase/firestore";
 
 const getCollection = async (collectionName) => {
   const querySnapshot = await getDocs(collection(db, collectionName));

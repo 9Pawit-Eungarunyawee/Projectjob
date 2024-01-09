@@ -52,7 +52,7 @@ export default function Cart() {
   const handleConfirmOrder = () => {
     router.push({
       pathname: "/cart/QR",
-      query: { total },
+      query: { cartId: JSON.stringify(cartIds), total },
     });
   };
   React.useEffect(() => {

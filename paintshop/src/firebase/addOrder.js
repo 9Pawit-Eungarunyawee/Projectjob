@@ -9,26 +9,26 @@ import {
 
 const db = getFirestore(firebase_app);
 
-export default async function addCart(collectionName, data) {
+export default async function addOrder(collectionName, data) {
   let result = null;
   let error = null;
-
-  // สร้างอ้างอิงไปยังเอกสารในคอลเลคชัน "catalog"
-  const productRef = doc(db, "products", data.product_id);
-  const colorRef = doc(db, "colors", data.color_id);
+console.log("wwwwww",data)
+  // สร้างอ้างอิงไปยังเอกสารในคอลเลคชัน "cart"
+  const currentDate = new Date();
+  const img = data.img ? data.img : "";
   try {
     // เตรียมข้อมูลที่ต้องการเพิ่ม
-    const cartData = {
-      product_id: productRef, // ใช้อ้างอิง
-      color_id: colorRef,
+    const orderData = {
+      cart_id: data.cart_id, // ใช้อ้างอิง
       user_id:data.user_id,
       price: data.price,
-      amount: data.amount,
-      status: data.status,
+      date:currentDate,
+      img: img,
+      status:data.status,
     };
-    console.log(cartData);
+    console.log(orderData);
     // เพิ่มข้อมูลเข้าคอลเลคชันตาม collectionName ด้วยข้อมูลที่เตรียมไว้
-    result = await addDoc(collection(db, collectionName), cartData);
+    result = await addDoc(collection(db, collectionName), orderData);
 
     console.log("เพิ่มข้อมูลสำเร็จ", result);
   } catch (e) {

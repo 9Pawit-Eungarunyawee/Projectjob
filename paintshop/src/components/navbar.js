@@ -33,8 +33,11 @@ import { useRouter } from "next/navigation";
 let settings = ["โปรไฟล์", "ออกจากระบบ"];
 
 export default function Navbar() {
-  const { isAdmin, user } = useAuthContext();
-  if (isAdmin == true) {
+  const { role, user } = useAuthContext();
+  if (role == "admin") {
+    settings = ["โปรไฟล์", "แดชบอร์ด", "ออกจากระบบ"];
+    console.log(user);
+  } else if (role == "employee") {
     settings = ["โปรไฟล์", "แดชบอร์ด", "ออกจากระบบ"];
     console.log(user);
   } else {
@@ -75,7 +78,11 @@ export default function Navbar() {
     } else if (setting == "โปรไฟล์") {
       router.push("/account/profile");
     } else if (setting == "แดชบอร์ด") {
-      router.push("/dashboard");
+      if(role == "admin"){
+        router.push("/dashboard");
+      }else{
+        router.push("/product");
+      }
     }
   };
 

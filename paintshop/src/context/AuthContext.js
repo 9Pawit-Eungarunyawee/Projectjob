@@ -12,7 +12,7 @@ export const useAuthContext = () => React.useContext(AuthContext);
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = React.useState(null);
-  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [role, setRole] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -23,16 +23,22 @@ export const AuthContextProvider = ({ children }) => {
         // ตรวจสอบว่าผู้ใช้เป็น admin หรือไม่
         const userDocRef = doc(db, "users", user.uid);
         const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists() && userDocSnap.data().isAdmin) {
-          setIsAdmin(true);
+        if (userDocSnap.exists() && userDocSnap.data().role == "admin") {
+          setRole("admin");
           console.log("ADMIN");
+        } else if (
+          userDocSnap.exists() &&
+          userDocSnap.data().role == "employee"
+        ) {
+          setRole("employee");
+          console.log("employee");
         } else {
-          setIsAdmin(false);
-          console.log("USER");
+          setRole("user");
+          console.log("user");
         }
       } else {
         setUser(null);
-        setIsAdmin(false);
+        setRole("");
       }
       setLoading(false);
     });
@@ -41,7 +47,7 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin }}>
+    <AuthContext.Provider value={{ user, role }}>
       {loading ? (
         <div>
           <Backdrop

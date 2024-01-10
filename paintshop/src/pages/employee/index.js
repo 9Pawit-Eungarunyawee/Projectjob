@@ -1,14 +1,25 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Layout from "@/components/layout";
-import { Button, Grid, Typography } from "@mui/material";
+import {
+  Button,
+  Grid,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import CardEmployee from "./card";
 import { useRouter } from "next/router";
 import { getCollection } from "../../firebase/getData";
 import { useAuthContext } from "@/context/AuthContext";
+import SearchIcon from "@mui/icons-material/Search";
+import TuneIcon from "@mui/icons-material/Tune";
+import searchUser from "@/firebase/searchData";
+import { debounce } from "lodash";
 export default function Employee() {
   const { role } = useAuthContext();
-  const [documentData, setDocumentData] = React.useState(null);
+  const [documentData, setDocumentData] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const [count, setCount] = React.useState(0);
   const router = useRouter();
   function handleAdd() {
@@ -16,34 +27,66 @@ export default function Employee() {
   }
 
   React.useEffect(() => {
-    fetchData();
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+    handleSearch('')
   }, []);
   React.useEffect(() => {
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
     console.log(documentData);
   }, [documentData]);
-  const fetchData = async () => {
-    const collectionName = "users";
-    const { result, error } = await getCollection(collectionName);
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result) {
-      const userData = result.docs.map((doc) => ({
-        id: doc.id,
-        name: doc.data().name, // ปรับให้เป็นชื่อฟิลด์ของคุณ
-        profileUrl: doc.data().profileUrl,
-        tel: doc.data().tel,
-        province: doc.data().province,
-        amphure: doc.data().amphure,
-        tambon: doc.data().tambon,
-        address: doc.data().address,
-        email: doc.data().email,
-        selected: doc.data().selected,
-        salary: doc.data().salary,
-      }));
-      setDocumentData(userData);
-      setCount(result.docs.length);
+
+  const debouncedSearchUser = debounce(async (term) => {
+    try {
+      const collectionName = "users";
+      const field = "name";
+      const results = await searchUser(collectionName, field, term);
+      setDocumentData(results);
+    } catch (error) {
+      console.error("Error searching data:", error);
     }
+  }, 500); // กำหนดเวลา debounce ที่คุณต้องการ
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchUser(term);
   };
+  // React.useEffect(() => {
+  //   fetchData();
+  // }, []);
+  // const fetchData = async () => {
+  //     try {
+  //       const collectionName = "users";
+  //       const field = "name";
+
+  //       const results = await searchUser(collectionName, field, searchuser);
+  //       console.log(results);
+  //       setDocumentData(results)
+  //       // ทำสิ่งที่คุณต้องการกับผลลัพธ์ที่ได้ที่นี่
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+    // const collectionName = "users";
+    // const { result, error } = await getCollection(collectionName);
+    // if (error) {
+    //   console.error("Error fetching document:", error);
+    // } else if (result) {
+    //   const userData = result.docs.map((doc) => ({
+    //     id: doc.id,
+    //     name: doc.data().name, // ปรับให้เป็นชื่อฟิลด์ของคุณ
+    //     profileUrl: doc.data().profileUrl,
+    //     tel: doc.data().tel,
+    //     province: doc.data().province,
+    //     amphure: doc.data().amphure,
+    //     tambon: doc.data().tambon,
+    //     address: doc.data().address,
+    //     email: doc.data().email,
+    //     selected: doc.data().selected,
+    //     salary: doc.data().salary,
+    //   }));
+    //   setDocumentData(userData);
+    //   setCount(result.docs.length);
+    // }
+  // };
   //เงินเดือนรวม
   let total = 0;
   if (documentData) {
@@ -55,7 +98,7 @@ export default function Employee() {
   }
   const formattedInt = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-  console.log("dashboard:::", role);
+  // console.log("employee:::", role);
   if (role == "employee") {
     return null;
   } else if (role == "admin") {
@@ -73,6 +116,25 @@ export default function Employee() {
                 <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
                   จัดการพนักงาน
                 </Typography>
+                <Box sx={{ mt: 1 }}>
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    onChange={(e) => handleSearch(e.target.value)}
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon sx={{ fontSize: "1.2vw" }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <Button variant="contained" sx={{ ml: 2 }}>
+                    <TuneIcon />
+                    ดูทั้งหมด
+                  </Button>
+                </Box>
               </Grid>
               <Grid item xs={12}>
                 <Button

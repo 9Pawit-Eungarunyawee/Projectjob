@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 import { getCollection } from "@/firebase/getData";
 import { softDeleteData } from "@/firebase/addData";
 import { useAuthContext } from "@/context/AuthContext";
+import { debounce } from "lodash";
+import searchUser from "@/firebase/searchData";
 
 export default function Product() {
   const theme = createTheme({
@@ -35,16 +37,47 @@ export default function Product() {
   });
   const { user } = useAuthContext();
   const [documentData, setDocumentData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   function handleAdd() {
     router.push("/product/addproduct");
   }
+  // useEffect(() => {
+  //   // fetchData();
+  // }, []);
+  // useEffect(() => {
+  //   // console.log(documentData);
+  // }, [documentData]);
+
   useEffect(() => {
-    fetchData();
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+    handleSearch('')
   }, []);
   useEffect(() => {
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
     // console.log(documentData);
   }, [documentData]);
+
+  const debouncedSearchUser = debounce(async (term) => {
+    try {
+      const collectionName = "products";
+      const field = "name";
+      const results = await searchUser(collectionName, field, term);
+      const filteredResults = results.filter((doc) => !doc.delete);
+      setDocumentData(filteredResults);
+    } catch (error) {
+      console.error("Error searching data:", error);
+    }
+  }, 500); // กำหนดเวลา debounce ที่คุณต้องการ
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchUser(term);
+  };
+
+
+
+
   const fetchData = async () => {
     const collectionName = "products";
     const { result, error } = await getCollection(collectionName);
@@ -110,6 +143,7 @@ export default function Product() {
               label="Search"
               variant="outlined"
               size="small"
+              onChange={(e) => handleSearch(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

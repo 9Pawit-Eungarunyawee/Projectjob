@@ -32,7 +32,7 @@ export default async function signUp(
       tambon: tambonName,
       tel: tel,
       profileUrl: profileUrl,
-      isAdmin: false,
+      role:"user"
     };
     await addDataUser("users", user.uid, newUser);
     console.log("สร้างผู้ใช้สำเร็จ:" + user.uid);

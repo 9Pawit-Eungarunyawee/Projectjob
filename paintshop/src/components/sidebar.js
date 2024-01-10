@@ -20,8 +20,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getAuth, signOut } from "firebase/auth";
+import { useAuthContext } from "@/context/AuthContext";
 export default function Sidebar() {
   const [activeLink, SetActiveLink] = useState("");
+  const { role } = useAuthContext();
+  console.log(role)
   const router = useRouter();
   useEffect(() => {
     SetActiveLink(router.pathname);
@@ -151,7 +154,7 @@ export default function Sidebar() {
                 href="/dashboard"
                 style={{
                   textDecoration: "none",
-                  display: "flex",
+                  display: role === "employee" ? "none" : "flex",
                   justifyContent: "center",
                 }}
                 onClick={(e) => SetActiveLink("/dashboard")}
@@ -257,7 +260,7 @@ export default function Sidebar() {
                 href="/employee"
                 style={{
                   textDecoration: "none",
-                  display: "flex",
+                  display: role === "employee" ? "none" : "flex",
                   justifyContent: "center",
                 }}
                 onClick={(e) => SetActiveLink("/employee")}

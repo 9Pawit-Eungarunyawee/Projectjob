@@ -211,12 +211,12 @@ export default function Navbar() {
                 anchorEl={anchorElUser}
                 anchorOrigin={{
                   vertical: "top",
-                  horizontal: "right",
+                  horizontal: "left",
                 }}
                 keepMounted
                 transformOrigin={{
                   vertical: "top",
-                  horizontal: "right",
+                  horizontal: "left",
                 }}
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}

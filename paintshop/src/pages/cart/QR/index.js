@@ -135,7 +135,6 @@ console.log("cartId",cartId)
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              height: "90vh",
             }}
           >
             <Box>
@@ -145,6 +144,7 @@ console.log("cartId",cartId)
                 direction="column"
                 alignItems="center"
                 sx={{
+                  mt:2,
                   p: 3,
                   pt: 2,
                   bgcolor: "#FFF",

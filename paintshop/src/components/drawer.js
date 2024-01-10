@@ -18,6 +18,7 @@ const DrawerComp = () => {
         anchor="left"
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
+      
       >
         <List>
           {pages.map((page, index) => (
@@ -30,7 +31,7 @@ const DrawerComp = () => {
         </List>
       </Drawer>
       <IconButton
-        sx={{ color: "black", marginLeft: "auto" }}
+        sx={{ color: "black"}}
         onClick={() => setOpenDrawer(!openDrawer)}
       >
         <MenuIcon color="white" />

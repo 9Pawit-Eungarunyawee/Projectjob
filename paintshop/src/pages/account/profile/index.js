@@ -24,9 +24,6 @@ export default function Profile() {
   const user = useAuthContext();
   const [userData, setUserData] = React.useState(null);
   const [open, setOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [tel, setTel] = React.useState("");
 
   const handleClickOpen = () => {
     setOpen(true);

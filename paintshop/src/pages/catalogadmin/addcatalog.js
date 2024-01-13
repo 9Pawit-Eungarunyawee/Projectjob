@@ -29,9 +29,9 @@ export default function AddCatalog() {
     },
   });
 
-
-  const [ name, setName ]= useState("");
+  const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [detail, setDetail] = useState("");
   const [open, setOpen] = useState(false);
   const [alert, setAlert] = useState(null);
   const handleClose = (event, reason) => {
@@ -62,15 +62,21 @@ export default function AddCatalog() {
     const catalog = {
       name: name,
       img: imageUrl,
-
+      detail:detail
     };
     const result = await addCatalog("catalog", catalog);
     if (result) {
-      setAlert(<Alert severity="success" onClose={handleClose}>เพิ่มข้อมูลสำเร็จ</Alert>);
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          เพิ่มข้อมูลสำเร็จ
+        </Alert>
+      );
       setOpen(true);
     } else {
       setAlert(
-        <Alert severity="error" onClose={handleClose}>ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้</Alert>
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้
+        </Alert>
       );
       setOpen(true);
     }
@@ -78,22 +84,21 @@ export default function AddCatalog() {
   return (
     <Layout>
       <ThemeProvider theme={theme}>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        {alert}
-      </Snackbar>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          {alert}
+        </Snackbar>
         <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
-          <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
+          <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
             เพิ่มแค็ตตาล็อก
           </Typography>
           <Grid
             container
-            spacing={1}
+            spacing={0}
             sx={{
-              width: "100%",
               mt: 3,
               mb: 5,
               backgroundColor: "#fff",
-              p: 1,
+              p: 2,
               borderRadius: "10px",
               boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
             }}
@@ -111,7 +116,19 @@ export default function AddCatalog() {
                   sx={{ mt: 1, mb: 1 }}
                   onChange={(e) => setName(e.target.value)}
                 />
-
+                <Typography sx={{ mt: 1 }}>รายละเอียดแค็ตตาล็อก:</Typography>
+                <TextField
+                  value={detail}
+                  onChange={(e) => setDetail(e.target.value)}
+                  variant="outlined"
+                  label="รายละเอียดแค็ตตาล็อก"
+                  fullWidth
+                  required
+                  rows={4}
+                  multiline
+                  size="small"
+                  sx={{ mt: 1, mb: 1 }}
+                />
                 <Box sx={{ textAlign: "left" }}>
                   <Typography sx={{ mb: 1 }}>รูปแค็ตตาล็อก:</Typography>
                   <Box>

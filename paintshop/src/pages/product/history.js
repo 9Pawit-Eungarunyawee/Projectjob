@@ -152,9 +152,9 @@ export default function History() {
         {alert}
       </Snackbar>
       <ThemeProvider theme={theme}>
-        <Box sx={{ pr: 3 }}>
+        <Box >
           <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
-            <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
+            <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
               ประวัติการลบ
             </Typography>
             <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
@@ -167,7 +167,6 @@ export default function History() {
                     <StyledTableCell>วันที่ลบ</StyledTableCell>
                     <StyledTableCell>ผู้ลบ</StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
-
                     <StyledTableCell align="center"></StyledTableCell>
                   </TableRow>
                 </TableHead>

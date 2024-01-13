@@ -40,7 +40,7 @@ export default function Catalogadmin() {
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch('')
+    handleSearch("");
   }, []);
   useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
@@ -63,8 +63,6 @@ export default function Catalogadmin() {
     debouncedSearchUser(term);
   };
 
-
-
   const router = useRouter();
   function handleAdd() {
     router.push("/catalogadmin/addcatalog");
@@ -79,38 +77,44 @@ export default function Catalogadmin() {
     <Layout>
       <ThemeProvider theme={theme}>
         <Box sx={{ minHeight: "70vh", width: "100%", mt: 5, mb: 3 }}>
-          <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
+          <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
             แคตตาล็อค
           </Typography>
           <Box sx={{ mt: 1 }}>
             <TextField
-              label="Search"
+              label="ค้นหา"
               variant="outlined"
               size="small"
+              onChange={(e) => handleSearch(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ fontSize: "1.2vw" }} />
+                    <SearchIcon sx={{ fontSize: "1.4rem" }} />
                   </InputAdornment>
                 ),
               }}
             />
-            <Button variant="contained" sx={{ ml: 2 }}>
-              <TuneIcon />
-              ดูทั้งหมด
-            </Button>
           </Box>
           <Box
-            sx={{ display: "flex", justifyContent: "flex-end", width: "98%" }}
+            sx={{
+              display: "flex",
+              justifyContent: { xl: "flex-end" },
+              width: "98%",
+            }}
           >
-            <Button variant="contained" color="success" onClick={handleAdd}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleAdd}
+              sx={{ mt: 1 }}
+            >
               เพิ่มแค็ตตาล็อก
             </Button>
           </Box>
           <Box
             sx={{
               height: "100%",
-              width: "95%",
+
               backgroundColor: "#fff",
               p: 2,
               mt: 2,

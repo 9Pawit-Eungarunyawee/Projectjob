@@ -56,8 +56,8 @@ export default function TableProduct({ data, onDelete }) {
     if (data && data.data) {
       setDocData(data.data);
     }
-    console.log("doc มา table: ", docuData);
-  }, [data, docuData]);
+    console.log("doc มา table: ", data);
+  }, [data]);
   function createData(No, id, img, p_name, p_sell, p_left, p_price, status) {
     return { No, id, img, p_name, p_sell, p_left, p_price, status };
   }
@@ -113,7 +113,7 @@ export default function TableProduct({ data, onDelete }) {
         </DialogActions>
       </Dialog>
       <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Table sx={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
               <StyledTableCell>No.</StyledTableCell>

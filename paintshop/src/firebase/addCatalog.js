@@ -15,6 +15,7 @@ export default async function addCatalog(collectionName, data) {
     const catalogData = {
       name: data.name,
       img: img,
+      detail:data.detail
     };
 
     // เพิ่มข้อมูลเข้าคอลเลคชันตาม collectionName ด้วยข้อมูลที่เตรียมไว้

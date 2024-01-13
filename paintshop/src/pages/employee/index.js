@@ -28,7 +28,7 @@ export default function Employee() {
 
   React.useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch('')
+    handleSearch("");
   }, []);
   React.useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
@@ -40,7 +40,9 @@ export default function Employee() {
       const collectionName = "users";
       const field = "name";
       const results = await searchUser(collectionName, field, term);
-      setDocumentData(results);
+      const filteredResults = results.filter((doc) => doc.role == "employee");
+      setDocumentData(filteredResults);
+      setCount(documentData.length);
     } catch (error) {
       console.error("Error searching data:", error);
     }
@@ -50,43 +52,7 @@ export default function Employee() {
     setSearchTerm(term);
     debouncedSearchUser(term);
   };
-  // React.useEffect(() => {
-  //   fetchData();
-  // }, []);
-  // const fetchData = async () => {
-  //     try {
-  //       const collectionName = "users";
-  //       const field = "name";
 
-  //       const results = await searchUser(collectionName, field, searchuser);
-  //       console.log(results);
-  //       setDocumentData(results)
-  //       // ทำสิ่งที่คุณต้องการกับผลลัพธ์ที่ได้ที่นี่
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-    // const collectionName = "users";
-    // const { result, error } = await getCollection(collectionName);
-    // if (error) {
-    //   console.error("Error fetching document:", error);
-    // } else if (result) {
-    //   const userData = result.docs.map((doc) => ({
-    //     id: doc.id,
-    //     name: doc.data().name, // ปรับให้เป็นชื่อฟิลด์ของคุณ
-    //     profileUrl: doc.data().profileUrl,
-    //     tel: doc.data().tel,
-    //     province: doc.data().province,
-    //     amphure: doc.data().amphure,
-    //     tambon: doc.data().tambon,
-    //     address: doc.data().address,
-    //     email: doc.data().email,
-    //     selected: doc.data().selected,
-    //     salary: doc.data().salary,
-    //   }));
-    //   setDocumentData(userData);
-    //   setCount(result.docs.length);
-    // }
-  // };
   //เงินเดือนรวม
   let total = 0;
   if (documentData) {
@@ -118,22 +84,18 @@ export default function Employee() {
                 </Typography>
                 <Box sx={{ mt: 1 }}>
                   <TextField
-                    label="Search"
+                    label="ค้นหา"
                     variant="outlined"
-                    onChange={(e) => handleSearch(e.target.value)}
                     size="small"
+                    onChange={(e) => handleSearch(e.target.value)}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <SearchIcon sx={{ fontSize: "1.2vw" }} />
+                          <SearchIcon sx={{ fontSize: "1.4rem" }} />
                         </InputAdornment>
                       ),
                     }}
                   />
-                  <Button variant="contained" sx={{ ml: 2 }}>
-                    <TuneIcon />
-                    ดูทั้งหมด
-                  </Button>
                 </Box>
               </Grid>
               <Grid item xs={12}>
@@ -184,7 +146,7 @@ export default function Employee() {
                             color: "#FE616A",
                           }}
                         >
-                          {count}
+                          {documentData.length}
                         </span>
                         คน
                       </Typography>

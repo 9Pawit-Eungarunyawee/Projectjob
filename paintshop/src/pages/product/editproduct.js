@@ -185,13 +185,12 @@ export default function EditProduct() {
 
         <Grid
           container
-          spacing={1}
+          spacing={0}
           sx={{
-            width: "100%",
             mt: 3,
             mb: 5,
             backgroundColor: "#fff",
-            p: 1,
+            p: 2,
             borderRadius: "10px",
             boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
           }}

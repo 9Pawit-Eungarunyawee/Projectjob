@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Container, Grid } from "@mui/material";
+import { Box, Container, Grid } from "@mui/material";
 import Sidebar from "./sidebar";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import NavbarAdmin from "./navbaradmin";
 export default function Layout({ children }) {
   const { user, role } = useAuthContext();
   const router = useRouter();
@@ -25,11 +26,15 @@ export default function Layout({ children }) {
     <React.Fragment>
       <Container maxWidth="sx" style={{ padding: 0 }}>
         <Grid container spacing={2} sx={{ bgcolor: "#FAF8F1" }}>
-          <Grid item xs={2.5}>
+          <Grid item xs={0} xl={2.5} sx={{ display: { xs: 'none', xl: 'block' } }}>
             <Sidebar />
           </Grid>
-          <Grid item xs={9.5} >
-            {children}
+          <Grid item xs={0} xl={2.5} sx={{ display: { xs: 'block', xl: 'none' } }}>
+            <NavbarAdmin />
+          </Grid>
+          <Grid item xs={12} xl={9.5}>
+            <Box sx={{pl:2,pr:2}}>{children}</Box>
+           
           </Grid>
         </Grid>
       </Container>

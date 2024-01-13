@@ -51,7 +51,7 @@ export default function Product() {
 
   useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch('')
+    handleSearch("");
   }, []);
   useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
@@ -75,30 +75,27 @@ export default function Product() {
     debouncedSearchUser(term);
   };
 
-
-
-
-  const fetchData = async () => {
-    const collectionName = "products";
-    const { result, error } = await getCollection(collectionName);
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result) {
-      const productData = result.docs.filter((doc) => !doc.data().delete).map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-        productSizes: doc.data().productSizes,
-        img: doc.data().img,
-        status: doc.data().status,
-      }));
-      setDocumentData(productData);
-    }
-  };
+  // const fetchData = async () => {
+  //   const collectionName = "products";
+  //   const { result, error } = await getCollection(collectionName);
+  //   if (error) {
+  //     console.error("Error fetching document:", error);
+  //   } else if (result) {
+  //     const productData = result.docs.filter((doc) => !doc.data().delete).map((doc) => ({
+  //       id: doc.id,
+  //       name: doc.data().name,
+  //       productSizes: doc.data().productSizes,
+  //       img: doc.data().img,
+  //       status: doc.data().status,
+  //     }));
+  //     setDocumentData(productData);
+  //   }
+  // };
   const handleDelete = async (id) => {
     const data = {
-      id:id,
-      user_id:user.uid
-    }
+      id: id,
+      user_id: user.uid,
+    };
     const result = await softDeleteData("products", data);
     fetchData();
     if (result) {
@@ -135,31 +132,27 @@ export default function Product() {
       </Snackbar>
       <ThemeProvider theme={theme}>
         <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
-          <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
+          <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
             การจัดการสินค้า
           </Typography>
           <Box sx={{ mt: 1 }}>
             <TextField
-              label="Search"
+              label="ค้นหา"
               variant="outlined"
               size="small"
               onChange={(e) => handleSearch(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ fontSize: "1.2vw" }} />
+                    <SearchIcon sx={{ fontSize: "1.4rem" }} />
                   </InputAdornment>
                 ),
               }}
             />
-            <Button variant="contained" sx={{ ml: 2 }}>
-              <TuneIcon />
-              ดูทั้งหมด
-            </Button>
           </Box>
 
-          <Box sx={{ pr: 3 }}>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box>
+            <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
               <Button
                 variant="contained"
                 color="success"

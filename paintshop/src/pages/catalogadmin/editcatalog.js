@@ -37,6 +37,7 @@ export default function EditCatalog() {
   const router = useRouter();
   const catalog_id = JSON.parse(router.query.catalog_id);
   const [name, setName] = useState("");
+  const [detail, setDetail] = useState("");
   const [colorname, setColorName] = useState("");
   const [code, setCode] = useState("");
   const [codename, setCodeName] = useState("");
@@ -78,6 +79,7 @@ export default function EditCatalog() {
       const catalog = result.data();
       setName(catalog.name);
       setImageUrl(catalog.img);
+      setDetail(catalog.detail);
     }
   };
 
@@ -91,7 +93,7 @@ export default function EditCatalog() {
         id: doc.id,
         name: doc.data().name,
         code: doc.data().code,
-        codename:doc.data().code_name,
+        codename: doc.data().code_name,
         catalog_id: doc.data().catalog_id.id,
       }));
       // console.log(colors);
@@ -129,7 +131,7 @@ export default function EditCatalog() {
       img: imageUrl,
     };
 
-    const result = await editCatalog("catalog",catalog_id ,catalog);
+    const result = await editCatalog("catalog", catalog_id, catalog);
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
@@ -185,14 +187,14 @@ export default function EditCatalog() {
       const color = {
         catalog_id: catalog_id,
         code: code,
-        codename:codename,
+        codename: codename,
         colorshade_id: colorShadeID,
         name: colorname,
       };
       const result = await addColor("colors", color);
-      setCode("")
-      setCodeName("")
-      setColorName("")
+      setCode("");
+      setCodeName("");
+      setColorName("");
       if (result) {
         setAlert(
           <Alert severity="success" onClose={handleClose}>
@@ -218,19 +220,18 @@ export default function EditCatalog() {
           {alert}
         </Snackbar>
         <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
-          <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
+          <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
             แก้ไขแคตตาล็อก
           </Typography>
           <form onSubmit={handleForm} className="form">
             <Grid
               container
-              spacing={1}
+              spacing={0}
               sx={{
-                width: "100%",
                 mt: 3,
-                mb: 2,
+                mb: 5,
                 backgroundColor: "#fff",
-                p: 1,
+                p: 2,
                 borderRadius: "10px",
                 boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
               }}
@@ -247,7 +248,19 @@ export default function EditCatalog() {
                   sx={{ mt: 1, mb: 1 }}
                   onChange={(e) => setName(e.target.value)}
                 />
-
+                <Typography sx={{ mt: 1 }}>รายละเอียดแค็ตตาล็อก:</Typography>
+                <TextField
+                  value={detail}
+                  onChange={(e) => setDetail(e.target.value)}
+                  variant="outlined"
+                  label="รายละเอียดแค็ตตาล็อก"
+                  fullWidth
+                  required
+                  rows={4}
+                  multiline
+                  size="small"
+                  sx={{ mt: 1, mb: 1 }}
+                />
                 <Box sx={{ textAlign: "left" }}>
                   <Typography sx={{ mb: 1 }}>รูปแค็ตตาล็อก:</Typography>
                   <Box>
@@ -285,8 +298,8 @@ export default function EditCatalog() {
                     <Typography sx={{ mt: 1 }}>เฉดสี:</Typography>
                     <Box
                       sx={{
-                        width: "10vw",
-                        height: "3vw",
+                        width: "10rem",
+                        height: "3rem",
                         bgcolor: background,
                         transition: "0.2s",
                         boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.20)",
@@ -294,7 +307,7 @@ export default function EditCatalog() {
                         borderRadius: "5px",
                       }}
                     />
-                    <Box sx={{ display: "flex", height: "4.5vw" }}>
+                    <Box sx={{ display: "flex" }}>
                       {colorShade &&
                         colorShade.map((shade) => (
                           <Box
@@ -304,16 +317,19 @@ export default function EditCatalog() {
                             }
                             sx={{
                               bgcolor: shade.code,
-                              width: "3vw",
-                              height: shade.id == colorShadeID ? "4vw" : "3vw",
+                              width: "2rem",
+                              height: "3rem",
+                              transform:
+                                shade.id == colorShadeID
+                                  ? "scale(1.2)"
+                                  : "scale(1)",
                               cursor: "pointer",
                               borderRadius: "100px",
-                              transition: "background-color 0.2s, height 0.3s",
+                              transition: "0.2s",
                               boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                               m: 1,
                               ":hover": {
-                                width: "3vw",
-                                height: "4vw",
+                                transform: "scale(1.2)",
                               },
                             }}
                           />
@@ -329,8 +345,8 @@ export default function EditCatalog() {
                   >
                     <Box
                       sx={{
-                        width: "10vw",
-                        height: "3vw",
+                        width: "10rem",
+                        height: "3rem",
                         bgcolor: code,
                         transition: "0.2s",
                         boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.20)",
@@ -374,7 +390,7 @@ export default function EditCatalog() {
                 </Box>
               </Grid>
               <Grid item xs={12} sm={5}>
-              <Typography sx={{ mt: 1 }}>สีที่มีในแคตตาล็อก:</Typography>
+                <Typography sx={{ mt: 1 }}>สีที่มีในแคตตาล็อก:</Typography>
                 <Box sx={{ display: "flex", flexWrap: "wrap" }}>
                   {allcolor &&
                     allcolor.map((color, index) => (
@@ -385,21 +401,21 @@ export default function EditCatalog() {
                           <Fragment>
                             <Typography color="inherit">
                               โค้ดสี: {color.code}
-                            </Typography> 
+                            </Typography>
                             <Typography color="inherit">
                               ชื่อสี: {color.name}
-                            </Typography> 
+                            </Typography>
                             <Typography color="inherit">
                               โค้ดเนม: {color.codename}
-                            </Typography> 
+                            </Typography>
                           </Fragment>
                         }
                       >
                         <Box
                           sx={{
                             bgcolor: color.code,
-                            width: "3vw",
-                            height: "3vw",
+                            width: "2rem",
+                            height: "3rem",
                             cursor: "pointer",
                             borderRadius: "100px",
                             transition: "0.1s",

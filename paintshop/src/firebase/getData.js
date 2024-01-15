@@ -1,8 +1,14 @@
 import firebase_app from "../firebase/config";
-import { getFirestore, doc, getDoc, where, query , collection,
-
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  where,
+  query,
+  collection,
   getDocs,
-  updateDoc,} from "firebase/firestore";
+  updateDoc,
+} from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
 
@@ -55,30 +61,40 @@ const getCart = async (collectionName, uid) => {
 
 export { getCart };
 
-const updateAmount = async (cartIds, newAmount) => {
-  console.log("Updating amount for cartId:", cartIds);
+const getProductDetails = async (productIds) => {
+  const products = [];
 
-  const q = query(collection(db, "cart"), where("id", "==", String(cartIds)));
-  const querySnapshot = await getDocs(q);
-
-  if (querySnapshot.size > 0) {
-    const docRef = querySnapshot.docs[0].ref;
-
-    try {
-      await updateDoc(docRef, {
-        amount: newAmount,
-      });
-
-      console.log("Document successfully updated for cart ID:", cartIds);
-    } catch (error) {
-      console.error("Error updating document for cart ID:", cartIds, error);
+  for (const productId of productIds) {
+    const productDoc = await getDoc(doc(db, "products", productId));
+    if (productDoc.exists()) {
+      const productData = productDoc.data();
+      // Assuming there's an 'image' field in your product data
+      const productDetails = { id: productId, ...productData };
+      products.push(productDetails);
     }
-  } else {
-    console.error("Document not found for cart ID:", cartIds);
   }
-};
-export { updateAmount };
 
+  return products;
+};
+
+export { getProductDetails };
+
+const getColorDetails = async (colorIds) => {
+  const colors = [];
+
+  for (const colorId of colorIds) {
+    const colorDoc = await getDoc(doc(db, "colors", colorId));
+    if (colorDoc.exists()) {
+      const colorData = colorDoc.data();
+      // Assuming there's an 'image' field in your product data
+      const colorDetails = { id: colorId, ...colorData };
+      colors.push(colorDetails);
+    }
+  }
+
+  return colors;
+};
+export { getColorDetails };
 const getUser = async (collectionName, uid) => {
   const q = query(
     collection(db, collectionName),

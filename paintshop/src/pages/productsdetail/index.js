@@ -72,7 +72,7 @@ export default function Productsdetail() {
       user_id: user.user.uid,
       price: selectedPrice,
       amount: number,
-      status:"pending"
+      size:sizeData,
     };
     const result = await addCart("cart", cart);
     if (result) {

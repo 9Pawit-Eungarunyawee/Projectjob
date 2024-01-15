@@ -158,7 +158,7 @@ export default function FormDialog({ handleClickOpen, onFormSubmitSuccess }) {
                 color: "#fff",
                 mb: 4,
                 "&:hover": {
-                  backgroundColor: "#01576e", // Change to the desired hover color
+                  backgroundColor: "#01576e", 
                 },
               }}
               type="submit"
@@ -169,7 +169,6 @@ export default function FormDialog({ handleClickOpen, onFormSubmitSuccess }) {
         </form>
       </Dialog>
 
-      {/* Open the dialog when clicking the "แก้ไข" button */}
       <Button sx={{ color: "#018294" }} onClick={handleClickOpenDialog}>
         แก้ไข
       </Button>

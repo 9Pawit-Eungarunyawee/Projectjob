@@ -5,6 +5,8 @@ import {
   collection,
   addDoc,
   setDoc,
+  deleteDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
@@ -21,10 +23,15 @@ export default async function addCart(collectionName, data) {
     const cartData = {
       product_id: productRef, // ใช้อ้างอิง
       color_id: colorRef,
-      user_id:data.user_id,
+      user_id: data.user_id,
       price: data.price,
       amount: data.amount,
-      status: data.status,
+      size: data.size,
+      delete: null,
+      create: {
+        createAt: serverTimestamp(),
+        createBy: data.user_id,
+      },
     };
     console.log(cartData);
     // เพิ่มข้อมูลเข้าคอลเลคชันตาม collectionName ด้วยข้อมูลที่เตรียมไว้

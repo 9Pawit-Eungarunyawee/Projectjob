@@ -35,6 +35,8 @@ export default function AddEmployee() {
   const [provinceName, setProvinceName] = useState(undefined);
   const [amphureName, setAmphureName] = useState(undefined);
   const [tambonName, setTambonName] = useState(undefined);
+  const [zipCode, setZipCode] = useState(undefined);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [selected, setSelected] = useState({
     province_id: undefined,
     amphure_id: undefined,
@@ -66,7 +68,11 @@ export default function AddEmployee() {
       const nameTambon = tambons.find(
         (tambon) => tambon.id === selected.tambon_id
       )?.name_th;
+      const zipcode = tambons.find(
+        (tambon) => tambon.id === selected.tambon_id
+      )?.zip_code;
       setTambonName(nameTambon);
+      setZipCode(zipcode);
     }
   }, [selected, provinces, amphures, tambons]);
 
@@ -109,19 +115,24 @@ export default function AddEmployee() {
   //กดสมัคร
   const handleForm = async (event) => {
     event.preventDefault();
-    await signUp(
-      email,
-      password,
-      address,
-      tel,
-      name,
-      profileUrl,
-      provinceName,
-      amphureName,
-      tambonName,
-    );
-
-    return router.push("/homepage");
+    if (password == conpassword) {
+      await signUp(
+        email,
+        password,
+        address,
+        tel,
+        name,
+        profileUrl,
+        provinceName,
+        amphureName,
+        tambonName,
+        zipCode
+      );
+      setPasswordsMatch(true);
+      return router.push("/homepage");
+    } else {
+      setPasswordsMatch(false);
+    }
   };
   const [showPassword, setShowPassword] = useState(false);
   const [showConPassword, setConShowPassword] = useState(false);
@@ -221,19 +232,32 @@ export default function AddEmployee() {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                     <TextField
+                      color={passwordsMatch ? "" : "error"}
                       variant="outlined"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       label="รหัสผ่าน"
                       fullWidth
                       required
                       size="small"
-                      sx={{ mt: 1, mb: 1 }}
+                      sx={{
+                        mt: 1,
+                        mb: 1,
+                      }}
+                      error={passwordsMatch? false:true}
+                      helperText={passwordsMatch ? "" : "รหัสผ่านไม่ตรงกัน"}
                       onChange={(e) => setPassword(e.target.value)}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
-                            <IconButton onClick={handleTogglePasswordVisibility} edge="end">
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            <IconButton
+                              onClick={handleTogglePasswordVisibility}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -241,18 +265,31 @@ export default function AddEmployee() {
                     />
                     <TextField
                       variant="outlined"
-                      type={showConPassword ? 'text' : 'password'}
+                      
+                      type={showConPassword ? "text" : "password"}
                       label="ยืนยันรหัสผ่าน"
                       fullWidth
+                      error={passwordsMatch? false:true}
                       required
                       size="small"
-                      sx={{ mt: 1, mb: 1 }}
+                      sx={{
+                        mt: 1,
+                        mb: 1,
+                      }}
+                      helperText={passwordsMatch ? "" : "รหัสผ่านไม่ตรงกัน"}
                       onChange={(e) => setConpassword(e.target.value)}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
-                            <IconButton onClick={handleToggleConPasswordVisibility} edge="end">
-                              {showConPassword ? <VisibilityOff /> : <Visibility />}
+                            <IconButton
+                              onClick={handleToggleConPasswordVisibility}
+                              edge="end"
+                            >
+                              {showConPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),

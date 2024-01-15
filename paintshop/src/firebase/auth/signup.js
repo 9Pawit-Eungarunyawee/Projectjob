@@ -14,7 +14,7 @@ export default async function signUp(
   provinceName,
   amphureName,
   tambonName,
-  selected
+  zipCode
 ) {
   let result = null;
   let error = null;
@@ -26,13 +26,16 @@ export default async function signUp(
       uid: user.uid,
       email: user.email,
       name: name,
-      address: address,
-      province: provinceName,
-      amphure: amphureName,
-      tambon: tambonName,
+      addresses: {
+        address: address,
+        province: provinceName,
+        amphure: amphureName,
+        tambon: tambonName,
+        zipcode: zipCode
+      },
       tel: tel,
       profileUrl: profileUrl,
-      role:"user"
+      role: "user",
     };
     await addDataUser("users", user.uid, newUser);
     console.log("สร้างผู้ใช้สำเร็จ:" + user.uid);

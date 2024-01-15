@@ -16,7 +16,9 @@ import { getCollection } from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Link from "next/link";
 import Image from "next/image";
+import searchUser from "@/firebase/searchData";
 import { useRouter } from "next/router";
+import { debounce } from "lodash";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -30,27 +32,49 @@ export default function Catalog() {
       query: { catalogData: JSON.stringify(data) },
     });
   }
+  const [searchTerm, setSearchTerm] = React.useState("");
   React.useEffect(() => {
-    fetchAllData();
-    console.log(documentData);
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+    handleSearch('')
   }, []);
-  const fetchAllData = async () => {
-    const collection = "catalog";
+  React.useEffect(() => {
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+    // console.log(documentData);
+  }, [documentData]);
 
-    const { result: querySnapshot, error } = await getCollection(collection);
-
-    if (error) {
-      console.error("Error fetching collection:", error);
-    } else {
-      const data = [];
-      querySnapshot.forEach((doc) => {
-        console.log("Document ID:", doc.id);
-        console.log("Document data:", doc.data());
-        data.push({ id: doc.id, ...doc.data() });
-      });
-      setDocumentData(data);
+  const debouncedSearchUser = debounce(async (term) => {
+    try {
+      const collectionName = "catalog";
+      const field = "name";
+      const results = await searchUser(collectionName, field, term);
+      setDocumentData(results);
+    } catch (error) {
+      console.error("Error searching data:", error);
     }
+  }, 500); // กำหนดเวลา debounce ที่คุณต้องการ
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchUser(term);
   };
+
+  // const fetchAllData = async () => {
+  //   const collection = "catalog";
+
+  //   const { result: querySnapshot, error } = await getCollection(collection);
+
+  //   if (error) {
+  //     console.error("Error fetching collection:", error);
+  //   } else {
+  //     const data = [];
+  //     querySnapshot.forEach((doc) => {
+  //       console.log("Document ID:", doc.id);
+  //       console.log("Document data:", doc.data());
+  //       data.push({ id: doc.id, ...doc.data() });
+  //     });
+  //     setDocumentData(data);
+  //   }
+  // };
 
   return (
     <Homelayout>

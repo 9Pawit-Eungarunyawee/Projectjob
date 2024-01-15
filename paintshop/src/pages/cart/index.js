@@ -24,7 +24,13 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { getCart, getCollection, updateAmount } from "../../firebase/getData";
+import {
+  getCart,
+  getCollection,
+  getColorDetails,
+  getProductDetails,
+  updateAmount,
+} from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import Link from "next/link";
@@ -34,6 +40,8 @@ import Product from "../product";
 import { useAuthContext } from "@/context/AuthContext";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import searchUser from "@/firebase/searchData";
+import { debounce } from "lodash";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -41,23 +49,18 @@ function handleClick(event) {
 
 export default function Cart() {
   const router = useRouter();
+  const [documentData, setDocumentData] = React.useState(null);
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
-  const [productIds, setProductIds] = React.useState(null);
   const [colorData, setColorData] = React.useState(null);
-  const [colorIds, setColorIds] = React.useState(null);
-  const [cartIds, setCartIds] = React.useState(null);
   const [total, setTotal] = React.useState(0);
+  const [totalQuantity, setTotalQuantity] = React.useState(0);
   const user = useAuthContext();
   const handleConfirmOrder = () => {
     router.push({
-      pathname: "/cart/QR",
-      query: { cartId: JSON.stringify(cartIds), total },
+      pathname: "/cart/selectaddress",
     });
   };
-  React.useEffect(() => {
-    fetchAllData();
-  }, []);
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
@@ -68,88 +71,67 @@ export default function Cart() {
       },
     },
   });
+  const [groupedProductData, setGroupedProductData] = React.useState(null);
+
   //ดึงข้อมูล
-  const fetchAllData = async () => {
-    const collection = "cart";
+  const [searchTerm, setSearchTerm] = React.useState("");
+  React.useEffect(() => {
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+    handleSearch("");
+  }, []);
+  React.useEffect(() => {
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+    // console.log(documentData);
+  }, [documentData]);
+
+  const debouncedSearchUser = debounce(async (term) => {
     const uid = user.user.uid;
-    const { result, error } = await getCart(collection, uid);
+    console.log("Fetched data:", {
+      documentData,
+      productData,
+      colorData,
+      groupedProductData,
+    });
+    try {
+      const collectionName = "cart";
+      const field = "user_id";
+      const results = await searchUser(collectionName, field, term);
+      const filteredResults = results.filter((doc) => doc.user_id == uid);
+      const productIds = filteredResults.map((doc) => doc.product_id.id);
+      const colorIds = filteredResults.map((doc) => doc.color_id.id);
+      console.log("Product IDs:", productIds);
+      console.log("Color IDs:", colorIds);
+      const productDetails = await getProductDetails(productIds);
+      const colorDetails = await getColorDetails(colorIds);
+      setColorData(colorDetails);
+      setProductData(productDetails);
+      setDocumentData(filteredResults);
 
-    if (error) {
-      console.error("Error fetching collection:", error);
-    } else {
-      const cart = result.docs.map((doc) => ({
-        id: doc.id,
-        amount: doc.data().amount,
-        color_id: doc.data().color_id.id,
-        price: doc.data().price,
-        product_id: doc.data().product_id.id,
-      }));
-      const cartTotal = cart.reduce(
-        (acc, item) => acc + item.amount * item.price,
-        0
-      );
-      setTotal(cartTotal);
-      console.log("คำนวณเงิน", total);
-      const productIds = cart.map((item) => item.product_id);
-      const colorIds = cart.map((item) => item.color_id);
-      const cartIds = cart.map((item) => item.id);
-      setCartIds(cartIds);
-      setColorIds(colorIds);
-      setProductIds(productIds);
-      console.log("ตรวจสอบผลิตภัณฑ์ :", productIds);
-      console.log("ตรวจสอบสี :", colorIds);
-      setCartData(cart);
-      console.log("ตรวจสอบตะกร้า :", cartIds);
-      fetchProductData(productIds);
-      fetchcolorData(colorIds);
+      const groupedProducts = {};
+      filteredResults.forEach((doc) => {
+        const key = `${doc.color_id.id}_${doc.product_id.id}_${doc.price}`;
+        if (!groupedProducts[key]) {
+          groupedProducts[key] = {
+            ...doc,
+            amount: 1,
+          };
+        } else {
+          groupedProducts[key].amount += 1;
+        }
+      });
+
+      setGroupedProductData(Object.values(groupedProducts));
+    } catch (error) {
+      console.error("Error searching data:", error);
     }
-  };
+  }, 500);
 
+  // กำหนดเวลา debounce ที่คุณต้องการ
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchUser(term);
+  };
   //ดึงสี
-  const fetchcolorData = async (selectedColorIds) => {
-    const collection = "colors";
-    const { result: querySnapshot, error } = await getCollection(collection);
-
-    if (error) {
-      console.error("Error fetching collection:", error);
-    } else {
-      const data = [];
-
-      querySnapshot.forEach((doc) => {
-        const colorId = doc.id;
-
-        if (selectedColorIds.includes(colorId)) {
-          console.log("Matching color found:", doc.data());
-          data.push({ id: colorId, ...doc.data() });
-        }
-      });
-
-      setColorData(data);
-    }
-  };
-
-  //ดึงสินค้า
-  const fetchProductData = async (selectedProductIds) => {
-    const collection = "products";
-
-    const { result: querySnapshot, error } = await getCollection(collection);
-
-    if (error) {
-      console.error("Error fetching collection:", error);
-    } else {
-      const data = [];
-
-      querySnapshot.forEach((doc) => {
-        const productId = doc.id;
-
-        if (selectedProductIds.includes(productId)) {
-          console.log("Matching product found:", doc.data());
-          data.push({ id: productId, ...doc.data() });
-        }
-      });
-      setProductData(data);
-    }
-  };
 
   // บวก ลบ
   const [amount, setAmount] = React.useState(0);
@@ -177,6 +159,20 @@ export default function Cart() {
     }
   }, [cartData]);
 
+  React.useEffect(() => {
+    if (groupedProductData && groupedProductData.length > 0) {
+      let totalQuantity = 0;
+      let total = 0;
+
+      groupedProductData.forEach((item) => {
+        totalQuantity += item.amount;
+        total += item.amount * item.price;
+      });
+
+      setTotalQuantity(totalQuantity);
+      setTotal(total);
+    }
+  }, [groupedProductData]);
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
@@ -240,7 +236,7 @@ export default function Cart() {
           >
             <Box sx={{ p: 3, width: "70vw" }}>
               <Grid container spacing={2}>
-                {cartData && cartData.length > 0 ? (
+                {documentData && documentData.length > 0 ? (
                   <>
                     <Grid item xs={12} md={9}>
                       <Typography
@@ -261,15 +257,20 @@ export default function Cart() {
                               <TableCell>รูปภาพ</TableCell>
                               <TableCell>สินค้า</TableCell>
                               <TableCell>สี</TableCell>
+                              <TableCell>ขนาด</TableCell>
                               <TableCell>ราคา(บาท)</TableCell>
                               <TableCell>จำนวน</TableCell>
                               <TableCell></TableCell>
                             </TableRow>
                           </TableHead>
-                          {productData &&
-                            productData.map((item, index) => (
-                              <TableBody key={index}>
+                          {groupedProductData &&
+                            groupedProductData.map((item, index) => {
+                              const product = productData.find(
+                                (p) => p.id === item.product_id.id
+                              );
+                              return (
                                 <TableRow
+                                  key={index}
                                   sx={{
                                     "&:last-child td, &:last-child th": {
                                       border: 0,
@@ -277,73 +278,39 @@ export default function Cart() {
                                   }}
                                 >
                                   <TableCell component="th" scope="row">
-                                    <img
-                                      src={item.img}
-                                      alt={item.name}
-                                      width={60}
-                                      height={60}
-                                    />
+                                    {product && (
+                                      <img
+                                        src={product.img}
+                                        alt={product.name}
+                                        width={60}
+                                        height={60}
+                                      />
+                                    )}
                                   </TableCell>
-                                  <TableCell>{item.name}</TableCell>
+                                  <TableCell>{product.name}</TableCell>
                                   <TableCell>
-                                    {colorData &&
-                                      colorData
-                                        .filter(
+                                    <Box
+                                      sx={{
+                                        width: 50,
+                                        height: 50,
+                                        bgcolor: colorData.find(
                                           (color) =>
-                                            color.id ===
-                                            cartData[index].color_id
-                                        )
-                                        .map((filteredColor, colorIndex) => {
-                                          return (
-                                            <Box
-                                              key={colorIndex}
-                                              sx={{
-                                                width: "50px",
-                                                height: "50px",
-                                                bgcolor: filteredColor.code,
-                                              }}
-                                            ></Box>
-                                          );
-                                        })}
+                                            color.id === item.color_id.id
+                                        ).code,
+                                      }}
+                                    ></Box>
                                   </TableCell>
-                                  <TableCell>
-                                    ฿
-                                    {cartData &&
-                                      format(
-                                        cartData
-                                          .filter(
-                                            (cartItem) =>
-                                              cartItem.product_id === item.id
-                                          )
-                                          .reduce(
-                                            (totalPrice, carts) =>
-                                              totalPrice +
-                                              carts.price * carts.amount,
-                                            0
-                                          )
-                                      )}
-                                  </TableCell>
-                                  <TableCell>
-                                    {cartData &&
-                                      cartData
-                                        .filter(
-                                          (cartItem) =>
-                                            cartItem.product_id === item.id
-                                        )
-                                        .reduce(
-                                          (totalAmount, carts) =>
-                                            totalAmount + carts.amount,
-                                          0
-                                        )}
-                                  </TableCell>
+                                  <TableCell>{item.size}</TableCell>
+                                  <TableCell>฿{format(item.price)}</TableCell>
+                                  <TableCell>{item.amount}</TableCell>
                                   <TableCell>
                                     <IconButton>
                                       <DeleteOutlineIcon />
                                     </IconButton>
                                   </TableCell>
                                 </TableRow>
-                              </TableBody>
-                            ))}
+                              );
+                            })}
                         </Table>
                       </TableContainer>
                     </Grid>
@@ -360,17 +327,9 @@ export default function Cart() {
                           >
                             สรุปรายการสั่งซื้อ
                           </Typography>
-                          {productData &&
-                            productData.map((item, index) => (
-                              <Typography
-                                key={index}
-                                gutterBottom
-                                variant="h8"
-                                component="div"
-                              >
-                                {item.name}
-                              </Typography>
-                            ))}
+                          <Typography>
+                            ยอดรวมสินค้า ({totalQuantity} ชิ้น)
+                          </Typography>
                           <hr />
                           <Box
                             sx={{
@@ -383,7 +342,7 @@ export default function Cart() {
                               variant="h8"
                               component="div"
                             >
-                              ยอดรวมสินค้า
+                              ยอดรวมสุทธิ
                             </Typography>
                             <Typography
                               gutterBottom

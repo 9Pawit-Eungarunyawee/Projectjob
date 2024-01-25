@@ -15,6 +15,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
+
 import LogoutIcon from "@mui/icons-material/Logout";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -24,7 +25,7 @@ import { useAuthContext } from "@/context/AuthContext";
 export default function Sidebar() {
   const [activeLink, SetActiveLink] = useState("");
   const { role } = useAuthContext();
-  console.log(role)
+  console.log(role);
   const router = useRouter();
   useEffect(() => {
     SetActiveLink(router.pathname);
@@ -278,32 +279,23 @@ export default function Sidebar() {
               </Link>
             </li>
             <li>
-              {/* <Link
-                href="/"
+              <Box
                 style={{
                   textDecoration: "none",
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e) => SetActiveLink("/employee")}
+                onClick={handleLogout}
               >
-                <Box
-                  sx={
-                    activeLink === "/employee" ? styles.BoxActive : styles.Box
-                  }
-                >
+                <Box sx={styles.Box}>
                   <Typography variant="menu">
-                    <PersonIcon sx={{ pr: 2 }} />
-                    จัดการพนักงาน
+                    <LogoutIcon sx={{ pr: 2 }} />
+                    ออกจากระบบ
                   </Typography>
                 </Box>
-              </Link> */}
-              <Button onClick={handleLogout}>
-                <Box>
-                  <Typography variant="menu">ออกจากระบบ</Typography>
-                </Box>
-              </Button>
+              </Box>
             </li>
+            
           </ul>
         </Box>
       </Box>

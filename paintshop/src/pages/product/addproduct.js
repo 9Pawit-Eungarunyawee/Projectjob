@@ -17,6 +17,7 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -51,6 +52,10 @@ export default function AddProduct() {
       },
     },
   });
+  const goBack = () => {
+    window.history.back();
+  };
+  
   const handleStatusChange = (e) => {
     setStatus(e.target.checked);
   };
@@ -70,11 +75,21 @@ export default function AddProduct() {
   };
 
   const removeInputSet = (index) => {
-    const newInputSets = [...productSizes];
-    newInputSets.splice(index, 1); // ลบชุดที่มีดัชนี index
-    setProductSizes(newInputSets);
+    
+    if (productSizes.length > 1) {
+      const newInputSets = [...productSizes];
+      newInputSets.splice(index, 1); // ลบชุดที่มีดัชนี index
+      setProductSizes(newInputSets);
+      
+    }else if(productSizes.length <= 1){
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ต้องมีรูปแบบสินค้าอย่างน้อย 1 รูปแบบ
+        </Alert>
+      );
+      setOpen(true);
+    }
   };
-
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -153,10 +168,26 @@ export default function AddProduct() {
   return (
     <Layout>
       <ThemeProvider theme={theme}>
-        <Typography sx={{ mt: 5 }}>เพิ่มสินค้า</Typography>
+        
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           {alert}
         </Snackbar>
+        <Typography sx={{ fontSize: "2rem", fontWeight: "600" ,mt:4}}>
+          เพิ่มสินค้า
+        </Typography>
+        <Button
+          sx={{
+            color: "#018294",
+            bgcolor: "white",
+            fontWeight: "bold",
+            borderRadius: "50px",
+            boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+          }}
+          onClick={goBack}
+        >
+          <ArrowBackOutlinedIcon />
+          <Typography> ย้อนกลับ</Typography>
+        </Button>
         <Grid
           container
           spacing={0}
@@ -271,10 +302,29 @@ export default function AddProduct() {
                   size="small"
                   sx={{ mt: 1, mb: 1 }}
                 />
-
+              
+                  <Typography> รูปแบบสินค้า: </Typography>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ mr: 2, mb: 2, mt: 2 ,width:"200px"}}
+                    onClick={addInputSet}
+                  >
+                    เพิ่มรูปแบบสินค้า
+                  </Button>
+              
                 {productSizes.map((productSizes, index) => (
-                  <div key={index}>
-                    <Typography> รูปแบบสินค้า: </Typography>
+                  <Box
+                    key={index}
+                    sx={{
+                      borderRadius:"10px",
+                      mb:3,
+                      p:2,
+                      boxShadow:
+                        "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
+                    }}
+                  >
+                    <Typography> รูปแบบที่:{index + 1} </Typography>
                     <TextField
                       value={productSizes.size}
                       onChange={(e) => handleInputChange(e, index, "size")}
@@ -368,17 +418,9 @@ export default function AddProduct() {
                     >
                       ลบ
                     </Button>
-                  </div>
+                  </Box>
                 ))}
 
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ mr: 2, mb: 2, mt: 2 }}
-                  onClick={addInputSet}
-                >
-                  เพิ่มรูปแบบสินค้า
-                </Button>
                 <Box sx={{ textAlign: "left" }}>
                   <Typography sx={{ mb: 1 }}>รูปภาพสินค้า:</Typography>
                   <Box>

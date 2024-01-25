@@ -2,7 +2,7 @@ import React from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import firebase_app from "@/firebase/config";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop, CircularProgress, Typography } from "@mui/material";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -51,10 +51,15 @@ export const AuthContextProvider = ({ children }) => {
       {loading ? (
         <div>
           <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{
+              color: "#fff",
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+              backgroundColor: "#018294", // สีฟ้าใส
+            }}
             open={true}
           >
             <CircularProgress color="inherit" />
+            <Typography sx={{m:2}}>กำลังโหลด...</Typography>
           </Backdrop>
         </div>
       ) : (

@@ -10,13 +10,8 @@ import Image from "next/image";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 import { use, useEffect, useState } from "react";
 import getDoument, { getCollection, getUser } from "@/firebase/getData";
-import {
-  Alert,
-  Box,
-  Button,
-  Snackbar,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import { Delete, EditNotifications } from "@mui/icons-material";
 import { deleteData, restoreData } from "@/firebase/addData";
 
@@ -40,6 +35,9 @@ export default function History() {
       border: 0,
     },
   }));
+  const goBack = () => {
+    window.history.back();
+  };
   const theme = createTheme({
     palette: {
       primary: {
@@ -75,7 +73,6 @@ export default function History() {
         }));
       setDocumentData(productData);
     }
-    
   };
 
   function createData(No, id, img, p_name, deleteAt, deleteBy) {
@@ -102,7 +99,6 @@ export default function History() {
   };
 
   const handleDelete = async (id) => {
-    
     const result = await deleteData("products", id);
     fetchData();
     if (result) {
@@ -152,11 +148,25 @@ export default function History() {
         {alert}
       </Snackbar>
       <ThemeProvider theme={theme}>
-        <Box >
+        <Box>
           <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
             <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
               ประวัติการลบ
             </Typography>
+            <Button
+              sx={{
+                color: "#018294",
+                bgcolor: "white",
+                fontWeight: "bold",
+                borderRadius: "50px",
+                boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                mb:2
+              }}
+              onClick={goBack}
+            >
+              <ArrowBackOutlinedIcon />
+              <Typography> ย้อนกลับ</Typography>
+            </Button>
             <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
               <Table sx={{ minWidth: 700 }}>
                 <TableHead>

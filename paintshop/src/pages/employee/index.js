@@ -23,7 +23,7 @@ export default function Employee() {
   const [count, setCount] = React.useState(0);
   const router = useRouter();
   function handleAdd() {
-    router.push("/employee/edit");
+    router.push("/employee/addemployee");
   }
 
   React.useEffect(() => {
@@ -79,7 +79,7 @@ export default function Employee() {
               sx={{ height: "100%", width: "100%", pt: 1 }}
             >
               <Grid item xs={12} sx={{ mt: 5 }}>
-                <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
+                <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
                   จัดการพนักงาน
                 </Typography>
                 <Box sx={{ mt: 1 }}>

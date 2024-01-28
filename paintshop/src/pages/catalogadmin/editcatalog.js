@@ -15,6 +15,7 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
+import { debounce } from "lodash";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
@@ -123,7 +124,16 @@ export default function EditCatalog() {
     reader.readAsDataURL(file);
     // console.log(imageUrl);
   };
+  const handleDebouncedColor = debounce((value) => {
+    // ทำงานที่ต้องการเมื่อเปลี่ยนแปลงหลังจาก debounce
+    setCode(value);
+  }, 500);
 
+  const handleInputColor = (e) => {
+    const inputValue = e.target.value;
+    // เรียกใช้ debounce function เมื่อมีการเปลี่ยนแปลง
+    handleDebouncedColor(inputValue);
+  };
   const handleForm = async (event) => {
     event.preventDefault();
     const catalog = {
@@ -359,8 +369,9 @@ export default function EditCatalog() {
                       value={code}
                       label="โค้ดสี"
                       size="small"
+                      type="color"
                       sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setCode(e.target.value)}
+                      onChange={handleInputColor}
                       placeholder="#RRGGBB หรือ #RGB"
                     />
                     <TextField

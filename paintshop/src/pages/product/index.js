@@ -97,7 +97,7 @@ export default function Product() {
       user_id: user.uid,
     };
     const result = await softDeleteData("products", data);
-    handleSearch("");w
+    handleSearch("");
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>

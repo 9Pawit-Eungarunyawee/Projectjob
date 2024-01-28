@@ -21,13 +21,14 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ProfileDiaLog from "./profile-dialog";
-
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 export default function Profile() {
   const router = useRouter();
   const employeeData = JSON.parse(router.query.employeeData);
   const [profileUrl, setProfileUrl] = useState(
     "/../public/default-profile.jpg"
   );
+
   const [name, setName] = useState("");
   const [tel, setTel] = useState("");
   const [addresses, setaddresses] = useState([]);
@@ -65,6 +66,9 @@ export default function Profile() {
     },
   });
 
+   const goBack = () => {
+    window.history.back();
+  };
   useEffect(() => {
     fetchData();
   }, []);
@@ -157,6 +161,19 @@ export default function Profile() {
         <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5 }}>
           ข้อมูลพนักงาน
         </Typography>
+        <Button
+          sx={{
+            color: "#018294",
+            bgcolor: "white",
+            fontWeight: "bold",
+            borderRadius: "50px",
+            boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+          }}
+          onClick={goBack}
+        >
+          <ArrowBackOutlinedIcon />
+          <Typography> ย้อนกลับ</Typography>
+        </Button>
         <ThemeProvider theme={style}>
           <Grid
             container
@@ -181,7 +198,7 @@ export default function Profile() {
                 alt="profile"
                 width={120}
                 height={120}
-                style={{ borderRadius: "100px" }}
+                style={{ borderRadius: "100px",objectFit:"cover" }}
               ></Image>
             </Grid>
             <Grid
@@ -270,7 +287,7 @@ export default function Profile() {
                 <Typography variant="text">ตำแหน่ง:</Typography>
               </Box>
               <Box>
-                <Typography variant="data">{showPosition}</Typography>
+                <Typography variant="data">{showPosition===""? "ยังไม่กำหนด":showPosition}</Typography>
               </Box>
             </Grid>
             <Grid
@@ -286,7 +303,7 @@ export default function Profile() {
                 <Typography variant="text">เงินเดือน:</Typography>
               </Box>
               <Box>
-                <Typography variant="data">{formattedInt}</Typography>
+                <Typography variant="data">{showSalary===""? "ยังไม่กำหนด" :formattedInt}</Typography>
               </Box>
             </Grid>
             <Grid

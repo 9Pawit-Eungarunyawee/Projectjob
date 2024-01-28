@@ -44,7 +44,7 @@ export default function CardEmployee(props) {
                 alt="profile"
                 width={60}
                 height={60}
-                style={{ borderRadius: "100px" }}
+                style={{ borderRadius: "100px",objectFit:"cover" }}
               ></Image>
               <Typography sx={{ pl: 2, fontWeight: 600, fontSize: "1.2vw" }}>
                 {data.name}

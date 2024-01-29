@@ -49,7 +49,7 @@ export default function Profile() {
         email: doc.data().email,
         tel: doc.data().tel,
       }));
-      console.log("ทดสอบรหัสผู้ใช้", uid);
+
       setUserData(user);
     }
   };
@@ -57,7 +57,6 @@ export default function Profile() {
     fetchAllData();
     
   };
-  console.log("ทดสอบผู้ใช้", userData);
   return (
     <>
       <Homelayout>

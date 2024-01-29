@@ -11,6 +11,14 @@ import {
   CardContent,
   createTheme,
   ThemeProvider,
+  TableContainer,
+  TableCell,
+  TableRow,
+  TableHead,
+  Paper,
+  Table,
+  IconButton,
+  TableBody,
 } from "@mui/material";
 import Link from "next/link";
 import Addressdialog from "./dialog";
@@ -20,18 +28,29 @@ import { useRouter } from "next/router";
 import { debounce } from "lodash";
 import { useAuthContext } from "@/context/AuthContext";
 import Editaddress from "./editdialog";
+import { getColorDetails, getProductDetails } from "@/firebase/getData";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
 export default function Selectaddress() {
   const [addressData, setAddressData] = React.useState(null);
+  const [documentData, setDocumentData] = React.useState(null);
+  const [cartData, setCartData] = React.useState(null);
+  const [productData, setProductData] = React.useState(null);
+  const [colorData, setColorData] = React.useState(null);
+  const [total, setTotal] = React.useState(0);
+  const [totalQuantity, setTotalQuantity] = React.useState(0);
+  const [groupedProductData, setGroupedProductData] = React.useState(null);
   const router = useRouter();
   const user = useAuthContext();
- 
 
   const handleClickOpen = () => {
     setOpen(true);
+  };
+
+  const format = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
   const theme = createTheme({
     palette: {
@@ -56,6 +75,48 @@ export default function Selectaddress() {
     // console.log(documentData);
   }, [addressData]);
 
+  const debouncedSearchCart = debounce(async (term) => {
+    const uid = user.user.uid;
+    console.log("Fetched data:", {
+      documentData,
+      productData,
+      colorData,
+      groupedProductData,
+    });
+    try {
+      const collectionName = "cart";
+      const field = "user_id";
+      const results = await searchUser(collectionName, field, term);
+      const filteredResults = results.filter((doc) => doc.user_id == uid);
+      const productIds = filteredResults.map((doc) => doc.product_id.id);
+      const colorIds = filteredResults.map((doc) => doc.color_id.id);
+      console.log("Product IDs:", productIds);
+      console.log("Color IDs:", colorIds);
+      const productDetails = await getProductDetails(productIds);
+      const colorDetails = await getColorDetails(colorIds);
+      setColorData(colorDetails);
+      setProductData(productDetails);
+      setDocumentData(filteredResults);
+
+      const groupedProducts = {};
+      filteredResults.forEach((doc) => {
+        const key = `${doc.color_id.id}_${doc.product_id.id}_${doc.price}`;
+        if (!groupedProducts[key]) {
+          groupedProducts[key] = {
+            ...doc,
+            amount: 1,
+          };
+        } else {
+          groupedProducts[key].amount += 1;
+        }
+      });
+
+      setGroupedProductData(Object.values(groupedProducts));
+    } catch (error) {
+      console.error("Error searching data:", error);
+    }
+  }, 500);
+
   const debouncedSearchUser = debounce(async (term) => {
     const uid = user.user.uid;
     try {
@@ -72,7 +133,24 @@ export default function Selectaddress() {
   const handleSearch = (term) => {
     setSearchTerm(term);
     debouncedSearchUser(term);
+    debouncedSearchCart(term);
   };
+
+  React.useEffect(() => {
+    if (groupedProductData && groupedProductData.length > 0) {
+      let totalQuantity = 0;
+      let total = 0;
+
+      groupedProductData.forEach((item) => {
+        totalQuantity += item.amount;
+        total += item.amount * item.price;
+      });
+
+      setTotalQuantity(totalQuantity);
+      setTotal(total);
+    }
+  }, [groupedProductData]);
+
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
@@ -190,8 +268,10 @@ export default function Selectaddress() {
                                 </Grid>
                                 <Grid item xs={12} sm={9}>
                                   <Typography>
-                                    {data.address} อำเภอ {data.amphure} ตำบล{" "}
-                                    {data.tambon} จังหวัด {data.province}
+                                    {data.addresses[0].address} อำเภอ{" "}
+                                    {data.addresses[0].amphure} ตำบล
+                                    {data.addresses[0].tambon} จังหวัด{" "}
+                                    {data.addresses[0].province}
                                   </Typography>
                                 </Grid>
                               </Grid>
@@ -200,8 +280,70 @@ export default function Selectaddress() {
                       </CardContent>
                     </Card>
                   </Box>
+                  <Box sx={{ mt: 2, mb: 2 }}>
+                    <Typography>รายการสั่งซื้อ</Typography>
+                    <TableContainer component={Paper}>
+                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>รูปภาพ</TableCell>
+                            <TableCell>สินค้า</TableCell>
+                            <TableCell>สี</TableCell>
+                            <TableCell>ขนาด</TableCell>
+                            <TableCell>ราคา(บาท)</TableCell>
+                            <TableCell>จำนวน</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {groupedProductData &&
+                            groupedProductData.map((item, index) => {
+                              const product = productData.find(
+                                (p) => p.id === item.product_id.id
+                              );
+                              return (
+                                <TableRow
+                                  key={index}
+                                  sx={{
+                                    "&:last-child td, &:last-child th": {
+                                      border: 0,
+                                    },
+                                  }}
+                                >
+                                  <TableCell component="th" scope="row">
+                                    {product && (
+                                      <img
+                                        src={product.img}
+                                        alt={product.name}
+                                        width={60}
+                                        height={60}
+                                      />
+                                    )}
+                                  </TableCell>
+                                  <TableCell>{product.name}</TableCell>
+                                  <TableCell>
+                                    <Box
+                                      sx={{
+                                        width: 50,
+                                        height: 50,
+                                        bgcolor: colorData.find(
+                                          (color) =>
+                                            color.id === item.color_id.id
+                                        ).code,
+                                      }}
+                                    ></Box>
+                                  </TableCell>
+                                  <TableCell>{item.size}</TableCell>
+                                  <TableCell>฿{format(item.price)}</TableCell>
+                                  <TableCell>{item.amount}</TableCell>
+                                </TableRow>
+                              );
+                            })}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} md={3}>
                   <Card>
                     <CardContent>
                       {" "}
@@ -213,6 +355,9 @@ export default function Selectaddress() {
                       >
                         สรุปรายการสั่งซื้อ
                       </Typography>
+                      <Typography>
+                        ยอดรวมสินค้า ({totalQuantity} ชิ้น)
+                      </Typography>
                       <hr />
                       <Box
                         sx={{
@@ -223,6 +368,9 @@ export default function Selectaddress() {
                         <Typography gutterBottom variant="h8" component="div">
                           ยอดรวมสุทธิ
                         </Typography>
+                        <Typography gutterBottom variant="h8" component="div">
+                          ฿{format(total)}
+                        </Typography>
                       </Box>
                       <Button
                         variant="contained"
@@ -230,7 +378,7 @@ export default function Selectaddress() {
                         fullWidth
                         onClick={handleConfirmOrder}
                       >
-                        ยืนยันคำสั่งซื้อ
+                        ชำระเงิน
                       </Button>
                     </CardContent>
                   </Card>

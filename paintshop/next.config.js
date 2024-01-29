@@ -12,6 +12,8 @@ const nextConfig = {
       "cx.lnwfile.com"
     ],
   },
+  distDir: "nextjs",
+  output: "export",
 };
 
 module.exports = nextConfig;

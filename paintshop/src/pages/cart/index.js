@@ -29,7 +29,6 @@ import {
   getCollection,
   getColorDetails,
   getProductDetails,
-  updateAmount,
 } from "../../firebase/getData";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
@@ -136,21 +135,6 @@ export default function Cart() {
   // บวก ลบ
   const [amount, setAmount] = React.useState(0);
 
-  const handleIncrement = () => {
-    const newAmount = amount + 1;
-    setAmount(newAmount);
-    console.log("Updating amount for cartIds:", cartIds);
-    updateAmount(cartIds, newAmount);
-  };
-
-  const handleDecrement = () => {
-    if (amount > 0) {
-      const newAmount = amount - 1;
-      setAmount(newAmount);
-      console.log("Updating amount for cartIds:", cartIds);
-      updateAmount(cartIds, newAmount);
-    }
-  };
 
   React.useEffect(() => {
     if (cartData) {

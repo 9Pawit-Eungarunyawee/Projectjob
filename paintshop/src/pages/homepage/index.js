@@ -25,7 +25,6 @@ import SensorDoorOutlinedIcon from "@mui/icons-material/SensorDoorOutlined";
 import Homelayout from "@/components/homelayout";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Designcard from "../designcard";
-import Colorshade from "../colorshade";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { getCollection, getProduct } from "../../firebase/getData";
@@ -342,7 +341,6 @@ export default function Homepage() {
                 </CustomTabPanel>
               ))}
           </Box>
-          <Colorshade />
         </ThemeProvider>
       </Container>
     </Homelayout>

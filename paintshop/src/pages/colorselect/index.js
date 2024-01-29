@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import { getCollection } from "../../firebase/getData";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-export default function colorselect() {
+export default function Colorselect() {
   const [value, setValue] = React.useState(0);
   const router = useRouter();
   const [documentData, setDocumentData] = React.useState(null);

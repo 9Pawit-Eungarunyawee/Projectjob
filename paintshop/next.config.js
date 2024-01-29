@@ -11,6 +11,7 @@ const nextConfig = {
       "upload.wikimedia.org",
       "cx.lnwfile.com"
     ],
+    unoptimized:true
   },
   distDir: "nextjs",
   output: "export",

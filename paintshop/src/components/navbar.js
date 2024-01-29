@@ -29,10 +29,12 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { getAuth, signOut } from "firebase/auth";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { getUser } from "@/firebase/getData";
 
 let settings = ["โปรไฟล์", "ออกจากระบบ"];
 
 export default function Navbar() {
+  const [userData, setUserData] = React.useState(null);
   const { role, user } = useAuthContext();
   if (role == "admin") {
     settings = ["โปรไฟล์", "แดชบอร์ด", "ออกจากระบบ"];
@@ -47,7 +49,27 @@ export default function Navbar() {
   const [activeLink, SetActiveLink] = React.useState("");
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  React.useEffect(() => {
+    fetchAllData();
+  }, []);
+  const fetchAllData = async () => {
+    const collection = "users";
+    const uid = user.uid;
+    const { result, error } = await getUser(collection, uid);
 
+    if (error) {
+      console.error("Error fetching collection:", error);
+    } else {
+      const user = result.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        email: doc.data().email,
+        tel: doc.data().tel,
+        img: doc.data().profileUrl,
+      }));
+      setUserData(user);
+    }
+  };
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -78,9 +100,9 @@ export default function Navbar() {
     } else if (setting == "โปรไฟล์") {
       router.push("/account/profile");
     } else if (setting == "แดชบอร์ด") {
-      if(role == "admin"){
+      if (role == "admin") {
         router.push("/dashboard");
-      }else{
+      } else {
         router.push("/product");
       }
     }
@@ -206,11 +228,16 @@ export default function Navbar() {
                 </IconButton>
               </Link>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  src="/profile.png"
-                  alt="profile"
-                  sx={{ width: 32, height: 32, ml: 1 }}
-                />
+                {userData &&
+                  userData.map((item, index) => (
+                    <Box key={index}>
+                      <Avatar
+                        src={item.img}
+                        alt="profile"
+                        sx={{ width: 32, height: 32, ml: 1 }}
+                      />
+                    </Box>
+                  ))}
               </IconButton>
               <Menu
                 sx={{ mt: "45px" }}

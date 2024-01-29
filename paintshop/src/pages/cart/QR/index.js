@@ -14,20 +14,21 @@ import { useRouter } from "next/router";
 import QRCode from "qrcode.react";
 import Image from "next/image";
 import { useAuthContext } from "@/context/AuthContext";
-import  addOrder  from "@/firebase/addOrder";
+import addOrder, { deleteCartItem } from "@/firebase/addOrder";
 const generate = require("promptpay-qr");
 export default function QR() {
   const router = useRouter();
   const user = useAuthContext();
   const total = JSON.parse(router.query.total);
-  const cartId = JSON.parse(router.query.cartId);
+  const productIDs = JSON.parse(router.query.productIDs);
+  const cartID = JSON.parse(router.query.cartId);
+  console.log("Cart ID:", cartID);
   const [price, setPrice] = React.useState(total);
   const [phoneNumber, setphoneNumber] = React.useState("0960868037");
   const [qrCode, setqrCode] = React.useState("null");
   const [countdown, setCountdown] = React.useState(5 * 60);
   const [imageUrl, setImageUrl] = React.useState("");
   const [alert, setAlert] = React.useState(null);
-console.log("cartId",cartId)
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
@@ -90,33 +91,52 @@ console.log("cartId",cartId)
       },
     },
   });
-  const updateorder = async (cart_id) => {
+  const updateorder = async (product_id) => {
     const currentDate = new Date();
     const order = {
-      cart_id: cart_id, // ใช้อ้างอิง
+      product_id: product_id,
       user_id: user.user.uid,
-      price: price, 
+      price: price,
       date: currentDate,
       img: imageUrl,
-      status:"disapprove"
+      status: "disapprove",
     };
-    const result = await addOrder("orders", order);
-    if (result) {
-      setAlert(
-        <Alert severity="success" onClose={handleClose}>
-          เพิ่มสินค้าลงตะกร้าเรียบร้อย
-        </Alert>
-      );
-      setOpen(true);
+
+    // Delete cart item first
+    const deleteCartResult = await deleteCartItem(cartID);
+
+    if (deleteCartResult.result) {
+      // Cart item deleted successfully, now add the order
+      const orderResult = await addOrder("orders", order);
+
+      if (orderResult.result) {
+        // Order added successfully
+        setAlert(
+          <Alert severity="success" onClose={handleClose}>
+            ชำระเงินเสร็จสิ้น
+          </Alert>
+        );
+        setOpen(true);
+      } else {
+        // Error adding order
+        setAlert(
+          <Alert severity="error" onClose={handleClose}>
+            ผิดพลาด! ไม่สามารถชำระเงิน
+          </Alert>
+        );
+        setOpen(true);
+      }
     } else {
+      // Error deleting cart item
       setAlert(
         <Alert severity="error" onClose={handleClose}>
-          ผิดพลาด! ไม่สามารถเพิ่มสินค้าลงตะกร้าได้
+          ผิดพลาด! ไม่สามารถลบสินค้าในตะกร้าได้
         </Alert>
       );
       setOpen(true);
     }
   };
+
   const [open, setOpen] = React.useState(false);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -144,7 +164,7 @@ console.log("cartId",cartId)
                 direction="column"
                 alignItems="center"
                 sx={{
-                  mt:2,
+                  mt: 2,
                   p: 3,
                   pt: 2,
                   bgcolor: "#FFF",
@@ -205,7 +225,7 @@ console.log("cartId",cartId)
                   <Button
                     variant="contained"
                     fullWidth
-                    onClick={() => updateorder(cartId)}
+                    onClick={() => updateorder(productIDs)}
                   >
                     ยืนยัน
                   </Button>

@@ -60,9 +60,15 @@ export default function Selectaddress() {
     },
   });
   const handleConfirmOrder = () => {
+    const productIDs = groupedProductData.map((item) => item.product_id.id);
+    const cartID = documentData.map((item)=>item.id)
     router.push({
       pathname: "/cart/QR",
-      //   query: { cartId: JSON.stringify(cartIds), total },
+      query: {
+        total,
+        productIDs: JSON.stringify(productIDs),
+        cartId: JSON.stringify(cartID),
+      },
     });
   };
   const [searchTerm, setSearchTerm] = React.useState("");

@@ -87,7 +87,7 @@ export default function Login() {
                   }}
                 >
                   <Image
-                    src="/../public/logo2.png"
+                    src="/logo2.png"
                     width={300}
                     height={300}
                     alt="loginbanner"

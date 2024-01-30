@@ -266,8 +266,7 @@ export default function Homepage() {
                             pb: 2,
                           }}
                         >
-                          สีสำหรับทาปูนโดยเฉพาะ ใช้สำหรับงานคอนกรีต
-                          ทาเคลือบพื้นปูน ผนังปูน ฝ้าเพดาน และกระเบื้องแผ่นเรียบ
+                          {item.detail}
                         </Typography>
                         <Button
                           sx={{

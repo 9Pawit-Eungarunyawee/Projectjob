@@ -117,6 +117,7 @@ export default function QR() {
           </Alert>
         );
         setOpen(true);
+        router.push("/homepage");
       } else {
         // Error adding order
         setAlert(
@@ -125,6 +126,7 @@ export default function QR() {
           </Alert>
         );
         setOpen(true);
+        
       }
     } else {
       // Error deleting cart item

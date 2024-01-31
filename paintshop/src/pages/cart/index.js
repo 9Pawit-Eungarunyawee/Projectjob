@@ -21,6 +21,7 @@ import {
   createTheme,
   ThemeProvider,
   Icon,
+  useMediaQuery,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -30,6 +31,7 @@ import {
   getColorDetails,
   getProductDetails,
 } from "../../firebase/getData";
+import CartDrawer from "./drawer";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import Link from "next/link";
@@ -47,14 +49,17 @@ function handleClick(event) {
 }
 
 export default function Cart() {
+  const shippingCost = 50;
   const router = useRouter();
   const [documentData, setDocumentData] = React.useState(null);
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
   const [colorData, setColorData] = React.useState(null);
+  const [producttotal, setProducttotal] = React.useState(0);
   const [total, setTotal] = React.useState(0);
   const [totalQuantity, setTotalQuantity] = React.useState(0);
   const user = useAuthContext();
+  const isMobile = useMediaQuery("(max-width:600px)");
   const handleConfirmOrder = () => {
     router.push({
       pathname: "/cart/selectaddress",
@@ -135,7 +140,6 @@ export default function Cart() {
   // บวก ลบ
   const [amount, setAmount] = React.useState(0);
 
-
   React.useEffect(() => {
     if (cartData) {
       const totalAmount = cartData.reduce((acc, item) => acc + item.amount, 0);
@@ -147,13 +151,14 @@ export default function Cart() {
     if (groupedProductData && groupedProductData.length > 0) {
       let totalQuantity = 0;
       let total = 0;
-
+      let producttotal = 0;
       groupedProductData.forEach((item) => {
         totalQuantity += item.amount;
-        total += item.amount * item.price;
+        producttotal += item.amount * item.price;
       });
-
+      total += producttotal + shippingCost;
       setTotalQuantity(totalQuantity);
+      setProducttotal(producttotal);
       setTotal(total);
     }
   }, [groupedProductData]);
@@ -298,55 +303,83 @@ export default function Cart() {
                         </Table>
                       </TableContainer>
                     </Grid>
-
-                    <Grid item xs={12} md={3}>
-                      <Card>
-                        <CardContent>
-                          {" "}
-                          <Typography
-                            gutterBottom
-                            variant="h5"
-                            component="div"
-                            sx={{ color: "#018294", fontWeight: "bold" }}
-                          >
-                            สรุปรายการสั่งซื้อ
-                          </Typography>
-                          <Typography>
-                            ยอดรวมสินค้า ({totalQuantity} ชิ้น)
-                          </Typography>
-                          <hr />
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
+                    {isMobile ? (
+                      <Grid item xs={12} md={12}>
+                        <CartDrawer />
+                      </Grid>
+                    ) : (
+                      <Grid item xs={12} md={3}>
+                        <Card>
+                          <CardContent>
+                            {" "}
                             <Typography
                               gutterBottom
-                              variant="h8"
+                              variant="h5"
                               component="div"
+                              sx={{ color: "#018294", fontWeight: "bold" }}
                             >
-                              ยอดรวมสุทธิ
+                              สรุปรายการสั่งซื้อ
                             </Typography>
-                            <Typography
-                              gutterBottom
-                              variant="h8"
-                              component="div"
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                              }}
                             >
-                              ฿{format(total)}
-                            </Typography>
-                          </Box>
-                          <Button
-                            variant="contained"
-                            sx={{ p: 1, bgcolor: "#FE616A" }}
-                            fullWidth
-                            onClick={handleConfirmOrder}
-                          >
-                            ยืนยันคำสั่งซื้อ
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </Grid>
+                              <Typography>
+                                {" "}
+                                ยอดรวมสินค้า ({totalQuantity} ชิ้น)
+                              </Typography>
+                              <Typography sx={{ fontWeight: "bold" }}>
+                                ฿{format(producttotal)}
+                              </Typography>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <Typography> ค่าจัดส่ง </Typography>
+                              <Typography sx={{ fontWeight: "bold" }}>
+                                ฿{shippingCost}
+                              </Typography>
+                            </Box>
+                            <hr />
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <Typography
+                                gutterBottom
+                                variant="h8"
+                                component="div"
+                              >
+                                ยอดรวมสุทธิ
+                              </Typography>
+                              <Typography
+                                gutterBottom
+                                variant="h8"
+                                component="div"
+                                sx={{ fontWeight: "bold" }}
+                              >
+                                ฿{format(total)}
+                              </Typography>
+                            </Box>
+                            <Button
+                              variant="contained"
+                              sx={{ p: 1, bgcolor: "#FE616A" }}
+                              fullWidth
+                              onClick={handleConfirmOrder}
+                            >
+                              ยืนยันคำสั่งซื้อ
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    )}
                   </>
                 ) : (
                   <Grid

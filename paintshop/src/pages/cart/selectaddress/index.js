@@ -19,11 +19,13 @@ import {
   Table,
   IconButton,
   TableBody,
+  useMediaQuery,
 } from "@mui/material";
 import Link from "next/link";
 import Addressdialog from "./dialog";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import searchUser from "@/firebase/searchData";
+import AddressDrawer from "./drawer";
 import { useRouter } from "next/router";
 import { debounce } from "lodash";
 import { useAuthContext } from "@/context/AuthContext";
@@ -34,6 +36,8 @@ function handleClick(event) {
   console.info("You clicked a breadcrumb.");
 }
 export default function Selectaddress() {
+  const shippingCost = 50;
+  const [producttotal, setProducttotal] = React.useState(0);
   const [addressData, setAddressData] = React.useState(null);
   const [documentData, setDocumentData] = React.useState(null);
   const [cartData, setCartData] = React.useState(null);
@@ -44,6 +48,7 @@ export default function Selectaddress() {
   const [groupedProductData, setGroupedProductData] = React.useState(null);
   const router = useRouter();
   const user = useAuthContext();
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -61,7 +66,7 @@ export default function Selectaddress() {
   });
   const handleConfirmOrder = () => {
     const productIDs = groupedProductData.map((item) => item.product_id.id);
-    const cartID = documentData.map((item)=>item.id)
+    const cartID = documentData.map((item) => item.id);
     router.push({
       pathname: "/cart/QR",
       query: {
@@ -146,13 +151,14 @@ export default function Selectaddress() {
     if (groupedProductData && groupedProductData.length > 0) {
       let totalQuantity = 0;
       let total = 0;
-
+      let producttotal = 0;
       groupedProductData.forEach((item) => {
         totalQuantity += item.amount;
-        total += item.amount * item.price;
+        producttotal += item.amount * item.price;
       });
-
+      total += producttotal + shippingCost;
       setTotalQuantity(totalQuantity);
+      setProducttotal(producttotal);
       setTotal(total);
     }
   }, [groupedProductData]);
@@ -349,46 +355,74 @@ export default function Selectaddress() {
                     </TableContainer>
                   </Box>
                 </Grid>
-                <Grid item xs={12} md={3}>
-                  <Card>
-                    <CardContent>
-                      {" "}
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        sx={{ color: "#018294", fontWeight: "bold" }}
-                      >
-                        สรุปรายการสั่งซื้อ
-                      </Typography>
-                      <Typography>
-                        ยอดรวมสินค้า ({totalQuantity} ชิ้น)
-                      </Typography>
-                      <hr />
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Typography gutterBottom variant="h8" component="div">
-                          ยอดรวมสุทธิ
+                {isMobile ? (
+                  <Grid item xs={12} md={12}>
+                    <AddressDrawer />
+                  </Grid>
+                ) : (
+                  <Grid item xs={12} md={3}>
+                    <Card>
+                      <CardContent>
+                        {" "}
+                        <Typography
+                          gutterBottom
+                          variant="h5"
+                          component="div"
+                          sx={{ color: "#018294", fontWeight: "bold" }}
+                        >
+                          สรุปรายการสั่งซื้อ
                         </Typography>
-                        <Typography gutterBottom variant="h8" component="div">
-                          ฿{format(total)}
-                        </Typography>
-                      </Box>
-                      <Button
-                        variant="contained"
-                        sx={{ p: 1, bgcolor: "#FE616A" }}
-                        fullWidth
-                        onClick={handleConfirmOrder}
-                      >
-                        ชำระเงิน
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography>
+                            {" "}
+                            ยอดรวมสินค้า ({totalQuantity} ชิ้น)
+                          </Typography>
+                          <Typography sx={{ fontWeight: "bold" }}>
+                            ฿{format(producttotal)}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography> ค่าจัดส่ง </Typography>
+                          <Typography sx={{ fontWeight: "bold" }}>
+                            ฿{shippingCost}
+                          </Typography>
+                        </Box>
+                        <hr />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography gutterBottom variant="h8" component="div">
+                            ยอดรวมสุทธิ
+                          </Typography>
+                          <Typography gutterBottom variant="h8" component="div">
+                            ฿{format(total)}
+                          </Typography>
+                        </Box>
+                        <Button
+                          variant="contained"
+                          sx={{ p: 1, bgcolor: "#FE616A" }}
+                          fullWidth
+                          onClick={handleConfirmOrder}
+                        >
+                          ชำระเงิน
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                )}
               </Grid>
             </Box>
           </Container>

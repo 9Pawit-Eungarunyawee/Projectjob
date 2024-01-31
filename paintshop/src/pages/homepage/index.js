@@ -159,6 +159,13 @@ export default function Homepage() {
       query: { catalogData: JSON.stringify(data) },
     });
   }
+  React.useEffect(() => {
+    if (documentData && documentData.length > 0) {
+      const initialCatalogId = documentData[0].id;
+      setSelectedCatalogId(initialCatalogId);
+    }
+  }, [documentData]);
+
   // Use useEffect to fetch product data when selectedCatalogId changes
   React.useEffect(() => {
     if (selectedCatalogId !== null) {
@@ -169,6 +176,11 @@ export default function Homepage() {
   console.log("แคตตาล็อกไอดี", selectedCatalogId);
   //ดึงสินค้า
   const fetchProductData = async (catalogId) => {
+    if (catalogId === null) {
+      // No need to fetch data when catalogId is null
+      return;
+    }
+
     const collection = "products";
     const { result: querySnapshot, error } = await getProduct(
       collection,
@@ -178,15 +190,18 @@ export default function Homepage() {
     if (error) {
       console.error("Error fetching collection:", error);
     } else {
-      const products = querySnapshot.docs.filter((doc) => !doc.data().delete).map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-        image: doc.data().img,
-      }));
+      const products = querySnapshot.docs
+        .filter((doc) => !doc.data().delete)
+        .map((doc) => ({
+          id: doc.id,
+          name: doc.data().name,
+          image: doc.data().img,
+        }));
       setProductData(products);
-      console.log("โปรดัก", productData);
+    
     }
   };
+  console.log("โปรดัก", productData);
   console.log("ทดสอบ value", value);
   React.useEffect(() => {
     fetchAllData();
@@ -201,8 +216,6 @@ export default function Homepage() {
     } else {
       const data = [];
       querySnapshot.forEach((doc) => {
-        console.log("Document ID:", doc.id);
-        console.log("Document data:", doc.data());
         data.push({ id: doc.id, ...doc.data() });
       });
       setDocumentData(data);
@@ -252,7 +265,7 @@ export default function Homepage() {
                 <CustomTabPanel value={value} index={index} key={index}>
                   <Grid container spacing={2}>
                     <Grid item xs={5}>
-                      <Box sx={{ display: { xs: "none", sm: "block" },}}>
+                      <Box sx={{ display: { xs: "none", sm: "block" } }}>
                         <Typography
                           variant="h4"
                           sx={{ pb: 2, color: "#018294" }}
@@ -327,7 +340,7 @@ export default function Homepage() {
                           border: "2px solid #018294",
                           color: "#018294",
                           ...styles.buttonHover,
-                          width:150,
+                          width: 150,
                           display: { xs: "flex", sm: "none" }, // Show on small screens
                         }}
                         onClick={() => handleBtn(item.id)}

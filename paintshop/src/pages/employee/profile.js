@@ -21,6 +21,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ProfileDiaLog from "./profile-dialog";
+import FireDialog from "./fire-dialog";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 export default function Profile() {
   const router = useRouter();
@@ -38,8 +39,10 @@ export default function Profile() {
   const [showSalary, setShowSalary] = useState("");
   const [showPosition, setShowPosition] = useState("");
   const [alert, setAlert] = useState(null);
-
-  const formattedInt = showSalary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const [isFormerEmployee, setIsFormerEmployee] = useState(false);
+  const formattedInt = showSalary
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   const style = createTheme({
     palette: {
       primary: {
@@ -66,7 +69,7 @@ export default function Profile() {
     },
   });
 
-   const goBack = () => {
+  const goBack = () => {
     window.history.back();
   };
   useEffect(() => {
@@ -80,6 +83,7 @@ export default function Profile() {
       console.error("Error fetching document:", error);
     } else if (result) {
       const userData = result.data();
+      setIsFormerEmployee(userData.isFormerEmployee);
       setName(userData.name);
       setEmail(userData.email);
       setTel(userData.tel);
@@ -99,8 +103,10 @@ export default function Profile() {
   //แก้ไขพนักงาน
   const handleForm = async (salary, position) => {
     const employeeUser = {
+      role:"employee",
       position: position,
       salary: salary,
+      isFormerEmployee: false,
     };
     const result = await editData("users", employeeData, employeeUser);
     if (result) {
@@ -120,7 +126,35 @@ export default function Profile() {
       setSnackbarOpen(true);
     }
   };
-
+  //เลิกจ้างพนักงาน
+  const handleFireForm = async () => {
+    const employeeUser = {
+      role: "user",
+      position: "",
+      salary: "",
+      isFormerEmployee: true,
+    };
+    const result = await editData("users", employeeData, employeeUser);
+    if (result) {
+      fetchData();
+      setAlert(
+        <Alert severity="success" onClose={handleSnackbarClose}>
+          เลิกจ้างสำเร็จ
+        </Alert>
+      );
+      setSnackbarOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleSnackbarClose}>
+          ผิดพลาด! ไม่สามารถเลิกจ้างได้
+        </Alert>
+      );
+      setSnackbarOpen(true);
+    }
+    setTimeout(() => {
+      goBack();
+    }, 500);
+  };
   const [open, setOpen] = useState(false);
   const [snackbaropen, setSnackbarOpen] = useState(false);
   const handleClickOpen = () => {
@@ -133,8 +167,15 @@ export default function Profile() {
     if (reason === "clickaway") {
       return;
     }
-
     setSnackbarOpen(false);
+  };
+
+  const [fireopen, setFireOpen] = useState(false);
+  const handleClickFireOpen = () => {
+    setFireOpen(true);
+  };
+  const handleFireClose = () => {
+    setFireOpen(false);
   };
   return (
     <Layout>
@@ -154,8 +195,15 @@ export default function Profile() {
         position={position}
         setSalary={setSalary}
         setPosition={setPosition}
+        isFormerEmployee={isFormerEmployee}
       />
-
+      <FireDialog
+        open={fireopen}
+        handleClose={handleFireClose}
+        style={style}
+        name={name}
+        handleFireForm={handleFireForm}
+      />
       <Box>
         {/* <Button>ย้อนกลับ</Button> */}
         <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5 }}>
@@ -198,7 +246,7 @@ export default function Profile() {
                 alt="profile"
                 width={120}
                 height={120}
-                style={{ borderRadius: "100px",objectFit:"cover" }}
+                style={{ borderRadius: "100px", objectFit: "cover" }}
               ></Image>
             </Grid>
             <Grid
@@ -287,7 +335,9 @@ export default function Profile() {
                 <Typography variant="text">ตำแหน่ง:</Typography>
               </Box>
               <Box>
-                <Typography variant="data">{showPosition===""? "ยังไม่กำหนด":showPosition}</Typography>
+                <Typography variant="data">
+                  {showPosition === "" ? "ยังไม่กำหนด" : showPosition}
+                </Typography>
               </Box>
             </Grid>
             <Grid
@@ -303,7 +353,9 @@ export default function Profile() {
                 <Typography variant="text">เงินเดือน:</Typography>
               </Box>
               <Box>
-                <Typography variant="data">{showSalary===""? "ยังไม่กำหนด" :formattedInt}</Typography>
+                <Typography variant="data">
+                  {showSalary === "" ? "ยังไม่กำหนด" : formattedInt}
+                </Typography>
               </Box>
             </Grid>
             <Grid
@@ -315,13 +367,38 @@ export default function Profile() {
                 p: 1,
               }}
             >
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleClickOpen}
-              >
-                แก้ไข
-              </Button>
+              {!isFormerEmployee && (
+                <>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleClickOpen}
+                    sx={{ m: 1 }}
+                  >
+                    แก้ไข
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    sx={{ m: 1 }}
+                    onClick={handleClickFireOpen}
+                  >
+                    เลิกจ้าง
+                  </Button>
+                </>
+              )}
+              {isFormerEmployee && (
+                <>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleClickOpen}
+                    sx={{ m: 1 }}
+                  >
+                    จ้างใหม่
+                  </Button>
+                </>
+              )}
             </Grid>
           </Grid>
         </ThemeProvider>

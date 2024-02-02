@@ -20,10 +20,10 @@ export default function ProfileDiaLog({
   position,
   setPosition,
   setSalary,
+  isFormerEmployee,
 }) {
-
-// const [position, setPosition] = useState("")
-// const [salary,setSalary] = useState("")
+  // const [position, setPosition] = useState("")
+  // const [salary,setSalary] = useState("")
   const handleSubmit = (event) => {
     event.preventDefault();
     handleForm(salary, position);
@@ -33,7 +33,10 @@ export default function ProfileDiaLog({
   return (
     <ThemeProvider theme={style}>
       <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-        <DialogTitle>แก้ไขข้อมูลพนักงาน</DialogTitle>
+        <DialogTitle>
+          {isFormerEmployee && <>จ้างพนักงาน</>}
+          {!isFormerEmployee && <>แก้ไขพนักงาน</>}
+        </DialogTitle>
         <DialogContent>
           <TextField
             value={position}
@@ -51,7 +54,6 @@ export default function ProfileDiaLog({
           <TextField
             variant="outlined"
             label="เงินเดือน"
-            
             fullWidth
             required
             size="small"
@@ -74,7 +76,8 @@ export default function ProfileDiaLog({
             ยกเลิก
           </Button>
           <Button variant="contained" color="success" onClick={handleSubmit}>
-            แก้ไข
+          {isFormerEmployee && <>ยืนยัน</>}
+          {!isFormerEmployee && <>แก้ไขพนักงาน</>}
           </Button>
         </DialogActions>
       </Dialog>

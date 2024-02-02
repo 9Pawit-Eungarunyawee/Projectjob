@@ -8,11 +8,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Image from "next/image";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
-import { use, useEffect, useState } from "react";
-import getDoument, { getCollection, getUser } from "@/firebase/getData";
+import {  useEffect, useState } from "react";
+import { getCollection } from "@/firebase/getData";
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import { Delete, EditNotifications } from "@mui/icons-material";
 import { deleteData, restoreData } from "@/firebase/addData";
 
 export default function History() {

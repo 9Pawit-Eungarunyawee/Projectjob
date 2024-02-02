@@ -110,6 +110,12 @@ export default function NavbarAdmin() {
         minHeight: "100vh",
         bgcolor: "#018294",
         overflow: "scroll",
+        "&::-webkit-scrollbar": {
+          width: "0px",  // Adjust the width as needed
+        },
+        "&::-webkit-scrollbar-thumb": {
+          width: "0px",  // Adjust the width as needed
+        },
       }}
     >
       <Box

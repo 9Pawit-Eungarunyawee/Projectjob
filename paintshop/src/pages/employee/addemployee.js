@@ -14,7 +14,7 @@ import {
   createTheme,
 } from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { debounce } from "lodash";
 import searchUser from "@/firebase/searchData";
@@ -48,7 +48,10 @@ export default function AddEmployee() {
   const goBack = () => {
     window.history.back();
   };
-  const [data,setData] = useState([]);
+  useEffect(()=>{
+    debouncedSearchUser("");
+  },[])
+  const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [documentData, setDocumentData] = useState([]);
   const debouncedSearchUser = debounce(async (term) => {
@@ -56,7 +59,7 @@ export default function AddEmployee() {
       const collectionName = "users";
       const field = "name";
       const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter((doc) => doc.role == "user");
+      const filteredResults = results.filter((doc) => doc.role == "user" && !doc.isFormerEmployee);
       setDocumentData(filteredResults);
     } catch (error) {
       console.error("Error searching data:", error);
@@ -70,32 +73,31 @@ export default function AddEmployee() {
   const [open, setOpen] = useState(false);
   const handleClickOpen = (item) => {
     setOpen(true);
-    setData(item)
+    setData(item);
   };
   const handleClose = () => {
     setOpen(false);
   };
   return (
     <Layout>
-      
       <ThemeProvider theme={style}>
         <Box>
           <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5 }}>
             เพิ่มพนักงาน
           </Typography>
           <Button
-          sx={{
-            color: "#018294",
-            bgcolor: "white",
-            fontWeight: "bold",
-            borderRadius: "50px",
-            boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-          }}
-          onClick={goBack}
-        >
-          <ArrowBackOutlinedIcon />
-          <Typography> ย้อนกลับ</Typography>
-        </Button>
+            sx={{
+              color: "#018294",
+              bgcolor: "white",
+              fontWeight: "bold",
+              borderRadius: "50px",
+              boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+            }}
+            onClick={goBack}
+          >
+            <ArrowBackOutlinedIcon />
+            <Typography> ย้อนกลับ</Typography>
+          </Button>
           <Box
             sx={{
               mt: 3,
@@ -108,7 +110,7 @@ export default function AddEmployee() {
             }}
           >
             <Grid container spacing={1}>
-              <Grid item xs={12} >
+              <Grid item xs={12}>
                 <TextField
                   label="ค้นหาผู้ใช้งาน"
                   variant="outlined"
@@ -127,7 +129,13 @@ export default function AddEmployee() {
               {documentData &&
                 documentData.map((item) => (
                   <Grid key={item.id} item xs={12} md={4} lg={3} sx={{ mt: 2 }}>
-                    <AddEmployeeDialog item={data} open={open} handleClose={handleClose} style={style}/>
+                    <AddEmployeeDialog
+                      item={data}
+                      open={open}
+                      handleClose={handleClose}
+                      style={style}
+                      debouncedSearchUser={debouncedSearchUser}
+                    />
                     <Card onClick={() => handleClickOpen(item)}>
                       <CardActionArea>
                         <CardMedia
@@ -151,7 +159,6 @@ export default function AddEmployee() {
                     </Card>
                   </Grid>
                 ))}
-               
             </Grid>
           </Box>
         </Box>

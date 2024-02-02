@@ -18,10 +18,10 @@ import TuneIcon from "@mui/icons-material/Tune";
 import SearchIcon from "@mui/icons-material/Search";
 import { getCollection } from "../../firebase/getData";
 import { useRouter } from "next/router";
-import searchUser from "@/firebase/searchData";
 import { debounce } from "lodash";
 import { useEffect } from "react";
 import { useState } from "react";
+import searchData from "@/firebase/searchData";
 export default function Catalogadmin() {
   const theme = createTheme({
     palette: {
@@ -51,7 +51,7 @@ export default function Catalogadmin() {
     try {
       const collectionName = "catalog";
       const field = "name";
-      const results = await searchUser(collectionName, field, term);
+      const results = await searchData(collectionName, field, term);
       setDocumentData(results);
     } catch (error) {
       console.error("Error searching data:", error);

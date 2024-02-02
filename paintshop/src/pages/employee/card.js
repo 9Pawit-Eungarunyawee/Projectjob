@@ -46,7 +46,7 @@ export default function CardEmployee(props) {
                 height={60}
                 style={{ borderRadius: "100px",objectFit:"cover" }}
               ></Image>
-              <Typography sx={{ pl: 2, fontWeight: 600, fontSize: "1.2vw" }}>
+              <Typography sx={{ pl: 2, fontWeight: 600, fontSize: "1.2rem" }}>
                 {data.name}
               </Typography>
             </Box>

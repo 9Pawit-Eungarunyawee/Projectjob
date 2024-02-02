@@ -2,7 +2,7 @@ import { collection, getDocs, getFirestore, query, orderBy } from "firebase/fire
 import firebase_app from "../firebase/config";
 const db = getFirestore(firebase_app);
 
-export default async function searchUser(collectionName, field, value) {
+export default async function searchData(collectionName, field, value) {
   try {
     const lowerCaseField = field.toLowerCase();
     const lowerCaseValue = value.toLowerCase();

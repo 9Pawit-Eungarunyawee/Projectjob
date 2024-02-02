@@ -144,7 +144,7 @@ export default function Sidebar() {
                   }
                 >
                   <Typography variant="menu">
-                    <HomeIcon sx={{ pr: 2 }} />
+                    <HomeIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
                     หน้าหลัก
                   </Typography>
                 </Box>
@@ -166,7 +166,7 @@ export default function Sidebar() {
                   }
                 >
                   <Typography variant="menu">
-                    <DashboardIcon sx={{ pr: 2 }} />
+                    <DashboardIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
                     แดชบอร์ด
                   </Typography>
                 </Box>
@@ -186,7 +186,7 @@ export default function Sidebar() {
                   sx={activeLink === "/product" ? styles.BoxActive : styles.Box}
                 >
                   <Typography variant="menu">
-                    <AppsIcon sx={{ pr: 2 }} />
+                    <AppsIcon sx={{ pr: 2,fontSize:"1.5vw" }} />
                     จัดการสินค้า
                   </Typography>
                 </Box>
@@ -210,7 +210,7 @@ export default function Sidebar() {
                   }
                 >
                   <Typography variant="menu">
-                    <PhotoLibraryIcon sx={{ pr: 2 }} />
+                    <PhotoLibraryIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
                     แคตตาล็อคสี
                   </Typography>
                 </Box>
@@ -230,7 +230,7 @@ export default function Sidebar() {
                   sx={activeLink === "/order" ? styles.BoxActive : styles.Box}
                 >
                   <Typography variant="menu">
-                    <StarBorderIcon sx={{ pr: 2 }} />
+                    <StarBorderIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
                     จัดการคำสั่งซื้อ
                   </Typography>
                 </Box>
@@ -250,7 +250,7 @@ export default function Sidebar() {
                   sx={activeLink === "/claim" ? styles.BoxActive : styles.Box}
                 >
                   <Typography variant="menu">
-                    <AutorenewIcon sx={{ pr: 2 }} />
+                    <AutorenewIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
                     การเคลมสินค้า
                   </Typography>
                 </Box>
@@ -272,7 +272,7 @@ export default function Sidebar() {
                   }
                 >
                   <Typography variant="menu">
-                    <PersonIcon sx={{ pr: 2 }} />
+                    <PersonIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
                     จัดการพนักงาน
                   </Typography>
                 </Box>
@@ -289,7 +289,7 @@ export default function Sidebar() {
               >
                 <Box sx={styles.Box}>
                   <Typography variant="menu">
-                    <LogoutIcon sx={{ pr: 2 }} />
+                    <LogoutIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
                     ออกจากระบบ
                   </Typography>
                 </Box>

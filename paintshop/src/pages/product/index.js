@@ -19,7 +19,8 @@ import { getCollection } from "@/firebase/getData";
 import { softDeleteData } from "@/firebase/addData";
 import { useAuthContext } from "@/context/AuthContext";
 import { debounce } from "lodash";
-import searchUser from "@/firebase/searchData";
+
+import searchData from "@/firebase/searchData";
 
 export default function Product() {
   const theme = createTheme({
@@ -51,18 +52,18 @@ export default function Product() {
 
   useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch("");
+    fetchData()
   }, []);
-  useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    // console.log(documentData);
-  }, [documentData]);
+  // useEffect(() => {
+  // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+  // console.log(documentData);
+  // }, [documentData]);
 
   const debouncedSearchUser = debounce(async (term) => {
     try {
       const collectionName = "products";
       const field = "name";
-      const results = await searchUser(collectionName, field, term);
+      const results = await searchData(collectionName, field, term);
       const filteredResults = results.filter((doc) => !doc.delete);
       setDocumentData(filteredResults);
     } catch (error) {
@@ -75,22 +76,19 @@ export default function Product() {
     debouncedSearchUser(term);
   };
 
-  // const fetchData = async () => {
-  //   const collectionName = "products";
-  //   const { result, error } = await getCollection(collectionName);
-  //   if (error) {
-  //     console.error("Error fetching document:", error);
-  //   } else if (result) {
-  //     const productData = result.docs.filter((doc) => !doc.data().delete).map((doc) => ({
-  //       id: doc.id,
-  //       name: doc.data().name,
-  //       productSizes: doc.data().productSizes,
-  //       img: doc.data().img,
-  //       status: doc.data().status,
-  //     }));
-  //     setDocumentData(productData);
-  //   }
-  // };
+  const fetchData = async () => {
+    const collectionName = "products";
+    const { result, error } = await getCollection(collectionName);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const productData = result.docs.filter((doc) => !doc.data().delete).map((doc) => ({
+        id: doc.id,
+       ...doc.data()
+      }));
+      setDocumentData(productData);
+    }
+  };
   const handleDelete = async (id) => {
     const data = {
       id: id,

@@ -7,6 +7,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  createTheme,
 } from "@mui/material";
 import CardEmployee from "./card";
 import { useRouter } from "next/router";
@@ -14,16 +15,33 @@ import { getCollection } from "../../firebase/getData";
 import { useAuthContext } from "@/context/AuthContext";
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
-import searchUser from "@/firebase/searchData";
 import { debounce } from "lodash";
+import searchData from "@/firebase/searchData";
+import { ThemeProvider } from "@emotion/react";
 export default function Employee() {
   const { role } = useAuthContext();
   const [documentData, setDocumentData] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [count, setCount] = React.useState(0);
   const router = useRouter();
+  const style = createTheme({
+    palette: {
+      primary: {
+        main: "#018294",
+      },
+      success: {
+        main: "#A9C470",
+      },
+      error: {
+        main: "#FE616A",
+      },
+    },
+  })
   function handleAdd() {
     router.push("/employee/addemployee");
+  }
+  function goFomerEmp() {
+    router.push("/employee/former-employee");
   }
 
   React.useEffect(() => {
@@ -39,7 +57,7 @@ export default function Employee() {
     try {
       const collectionName = "users";
       const field = "name";
-      const results = await searchUser(collectionName, field, term);
+      const results = await searchData(collectionName, field, term);
       const filteredResults = results.filter((doc) => doc.role == "employee");
       setDocumentData(filteredResults);
       setCount(documentData.length);
@@ -71,7 +89,7 @@ export default function Employee() {
     return (
       <>
         <Layout>
-          <Box>
+          <ThemeProvider theme={style}>
             <Grid
               container
               columnSpacing={2}
@@ -106,6 +124,14 @@ export default function Employee() {
                   onClick={handleAdd}
                 >
                   เพิ่มพนักงาน
+                </Button>
+                <Button
+                  variant="contained"
+                  
+                  sx={{ mr: 2, mb: 2, mt: 2 }}
+                  onClick={goFomerEmp}
+                >
+                  อดีตพนักงาน
                 </Button>
               </Grid>
               <Grid item sm={8} xs={12}>
@@ -179,7 +205,7 @@ export default function Employee() {
                 </Box>
               </Grid>
             </Grid>
-          </Box>
+          </ThemeProvider>
         </Layout>
       </>
     );

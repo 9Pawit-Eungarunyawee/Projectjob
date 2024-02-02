@@ -26,15 +26,15 @@ export default function Layout({ children }) {
     <React.Fragment>
       <Container maxWidth="sx" style={{ padding: 0 }}>
         <Grid container spacing={2} sx={{ bgcolor: "#FAF8F1" }}>
-          <Grid item xs={0} xl={2.5} sx={{ display: { xs: 'none', xl: 'block' } }}>
+          <Grid item xs={0} lg={2.5} sx={{ display: { xs: 'none', lg: 'block' } }}>
             <Sidebar />
           </Grid>
-          <Grid item xs={0} xl={2.5} sx={{ display: { xs: 'block', xl: 'none' } }}>
+          <Grid item xs={0} lg={2.5} sx={{ display: { xs: 'block', lg: 'none' } }}>
             <NavbarAdmin />
           </Grid>
-          <Grid item xs={12} xl={9.5}>
+          <Grid item xs={12} lg={9.5}>
             <Box sx={{pl:2,pr:2}}>{children}</Box>
-           
+
           </Grid>
         </Grid>
       </Container>

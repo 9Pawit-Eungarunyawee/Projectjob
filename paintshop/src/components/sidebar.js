@@ -15,7 +15,9 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
-
+import InventoryIcon from '@mui/icons-material/Inventory';
+import ShoppingBasketOutlinedIcon from '@mui/icons-material/ShoppingBasketOutlined';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import LogoutIcon from "@mui/icons-material/Logout";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -218,20 +220,40 @@ export default function Sidebar() {
             </li>
             <li>
               <Link
-                href="/order"
+                href="/buy"
                 style={{
                   textDecoration: "none",
                   display: "flex",
                   justifyContent: "center",
                 }}
-                onClick={(e) => SetActiveLink("/order")}
+                onClick={(e) => SetActiveLink("/buy")}
               >
                 <Box
-                  sx={activeLink === "/order" ? styles.BoxActive : styles.Box}
+                  sx={activeLink === "/buy" ? styles.BoxActive : styles.Box}
                 >
                   <Typography variant="menu">
-                    <StarBorderIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
-                    จัดการคำสั่งซื้อ
+                    <ShoppingBasketOutlinedIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
+                    รายการซื้อ
+                  </Typography>
+                </Box>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/sell"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                onClick={(e) => SetActiveLink("/sell")}
+              >
+                <Box
+                  sx={activeLink === "/sell" ? styles.BoxActive : styles.Box}
+                >
+                  <Typography variant="menu">
+                    <ListAltIcon sx={{ pr: 2 ,fontSize:"1.5vw"}} />
+                      รายการขาย
                   </Typography>
                 </Box>
               </Link>

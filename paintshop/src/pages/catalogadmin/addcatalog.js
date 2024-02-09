@@ -48,7 +48,6 @@ export default function AddCatalog() {
 
   useEffect(() => {
     fetchAllColorShade();
-
   }, []);
   const fetchAllColorShade = async () => {
     const collectionName = "colorshade";
@@ -120,7 +119,7 @@ export default function AddCatalog() {
     const catalog = {
       name: name,
       img: imageUrl,
-      detail:detail
+      detail: detail,
     };
     const result = await addCatalog("catalog", catalog);
     if (result) {
@@ -214,21 +213,19 @@ export default function AddCatalog() {
             เพิ่มแค็ตตาล็อก
           </Typography>
           <form onSubmit={handleForm} className="form">
-          <Grid
-            container
-            spacing={0}
-            sx={{
-              mt: 3,
-              mb: 5,
-              backgroundColor: "#fff",
-              p: 2,
-              borderRadius: "10px",
-              boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-            }}
-          >
-            
-            <Grid item xs={12} sm={7}>
-              
+            <Grid
+              container
+              spacing={0}
+              sx={{
+                mt: 3,
+                mb: 5,
+                backgroundColor: "#fff",
+                p: 2,
+                borderRadius: "10px",
+                boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+              }}
+            >
+              <Grid item xs={12} sm={7}>
                 <Typography sx={{ mt: 1 }}>ชื่อแค็ตตาล็อก:</Typography>
                 <TextField
                   variant="outlined"
@@ -283,7 +280,7 @@ export default function AddCatalog() {
                     />
                   </label>
                 </Box>
-                <Typography sx={{ mt: 1 }}>เพิ่มสี:</Typography>
+                {/* <Typography sx={{ mt: 1 }}>เพิ่มสี:</Typography>
                 <Box sx={{ ml: 2 }}>
                   <Box>
                     <Typography sx={{ mt: 1 }}>เฉดสี:</Typography>
@@ -379,10 +376,9 @@ export default function AddCatalog() {
                       เพิ่ม
                     </Button>
                   </Box>
-                </Box>
-                
-            </Grid>
-            <Grid item xs={12} sm={5}>
+                </Box> */}
+              </Grid>
+              {/* <Grid item xs={12} sm={5}>
                 <Typography sx={{ mt: 1 }}>สีที่มีในแคตตาล็อก:</Typography>
                 <Box sx={{ display: "flex", flexWrap: "wrap" }}>
                   {allcolor &&
@@ -422,7 +418,7 @@ export default function AddCatalog() {
                       </Tooltip>
                     ))}
                 </Box>
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <Button
                   variant="contained"
@@ -430,10 +426,10 @@ export default function AddCatalog() {
                   sx={{ mr: 2, mb: 2, mt: 2 }}
                   type="submit"
                 >
-                  แก้ไขแค็ตตาล็อก
+                  เพิ่ม
                 </Button>
               </Grid>
-          </Grid>
+            </Grid>
           </form>
         </Box>
       </ThemeProvider>

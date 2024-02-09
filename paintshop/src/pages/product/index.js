@@ -11,16 +11,17 @@ import {
   createTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/Tune";
+
 import TableProduct from "./table";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { getCollection } from "@/firebase/getData";
+import { useContext, useEffect, useState } from "react";
+
 import { softDeleteData } from "@/firebase/addData";
 import { useAuthContext } from "@/context/AuthContext";
 import { debounce } from "lodash";
 
 import searchData from "@/firebase/searchData";
+import { ProductContext } from "@/context/ProductContext";
 
 export default function Product() {
   const theme = createTheme({
@@ -36,28 +37,15 @@ export default function Product() {
       },
     },
   });
+
   const { user } = useAuthContext();
-  const [documentData, setDocumentData] = useState([]);
+  const { productData, setProductData ,fetchProductData} = useContext(ProductContext);
+
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   function handleAdd() {
     router.push("/product/addproduct");
   }
-  // useEffect(() => {
-  //   // fetchData();
-  // }, []);
-  // useEffect(() => {
-  //   // console.log(documentData);
-  // }, [documentData]);
-
-  useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    fetchData()
-  }, []);
-  // useEffect(() => {
-  // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-  // console.log(documentData);
-  // }, [documentData]);
 
   const debouncedSearchUser = debounce(async (term) => {
     try {
@@ -65,30 +53,21 @@ export default function Product() {
       const field = "name";
       const results = await searchData(collectionName, field, term);
       const filteredResults = results.filter((doc) => !doc.delete);
-      setDocumentData(filteredResults);
+      setProductData(filteredResults);
     } catch (error) {
       console.error("Error searching data:", error);
     }
-  }, 500); // กำหนดเวลา debounce ที่คุณต้องการ
+  }, 500);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
     debouncedSearchUser(term);
   };
 
-  const fetchData = async () => {
-    const collectionName = "products";
-    const { result, error } = await getCollection(collectionName);
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result) {
-      const productData = result.docs.filter((doc) => !doc.data().delete).map((doc) => ({
-        id: doc.id,
-       ...doc.data()
-      }));
-      setDocumentData(productData);
-    }
-  };
+  useEffect(() => {
+    fetchProductData();
+  }, []);
+
   const handleDelete = async (id) => {
     const data = {
       id: id,
@@ -169,7 +148,7 @@ export default function Product() {
               </Button>
             </Box>
             <TableProduct
-              data={{ data: documentData }}
+              data={{ data: productData }}
               onDelete={handleDelete}
             />
           </Box>

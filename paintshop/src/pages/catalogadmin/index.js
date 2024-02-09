@@ -22,6 +22,7 @@ import { debounce } from "lodash";
 import { useEffect } from "react";
 import { useState } from "react";
 import searchData from "@/firebase/searchData";
+import { CatalogContext } from "@/context/CatalogContext";
 export default function Catalogadmin() {
   const theme = createTheme({
     palette: {
@@ -36,23 +37,16 @@ export default function Catalogadmin() {
       },
     },
   });
-  const [documentData, setDocumentData] = useState(null);
+  const { catalogData, setCatalogData,fetchcatalogData } = React.useContext(CatalogContext);
   const [searchTerm, setSearchTerm] = useState("");
-  useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch("");
-  }, []);
-  useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    // console.log(documentData);
-  }, [documentData]);
+
 
   const debouncedSearchUser = debounce(async (term) => {
     try {
       const collectionName = "catalog";
       const field = "name";
       const results = await searchData(collectionName, field, term);
-      setDocumentData(results);
+      setCatalogData(results);
     } catch (error) {
       console.error("Error searching data:", error);
     }
@@ -123,8 +117,8 @@ export default function Catalogadmin() {
             }}
           >
             <Grid container spacing={2}>
-              {documentData &&
-                documentData.map((item) => (
+              {catalogData &&
+                catalogData.map((item) => (
                   <Grid key={item.id} item xs={12} sm={6} md={4}>
                     <Card
                       sx={{ maxWidth: 400 }}

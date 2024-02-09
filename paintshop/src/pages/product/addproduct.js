@@ -19,7 +19,8 @@ import {
 } from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { CatalogContext } from "@/context/CatalogContext";
 
 export default function AddProduct() {
   const { user } = useAuthContext();
@@ -107,24 +108,7 @@ export default function AddProduct() {
     // console.log(imageUrl);
   };
 
-  useEffect(() => {
-    fetchDataCatalog();
-  }, []);
-
-  const [catalogData, setCatalogData] = useState(null);
-  const fetchDataCatalog = async () => {
-    const collectionName = "catalog";
-    const { result, error } = await getCollection(collectionName);
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result) {
-      const catalog = result.docs.map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-      }));
-      setCatalogData(catalog);
-    }
-  };
+  const { catalogData, setCatalogData, fetchcatalogData } = useContext(CatalogContext);
   const handleForm = async (event) => {
     event.preventDefault();
     const product = {

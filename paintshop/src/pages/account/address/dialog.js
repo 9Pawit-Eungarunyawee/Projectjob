@@ -9,10 +9,28 @@ import {
   DialogTitle,
   Grid,
   Autocomplete,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import addAddress from "@/firebase/addAddresses";
 import { useAuthContext } from "@/context/AuthContext";
 export default function Addressdialog() {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#018294",
+      },
+      success: {
+        main: "#A9C470",
+      },
+      edit: {
+        main: "#FFC300",
+      },
+      error: {
+        main: "#FE616A",
+      },
+    },
+  });
   const [open, setOpen] = React.useState(false);
   const [address, setAddress] = React.useState(null);
   const [provinces, setProvinces] = React.useState([]);
@@ -113,136 +131,140 @@ export default function Addressdialog() {
   };
 
   return (
-    <React.Fragment>
-      <Button onClick={handleClickOpen} sx={{ color: "#018294" }}>
-        เพิ่มที่อยู่
-      </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-      >
-        <DialogTitle sx={{ fontWeight: "bold" }}>ที่อยู่จัดส่ง</DialogTitle>
-        <form onSubmit={handleForm} className="form" >
-          <DialogContent>
-            <Grid container spacing={2}>
-              <Grid xs={12} item>
-                <TextField
-                  variant="outlined"
-                  label="บ้านเลขที่"
-                  fullWidth
-                  multiline
-                  required
-                  size="small"
-                  sx={{ mt: 1, mb: 1 }}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </Grid>
-              <Grid xs={12} sm={6} item>
-                <Autocomplete
-                  disablePortal
-                  options={provinces}
-                  getOptionLabel={(option) => option.name_th}
-                  onChange={(e, newValue) => {
-                    setSelected((prevState) => ({
-                      ...prevState,
-                      province_id: newValue ? newValue.id : undefined,
-                      amphure_id: undefined,
-                      tambon_id: undefined,
-                    }));
-                  }}
-                  fullWidth
-                  required
-                  size="small"
-                  renderInput={(params) => (
-                    <TextField {...params} label="จังหวัด" />
-                  )}
-                />
-              </Grid>
+    <ThemeProvider theme={theme}>
+      <React.Fragment>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleClickOpen}
+          sx={{ color: "white" }}
+        >
+          เพิ่มที่อยู่
+        </Button>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle sx={{ fontWeight: "bold" }}>ที่อยู่จัดส่ง</DialogTitle>
+          <form onSubmit={handleForm} className="form">
+            <DialogContent>
+              <Grid container spacing={2}>
+                <Grid xs={12} item>
+                  <TextField
+                    variant="outlined"
+                    label="บ้านเลขที่"
+                    fullWidth
+                    multiline
+                    required
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </Grid>
+                <Grid xs={12} sm={6} item>
+                  <Autocomplete
+                    disablePortal
+                    options={provinces}
+                    getOptionLabel={(option) => option.name_th}
+                    onChange={(e, newValue) => {
+                      setSelected((prevState) => ({
+                        ...prevState,
+                        province_id: newValue ? newValue.id : undefined,
+                        amphure_id: undefined,
+                        tambon_id: undefined,
+                      }));
+                    }}
+                    fullWidth
+                    required
+                    size="small"
+                    renderInput={(params) => (
+                      <TextField {...params} label="จังหวัด" />
+                    )}
+                  />
+                </Grid>
 
-              <Grid xs={12} sm={6} item>
-                <Autocomplete
-                  disablePortal
-                  options={amphures || []}
-                  getOptionLabel={(option) => option.name_th}
-                  onChange={(e, newValue) => {
-                    setSelected((prevState) => ({
-                      ...prevState,
-                      amphure_id: newValue ? newValue.id : undefined,
-                      tambon_id: undefined,
-                    }));
-                  }}
-                  fullWidth
-                  size="small"
-                  renderInput={(params) => (
-                    <TextField {...params} label="อำเภอ/เขต" />
-                  )}
-                />
+                <Grid xs={12} sm={6} item>
+                  <Autocomplete
+                    disablePortal
+                    options={amphures || []}
+                    getOptionLabel={(option) => option.name_th}
+                    onChange={(e, newValue) => {
+                      setSelected((prevState) => ({
+                        ...prevState,
+                        amphure_id: newValue ? newValue.id : undefined,
+                        tambon_id: undefined,
+                      }));
+                    }}
+                    fullWidth
+                    size="small"
+                    renderInput={(params) => (
+                      <TextField {...params} label="อำเภอ/เขต" />
+                    )}
+                  />
+                </Grid>
+                <Grid xs={12} sm={6} item>
+                  <Autocomplete
+                    disablePortal
+                    options={tambons || []}
+                    getOptionLabel={(option) => option.name_th}
+                    onChange={(e, newValue) => {
+                      setSelected((prevState) => ({
+                        ...prevState,
+                        tambon_id: newValue ? newValue.id : undefined,
+                      }));
+                    }}
+                    fullWidth
+                    size="small"
+                    renderInput={(params) => (
+                      <TextField {...params} label="ตำบล" />
+                    )}
+                  />
+                </Grid>
+                <Grid xs={12} sm={6} item>
+                  <TextField
+                    variant="outlined"
+                    label="รหัสไปรษณีย์"
+                    value={zipCode || ""}
+                    fullWidth
+                    required
+                    size="small"
+                  />
+                </Grid>
               </Grid>
-              <Grid xs={12} sm={6} item>
-                <Autocomplete
-                  disablePortal
-                  options={tambons || []}
-                  getOptionLabel={(option) => option.name_th}
-                  onChange={(e, newValue) => {
-                    setSelected((prevState) => ({
-                      ...prevState,
-                      tambon_id: newValue ? newValue.id : undefined,
-                    }));
-                  }}
-                  fullWidth
-                  size="small"
-                  renderInput={(params) => (
-                    <TextField {...params} label="ตำบล" />
-                  )}
-                />
-              </Grid>
-              <Grid xs={12} sm={6} item>
-                <TextField
-                  variant="outlined"
-                  label="รหัสไปรษณีย์"
-                  value={zipCode || ""}
-                  fullWidth
-                  required
-                  size="small"
-                />
-              </Grid>
-            </Grid>
-          </DialogContent>
+            </DialogContent>
 
-          <DialogActions>
-            <Button
-              variant="outlined"
-              onClick={handleClose}
-              sx={{
-                borderColor: "#018294",
-                color: "#018294",
-                mb: 4,
-                "&:hover": {
-                  backgroundColor: "#018294",
+            <DialogActions>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleClose}
+                sx={{
+                  color: "error",
+                  mb: 4,
+                  "&:hover": {
+                    backgroundColor: "#FE616A",
+                    color: "#fff",
+                  },
+                }}
+              >
+                ยกเลิก
+              </Button>
+
+              <Button
+                variant="contained"
+                color="success"
+                sx={{
                   color: "#fff",
-                },
-              }}
-            >
-              ยกเลิก
-            </Button>
-
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#018294",
-                color: "#fff",
-                mb: 4,
-                "&:hover": {
-                  backgroundColor: "#01576e",
-                },
-              }}
-              type="submit"
-            >
-              บันทึก
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-    </React.Fragment>
+                  mb: 4,
+                  "&:hover": {
+                    backgroundColor: "#A9C470",
+                  },
+                }}
+                type="submit"
+              >
+                บันทึก
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
+      </React.Fragment>
+    </ThemeProvider>
   );
 }

@@ -117,7 +117,6 @@ export default function Cart() {
         if (!groupedProducts[key]) {
           groupedProducts[key] = {
             ...doc,
-            amount: 1,
           };
         } else {
           groupedProducts[key].amount += 1;

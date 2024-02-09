@@ -1,17 +1,45 @@
-import * as React from "react";
+import React from "react";
 import {
-  Button,
-  TextField,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
-  Grid,
+  DialogContent,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Button,
 } from "@mui/material";
-
-export default function Editaddress() {
+import { debounce } from "lodash";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
+import searchUser from "@/firebase/searchData";
+export default function SelectAddressDialog({ onSelectAddress }) {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const router = useRouter();
+  const user = useAuthContext();
+  const [addressData, setAddressData] = React.useState(null);
+  const [selectedAddressIndex, setSelectedAddressIndex] = React.useState(-1);
+  React.useEffect(() => {
+    handleSearch("");
+  }, []);
+  const debouncedSearchUser = debounce(async (term) => {
+    const uid = user.user.uid;
+    try {
+      const collectionName = "users";
+      const field = "name";
+      const results = await searchUser(collectionName, field, term);
+      const filteredResults = results.filter((doc) => doc.uid == uid);
+      setAddressData(filteredResults[0]?.addresses);
+    } catch (error) {
+      console.error("Error searching data:", error);
+    }
+  }, 500); // กำหนดเวลา debounce ที่คุณต้องการ
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchUser(term);
+  };
   const [open, setOpen] = React.useState(false);
+  const [selectedAddress, setSelectedAddress] = React.useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -21,129 +49,43 @@ export default function Editaddress() {
     setOpen(false);
   };
 
+  const handleAddressChange = (event, index) => {
+    setSelectedAddressIndex(index);
+  };
+
+  const handleConfirm = () => {
+    onSelectAddress(selectedAddressIndex);
+    handleClose();
+  };
+
   return (
     <React.Fragment>
-      <Button onClick={handleClickOpen} sx={{ color: "#018294" }}>
-        แก้ไข
-      </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          component: "form",
-          onSubmit: (event) => {
-            event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries(formData.entries());
-            const email = formJson.email;
-            console.log(email);
-            handleClose();
-          },
-        }}
-      >
-        <DialogTitle sx={{ fontWeight: "bold" }}>ที่อยู่จัดส่ง</DialogTitle>
-        <form className="form">
-          <DialogContent>
-            <Grid container spacing={2}>
-              <Grid xs={12} sm={6} item>
-                <TextField
-                  variant="outlined"
-                  label="ชื่อ"
-                  fullWidth
-                  required
-                  size="small"
-                />
-              </Grid>
-              <Grid xs={12} sm={6} item>
-                <TextField
-                  variant="outlined"
-                  label="หมายเลขโทรศัพท์"
-                  fullWidth
-                  required
-                  size="small"
-                />
-              </Grid>
-              <Grid xs={12} item>
-                <TextField
-                  variant="outlined"
-                  label="ที่อยู่"
-                  fullWidth
-                  required
-                  size="small"
-                  multiline
-                />
-              </Grid>
-              <Grid xs={12} sm={6} item>
-                <TextField
-                  variant="outlined"
-                  label="แขวง/ตำบล"
-                  fullWidth
-                  required
-                  size="small"
-                />
-              </Grid>
-              <Grid xs={12} sm={6} item>
-                <TextField
-                  variant="outlined"
-                  label="อำเภอ/เขต"
-                  fullWidth
-                  required
-                  size="small"
-                />
-              </Grid>
-              <Grid xs={12} sm={6} item>
-                <TextField
-                  variant="outlined"
-                  label="จังหวัด"
-                  fullWidth
-                  required
-                  size="small"
-                />
-              </Grid>
-              <Grid xs={12} sm={6} item>
-                <TextField
-                  variant="outlined"
-                  label="รหัสไปรษณีย์"
-                  fullWidth
-                  required
-                  size="small"
-                />
-              </Grid>
-            </Grid>
-          </DialogContent>
-        </form>
-        <DialogActions>
-          <Button
-            variant="outlined"
-            onClick={handleClose}
-            sx={{
-              borderColor: "#018294",
-              color: "#018294",
-              mb: 4,
-              "&:hover": {
-                backgroundColor: "#018294",
-                color: "#fff",
-              },
-            }}
-          >
-            ยกเลิก
+      <Button onClick={handleClickOpen} sx={{ color: "#018294" }}>เปลี่ยนที่อยู่</Button>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>เลือกที่อยู่</DialogTitle>
+        <DialogContent>
+          <FormControl component="fieldset">
+            <RadioGroup
+              aria-label="address"
+              name="address"
+              value={selectedAddressIndex.toString()}
+              onChange={handleAddressChange}
+            >
+              {addressData &&
+                addressData.map((address, index) => (
+                  <FormControlLabel
+                    key={index}
+                    value={index.toString()}
+                    control={<Radio />}
+                    label={`${address.address} อำเภอ ${address.amphure} ตำบล ${address.tambon} จังหวัด ${address.province}`}
+                  />
+                ))}
+            </RadioGroup>
+          </FormControl>
+          <Button onClick={handleConfirm} variant="contained" color="primary">
+            ยืนยัน
           </Button>
-
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#018294",
-              color: "#fff",
-              mb: 4,
-              "&:hover": {
-                backgroundColor: "#01576e",
-              },
-            }}
-            type="submit"
-          >
-            บันทึก
-          </Button>
-        </DialogActions>
+        </DialogContent>
       </Dialog>
     </React.Fragment>
   );

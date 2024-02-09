@@ -59,7 +59,7 @@ export const AuthContextProvider = ({ children }) => {
             open={true}
           >
             <CircularProgress color="inherit" />
-            <Typography sx={{m:2}}>กำลังโหลด...</Typography>
+            <Typography sx={{m:2}}>กำลังตรวจสอบผู้ใช้งาน...</Typography>
           </Backdrop>
         </div>
       ) : (

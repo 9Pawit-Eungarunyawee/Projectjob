@@ -15,6 +15,8 @@ import {
   TableBody,
   Paper,
   Button,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -27,6 +29,22 @@ function handleClick(event) {
 }
 
 export default function Address() {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#018294",
+      },
+      success: {
+        main: "#A9C470",
+      },
+      edit: {
+        main: "#FFC300",
+      },
+      error: {
+        main: "#FE616A",
+      },
+    },
+  });
   const router = useRouter();
   const user = useAuthContext();
   const [userData, setUserData] = React.useState(null);
@@ -57,7 +75,7 @@ export default function Address() {
     }
   };
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Homelayout>
         <Box sx={{ width: "100%" }}>
           <Container
@@ -81,7 +99,7 @@ export default function Address() {
                   >
                     หน้าแรก
                   </Link>
-                  <Typography color="text.primary">บัญชีของฉัน</Typography>
+                  <Typography color="text.primary" >บัญชีของฉัน</Typography>
                 </Breadcrumbs>
               </div>
             </Box>
@@ -124,10 +142,10 @@ export default function Address() {
                   <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                       <TableHead>
-                        <TableRow>
-                          <TableCell>ชื่อ</TableCell>
-                          <TableCell>เบอร์โทรศัพท์</TableCell>
-                          <TableCell>ที่อยู่</TableCell>
+                        <TableRow style={{ backgroundColor: "#018294" ,}}>
+                          <TableCell sx={{color:"white"}}>ชื่อ</TableCell>
+                          <TableCell sx={{color:"white",whiteSpace: "nowrap"}}>เบอร์โทรศัพท์</TableCell>
+                          <TableCell sx={{color:"white"}}>ที่อยู่</TableCell>
                           <TableCell></TableCell>
                           <TableCell></TableCell>
                         </TableRow>
@@ -144,6 +162,9 @@ export default function Address() {
                                       "&:last-child td, &:last-child th": {
                                         border: 0,
                                       },
+                                      "&:hover": {
+                                        bgcolor:"#EEEDEB",
+                                      },
                                     }}
                                   >
                                     <TableCell
@@ -154,12 +175,26 @@ export default function Address() {
                                       {item.name}
                                     </TableCell>
                                     <TableCell>{item.tel}</TableCell>
-                                    <TableCell>{address.address} อำเภอ {address.amphure} ตำบล {address.tambon} จังหวัด {address.province}</TableCell>
                                     <TableCell>
-                                      <Button sx={{ color: "#018294" }}>
+                                      {address.address} อำเภอ {address.amphure}{" "}
+                                      ตำบล {address.tambon} จังหวัด{" "}
+                                      {address.province}{" "}{address.zipcode}
+                                    </TableCell>
+                                    <TableCell>
+                                      <Button
+                                        variant="contained"
+                                        color="edit"
+                                        
+                                      >
                                         แก้ไข
                                       </Button>
-                                      <Button sx={{ color: "#018294" }}>
+                                    </TableCell>
+                                    <TableCell>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        
+                                      >
                                         ลบ
                                       </Button>
                                     </TableCell>
@@ -176,6 +211,6 @@ export default function Address() {
           </Container>
         </Box>
       </Homelayout>
-    </>
+    </ThemeProvider>
   );
 }

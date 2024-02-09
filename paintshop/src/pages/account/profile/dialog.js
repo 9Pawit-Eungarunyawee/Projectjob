@@ -9,6 +9,8 @@ import {
   DialogTitle,
   Alert,
   Snackbar,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import { useAuthContext } from "@/context/AuthContext";
 import { getUser } from "../../../firebase/getData";
@@ -23,6 +25,22 @@ export default function FormDialog({ handleClickOpen, onFormSubmitSuccess }) {
   const [alert, setAlert] = React.useState(null);
   const user = useAuthContext();
   const router = useRouter();
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#018294",
+      },
+      success: {
+        main: "#A9C470",
+      },
+      edit: {
+        main: "#FFC300",
+      },
+      error: {
+        main: "#FE616A",
+      },
+    },
+  });
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -88,90 +106,97 @@ export default function FormDialog({ handleClickOpen, onFormSubmitSuccess }) {
   }, []);
 
   return (
-    <React.Fragment>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle sx={{ fontWeight: "bold" }}>
-          แก้ไขข้อมูลส่วนตัว
-        </DialogTitle>
-        <Snackbar
-          open={open}
-          autoHideDuration={6000}
-          onClose={handleAlertClose}
-        >
-          {alert}
-        </Snackbar>
-        <form onSubmit={handleForm} className="form">
-          <DialogContent>
-            <TextField
-              variant="outlined"
-              value={String(name)}
-              label="ชื่อ"
-              fullWidth
-              required
-              size="small"
-              sx={{ mt: 1, mb: 1 }}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              value={String(email)}
-              label="อีเมล"
-              fullWidth
-              required
-              size="small"
-              sx={{ mt: 1, mb: 1 }}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+    <ThemeProvider theme={theme}>
+      <React.Fragment>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle sx={{ fontWeight: "bold" }}>
+            แก้ไขข้อมูลส่วนตัว
+          </DialogTitle>
+          <Snackbar
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleAlertClose}
+          >
+            {alert}
+          </Snackbar>
+          <form onSubmit={handleForm} className="form">
+            <DialogContent>
+              <TextField
+                variant="outlined"
+                value={String(name)}
+                label="ชื่อ"
+                fullWidth
+                required
+                size="small"
+                sx={{ mt: 1, mb: 1 }}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <TextField
+                variant="outlined"
+                value={String(email)}
+                label="อีเมล"
+                fullWidth
+                required
+                size="small"
+                sx={{ mt: 1, mb: 1 }}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-            <TextField
-              variant="outlined"
-              label="เบอร์ติดต่อ"
-              fullWidth
-              required
-              size="small"
-              sx={{ mt: 1, mb: 1 }}
-              onChange={(e) => setTel(e.target.value)}
-              value={String(tel)}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button
-              variant="outlined"
-              onClick={handleClose}
-              sx={{
-                borderColor: "#018294",
-                color: "#018294",
-                mb: 4,
-                "&:hover": {
-                  backgroundColor: "#018294",
+              <TextField
+                variant="outlined"
+                label="เบอร์ติดต่อ"
+                fullWidth
+                required
+                size="small"
+                sx={{ mt: 1, mb: 1 }}
+                onChange={(e) => setTel(e.target.value)}
+                value={String(tel)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleClose}
+                sx={{
+                  color: "error",
+                  mb: 4,
+                  "&:hover": {
+                    backgroundColor: "#FE616A",
+                    color: "#fff",
+                  },
+                }}
+              >
+                ยกเลิก
+              </Button>
+
+              <Button
+                variant="contained"
+                color="success"
+                sx={{
                   color: "#fff",
-                },
-              }}
-            >
-              ยกเลิก
-            </Button>
+                  mb: 4,
+                  "&:hover": {
+                    backgroundColor: "#A9C470",
+                  },
+                }}
+                type="submit"
+              >
+                บันทึก
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
 
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#018294",
-                color: "#fff",
-                mb: 4,
-                "&:hover": {
-                  backgroundColor: "#01576e", 
-                },
-              }}
-              type="submit"
-            >
-              บันทึก
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-
-      <Button sx={{ color: "#018294" }} onClick={handleClickOpenDialog}>
-        แก้ไข
-      </Button>
-    </React.Fragment>
+        <Button
+          variant="contained"
+          color="edit"
+          sx={{ color: "black" }}
+          onClick={handleClickOpenDialog}
+        >
+          แก้ไข
+        </Button>
+      </React.Fragment>
+    </ThemeProvider>
   );
 }

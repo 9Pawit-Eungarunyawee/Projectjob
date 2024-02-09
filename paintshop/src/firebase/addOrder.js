@@ -20,9 +20,10 @@ export default async function addOrder(collectionName, data) {
   try {
     // เตรียมข้อมูลที่ต้องการเพิ่ม
     const orderData = {
-      product_id: data.product_id, // ใช้อ้างอิง
+      products: data.products, 
       user_id: data.user_id,
-      price: data.price,
+      total_price: data.total_price,
+      address:data.address,
       date: currentDate,
       img: img,
       status: data.status,

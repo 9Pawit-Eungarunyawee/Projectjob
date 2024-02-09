@@ -128,7 +128,7 @@ export default function Orderhistory() {
                         sx={{ ...styles.Active }}
                       />
                       <Tab
-                        label="ที่ต้องชำระ"
+                        label="รอยืนยัน"
                         {...a11yProps(1)}
                         sx={{ ...styles.Active }}
                       />

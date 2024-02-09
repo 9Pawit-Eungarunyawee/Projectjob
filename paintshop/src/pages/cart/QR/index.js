@@ -20,7 +20,8 @@ export default function QR() {
   const router = useRouter();
   const user = useAuthContext();
   const total = JSON.parse(router.query.total);
-  const productIDs = JSON.parse(router.query.productIDs);
+  const productDetails = JSON.parse(router.query.productDetails);
+  const addressDetails = JSON.parse(router.query.addressDetails);
   const cartID = JSON.parse(router.query.cartId);
   console.log("Cart ID:", cartID);
   const [price, setPrice] = React.useState(total);
@@ -91,12 +92,13 @@ export default function QR() {
       },
     },
   });
-  const updateorder = async (product_id) => {
+  const updateorder = async (products ,address) => {
     const currentDate = new Date();
     const order = {
-      product_id: product_id,
+      products: products,
       user_id: user.user.uid,
-      price: price,
+      total_price: price,
+      address:address,
       date: currentDate,
       img: imageUrl,
       status: "disapprove",
@@ -227,7 +229,7 @@ export default function QR() {
                   <Button
                     variant="contained"
                     fullWidth
-                    onClick={() => updateorder(productIDs)}
+                    onClick={() => updateorder(productDetails,addressDetails)}
                   >
                     ยืนยัน
                   </Button>

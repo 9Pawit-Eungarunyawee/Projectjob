@@ -8,6 +8,8 @@ import {
   Breadcrumbs,
   Box,
   Button,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import Link from "next/link";
 import FormDialog from "./dialog";
@@ -20,6 +22,22 @@ function handleClick(event) {
 }
 
 export default function Profile() {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#018294",
+      },
+      success: {
+        main: "#A9C470",
+      },
+      edit: {
+        main: "#FFC300",
+      },
+      error: {
+        main: "#FE616A",
+      },
+    },
+  });
   const router = useRouter();
   const user = useAuthContext();
   const [userData, setUserData] = React.useState(null);
@@ -55,10 +73,9 @@ export default function Profile() {
   };
   const handleFormSubmitSuccess = () => {
     fetchAllData();
-    
   };
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Homelayout>
         <Box sx={{ width: "100%" }}>
           <Container
@@ -138,7 +155,11 @@ export default function Profile() {
                           }}
                         >
                           <Grid item sm={4} xs={9}>
-                            <Typography>ชื่อโปรไฟล์</Typography>
+                            <Typography
+                              sx={{ fontWeight: "bold", color: "grey" }}
+                            >
+                              ชื่อโปรไฟล์
+                            </Typography>
                           </Grid>
                           <Grid item sm={5} xs={9}>
                             <Typography>{item.name}</Typography>
@@ -155,7 +176,11 @@ export default function Profile() {
                           }}
                         >
                           <Grid item sm={4} xs={9}>
-                            <Typography>เบอร์โทรศัพท์</Typography>
+                            <Typography
+                              sx={{ fontWeight: "bold", color: "grey" }}
+                            >
+                              เบอร์โทรศัพท์
+                            </Typography>
                           </Grid>
                           <Grid item sm={5} xs={9}>
                             <Typography>{item.tel}</Typography>
@@ -172,7 +197,11 @@ export default function Profile() {
                           }}
                         >
                           <Grid item sm={4} xs={9}>
-                            <Typography>อีเมล</Typography>
+                            <Typography
+                              sx={{ fontWeight: "bold", color: "grey" }}
+                            >
+                              อีเมล
+                            </Typography>
                           </Grid>
                           <Grid item sm={5} xs={9}>
                             <Typography>{item.email}</Typography>
@@ -189,7 +218,11 @@ export default function Profile() {
                           }}
                         >
                           <Grid item sm={4} xs={9}>
-                            <Typography>รหัสผ่าน</Typography>
+                            <Typography
+                              sx={{ fontWeight: "bold", color: "grey" }}
+                            >
+                              รหัสผ่าน
+                            </Typography>
                           </Grid>
                           <Grid item sm={5} xs={9}>
                             <Typography>-</Typography>
@@ -203,6 +236,6 @@ export default function Profile() {
           </Container>
         </Box>
       </Homelayout>
-    </>
+    </ThemeProvider>
   );
 }

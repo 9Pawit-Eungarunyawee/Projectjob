@@ -29,7 +29,7 @@ import AddressDrawer from "./drawer";
 import { useRouter } from "next/router";
 import { debounce } from "lodash";
 import { useAuthContext } from "@/context/AuthContext";
-import Editaddress from "./editdialog";
+import SelectAddressDialog from "./editdialog";
 import { getColorDetails, getProductDetails } from "@/firebase/getData";
 function handleClick(event) {
   event.preventDefault();
@@ -37,6 +37,7 @@ function handleClick(event) {
 }
 export default function Selectaddress() {
   const shippingCost = 50;
+  const [selectedAddressIndex, setSelectedAddressIndex] = React.useState(0);
   const [producttotal, setProducttotal] = React.useState(0);
   const [addressData, setAddressData] = React.useState(null);
   const [documentData, setDocumentData] = React.useState(null);
@@ -65,14 +66,28 @@ export default function Selectaddress() {
     },
   });
   const handleConfirmOrder = () => {
-    const productIDs = groupedProductData.map((item) => item.product_id.id);
+    const productDetails = groupedProductData.map((item) => ({
+      product_id: item.product_id.id,
+      amount: item.amount,
+      size: item.size,
+      price: item.price,
+      color_id: item.color_id.id,
+    }));
     const cartID = documentData.map((item) => item.id);
+    const addressDetails = addressData.map((item) => ({
+      address: item.addresses[selectedAddressIndex].address,
+      amphure: item.addresses[selectedAddressIndex].amphure,
+      tambon: item.addresses[selectedAddressIndex].tambon,
+      province: item.addresses[selectedAddressIndex].province,
+      zipcode: item.addresses[selectedAddressIndex].zipcode,
+    }));
     router.push({
       pathname: "/cart/QR",
       query: {
         total,
-        productIDs: JSON.stringify(productIDs),
+        productDetails: JSON.stringify(productDetails),
         cartId: JSON.stringify(cartID),
+        addressDetails:JSON.stringify(addressDetails),
       },
     });
   };
@@ -115,7 +130,6 @@ export default function Selectaddress() {
         if (!groupedProducts[key]) {
           groupedProducts[key] = {
             ...doc,
-            amount: 1,
           };
         } else {
           groupedProducts[key].amount += 1;
@@ -262,7 +276,11 @@ export default function Selectaddress() {
                         >
                           <Typography>ที่อยู่จัดส่ง</Typography>
                           <Box>
-                            <Editaddress handleClickOpen={handleClickOpen} />
+                            <SelectAddressDialog
+                              onSelectAddress={(selectedAddressIndex) => {
+                                setSelectedAddressIndex(selectedAddressIndex);
+                              }}
+                            />
                             <Addressdialog handleClickOpen={handleClickOpen} />
                           </Box>
                         </Box>
@@ -276,14 +294,34 @@ export default function Selectaddress() {
                                 key={index}
                               >
                                 <Grid item xs={12} sm={3}>
-                                  <Typography>{data.name}</Typography>
+                                  {console.log("ดาต้าาาาาาาา", data.addresses[selectedAddressIndex])}
+                                  {data && <Typography>{data.name}</Typography>}
                                 </Grid>
                                 <Grid item xs={12} sm={9}>
                                   <Typography>
-                                    {data.addresses[0].address} อำเภอ{" "}
-                                    {data.addresses[0].amphure} ตำบล
-                                    {data.addresses[0].tambon} จังหวัด{" "}
-                                    {data.addresses[0].province}
+                                    {
+                                      data.addresses[selectedAddressIndex]
+                                        .address
+                                    }{" "}
+                                    อำเภอ{" "}
+                                    {
+                                      data.addresses[selectedAddressIndex]
+                                        .amphure
+                                    }{" "}
+                                    ตำบล{" "}
+                                    {
+                                      data.addresses[selectedAddressIndex]
+                                        .tambon
+                                    }{" "}
+                                    จังหวัด{" "}
+                                    {
+                                      data.addresses[selectedAddressIndex]
+                                        .province
+                                    }{" "}
+                                    {
+                                      data.addresses[selectedAddressIndex]
+                                        .zipcode
+                                    }
                                   </Typography>
                                 </Grid>
                               </Grid>

@@ -326,7 +326,7 @@ export default function AddProduct() {
                       <MenuItem value={"5 แกลลอน"}>5 แกลลอน</MenuItem>
                     </TextField>
 
-                    <TextField
+                    {/* <TextField
                       value={productSizes.quantity}
                       onChange={(e) => {
                         const input = e.target.value;
@@ -347,7 +347,7 @@ export default function AddProduct() {
                       required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
-                    />
+                    /> */}
 
                     <TextField
                       value={productSizes.price}
@@ -372,7 +372,7 @@ export default function AddProduct() {
                       sx={{ mt: 1, mb: 1 }}
                     />
 
-                    <TextField
+                    {/* <TextField
                       value={productSizes.cost}
                       onChange={(e) => {
                         const input = e.target.value;
@@ -393,7 +393,7 @@ export default function AddProduct() {
                       required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
-                    />
+                    /> */}
                     <Button
                       variant="contained"
                       color="error"
@@ -434,7 +434,7 @@ export default function AddProduct() {
                     />
                   </label>
                 </Box>
-                <Typography sx={{ mt: 1 }}>ล๊อตสินค้า:</Typography>
+                {/* <Typography sx={{ mt: 1 }}>ล๊อตสินค้า:</Typography>
                 <TextField
                   value={lot}
                   onChange={(e) => setLot(e.target.value)}
@@ -444,7 +444,7 @@ export default function AddProduct() {
                   size="small"
                   sx={{ mt: 1, mb: 1 }}
                   type="date"
-                />
+                /> */}
                 <Box>
                   <FormControlLabel
                     sx={{ m: 0 }}

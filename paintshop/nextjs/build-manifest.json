@@ -22,15 +22,20 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/buy": [
+    "/buy/add": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/buy.js"
+      "static/chunks/pages/buy/add.js"
     ],
-    "/catalogadmin": [
+    "/claim": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/catalogadmin.js"
+      "static/chunks/pages/claim.js"
+    ],
+    "/employee": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/employee.js"
     ],
     "/product": [
       "static/chunks/webpack.js",

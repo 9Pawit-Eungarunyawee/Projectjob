@@ -110,8 +110,8 @@ export default function Order() {
     }
   };
   
-  function createData(No, date,time, name, product_id, price, img, status) {
-    return { No, date,time, name, product_id, price, img, status };
+  function createData(No, date,time, name, id, total_price, img, status) {
+    return { No, date,time, name, id, total_price, img, status };
   }
   const rows = documentData.map((dataItem, index) => {
     const date = dataItem.date
@@ -127,15 +127,14 @@ export default function Order() {
       const user = users.find(user => user.id === dataItem.user_id);
       const name = user ? user.name : dataItem.user_id;
       
-      const product = products.find(product => dataItem.product_id.includes(product.id));
-      const product_name = product ? product.name : "";
+ 
     return createData(
       index + 1,
       date,
       time,
       name,
-      product_name,
-      dataItem.price,
+      dataItem.id,
+      dataItem.total_price,
       dataItem.img,
       dataItem.status
     );
@@ -178,8 +177,8 @@ export default function Order() {
                       <StyledTableCell>{row.date}</StyledTableCell>
                       <StyledTableCell>{row.time}</StyledTableCell>
                       <StyledTableCell>{row.name}</StyledTableCell>
-                      <StyledTableCell>{row.product_id}</StyledTableCell>
-                      <StyledTableCell>{row.price}</StyledTableCell>
+                      <StyledTableCell>{row.id}</StyledTableCell>
+                      <StyledTableCell>{row.total_price}</StyledTableCell>
                       <StyledTableCell align="center">
                         {
                           <Image
@@ -196,9 +195,9 @@ export default function Order() {
                       <StyledTableCell align="center">
                         <Button
                           color="primary"
-                          onClick={() => handleRestoreData(row.id)}
+                         
                         >
-                          กู้คืน
+                          ดูรายละเอียด
                         </Button>
                       </StyledTableCell>
                     </StyledTableRow>

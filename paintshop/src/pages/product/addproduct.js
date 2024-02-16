@@ -108,7 +108,7 @@ export default function AddProduct() {
     // console.log(imageUrl);
   };
 
-  const { catalogData, setCatalogData, fetchcatalogData } = useContext(CatalogContext);
+  const { catalogData} = useContext(CatalogContext);
   const handleForm = async (event) => {
     event.preventDefault();
     const product = {

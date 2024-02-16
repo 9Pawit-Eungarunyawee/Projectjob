@@ -14,7 +14,9 @@ import {
 } from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import SearchDialog from "./search-dialog";
+import { ProductContext } from "@/context/ProductContext";
 export default function Add() {
   const [alert, setAlert] = useState(null);
   const theme = createTheme({
@@ -33,9 +35,26 @@ export default function Add() {
   const goBack = () => {
     window.history.back();
   };
+  const { productData } = useContext(ProductContext);
   const [products, setProducts] = useState([
-    { product_id: "", product_size: [{ amount: "", size: "", cost: "" }] },
+    {
+      product_name: "",
+      product_id: "",
+      product_size: [{ amount: "", size: "", cost: "" }],
+    },
   ]);
+  const handleInputChange = (e, index, property) => {
+    const newInputSets = [...products];
+    newInputSets[index][property] = e.target.value;
+    setProducts(newInputSets);
+  };
+
+  const handleInputSizeChange = (e, index, id, property) => {
+    const newInputSets = [...products];
+    newInputSets[index].product_size[id][property] = e.target.value;
+    setProducts(newInputSets);
+  };
+
   const [open, setOpen] = useState(false);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -97,6 +116,19 @@ export default function Add() {
       setOpen(true);
     }
   };
+
+  const [opendialog, setOpenDialog] = useState(false);
+  const handleOpenDialog = (item) => {
+    setOpenDialog(true);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  useEffect(() => {
+    console.log(products);
+  }, [products]);
+  const createBuy = () => {};
   return (
     <Layout>
       <ThemeProvider theme={theme}>
@@ -151,7 +183,6 @@ export default function Add() {
               type="date"
             />
             <Typography sx={{ mt: 1 }}>สินค้า:</Typography>
-
             {products.map((product, index) => (
               <Box
                 key={index}
@@ -164,16 +195,23 @@ export default function Add() {
                     "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
                 }}
               >
+                <SearchDialog
+                  handleCloseDialog={handleCloseDialog}
+                  opendialog={opendialog}
+                  productData={productData}
+                />
                 <TextField
                   variant="outlined"
                   label="ชื่อสินค้า"
+                  value={products[index].product_name}
+                  onChange={(e) => handleInputChange(e, index, "product_name")}
                   fullWidth
                   size="small"
                   sx={{ mt: 1, mb: 1 }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton>
+                        <IconButton onClick={handleOpenDialog}>
                           <SearchIcon />
                         </IconButton>
                       </InputAdornment>
@@ -185,6 +223,10 @@ export default function Add() {
                   <Box sx={{ pr: 3, pl: 3 }} key={id}>
                     <Typography sx={{ mt: 1 }}>รูปแบบที่ {id + 1} :</Typography>
                     <TextField
+                      defaultValue={product_size.size}
+                      onChange={(e) =>
+                        handleInputSizeChange(e, index, id, "size")
+                      }
                       variant="outlined"
                       label="ขนาด"
                       fullWidth
@@ -194,6 +236,10 @@ export default function Add() {
                     />
                     <TextField
                       variant="outlined"
+                      defaultValue={product_size.amount}
+                      onChange={(e) =>
+                        handleInputSizeChange(e, index, id, "amount")
+                      }
                       label="จำนวน"
                       fullWidth
                       required
@@ -201,6 +247,10 @@ export default function Add() {
                       sx={{ mt: 1, mb: 1 }}
                     />
                     <TextField
+                      defaultValue={product_size.cost}
+                      onChange={(e) =>
+                        handleInputSizeChange(e, index, id, "cost")
+                      }
                       variant="outlined"
                       label="ราคาต่อหน่วย"
                       fullWidth
@@ -279,7 +329,12 @@ export default function Add() {
                 มูลค่ารวมสุทธิ :
               </Typography>
             </Box>
-            <Button sx={{ mb: 1 ,mt:2}} variant="contained" color="success">
+            <Button
+              sx={{ mb: 1, mt: 2 }}
+              variant="contained"
+              color="success"
+              onClick={createBuy}
+            >
               สร้างรายการซื้อ
             </Button>
           </Grid>

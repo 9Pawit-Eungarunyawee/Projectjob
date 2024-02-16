@@ -16,11 +16,14 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  TableFooter,
+  TablePagination,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Delete } from "@mui/icons-material";
+
 export default function TableProduct({ data, onDelete }) {
   const router = useRouter();
   const handleClick = (id) => {
@@ -76,6 +79,22 @@ export default function TableProduct({ data, onDelete }) {
       dataItem.status === true ? "พร้อมขาย" : "ไม่พร้อมขาย"
     )
   );
+
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const [dialogopen, setDialogOpen] = React.useState(false);
   const [deleteID, setDeleteID] = React.useState(null);
   const handleDialogOpen = (id) => {
@@ -92,13 +111,8 @@ export default function TableProduct({ data, onDelete }) {
   };
   return (
     <>
-      <Dialog
-        open={dialogopen}
-        onClose={handleDialogClose}
-      >
-        <DialogTitle>
-          {"ยืนยันที่จะลบหรือไม่?"}
-        </DialogTitle>
+      <Dialog open={dialogopen} onClose={handleDialogClose}>
+        <DialogTitle>{"ยืนยันที่จะลบหรือไม่?"}</DialogTitle>
         {/* <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Let Google help apps determine location. This means sending
@@ -112,7 +126,7 @@ export default function TableProduct({ data, onDelete }) {
           </Button>
         </DialogActions>
       </Dialog>
-      <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
+      <TableContainer component={Paper} sx={{ borderRadius: "25px",mb:5 }}>
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
@@ -129,7 +143,10 @@ export default function TableProduct({ data, onDelete }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {(rowsPerPage > 0
+              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : rows
+            ).map((row) => (
               <StyledTableRow key={row.No}>
                 <StyledTableCell component="th" scope="row">
                   {row.No}
@@ -189,6 +206,19 @@ export default function TableProduct({ data, onDelete }) {
               </StyledTableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[2,5, 10, 25, { label: "ทั้งหมด", value: -1 }]}
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                labelRowsPerPage="รายการสินค้าต่อหน้า"
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
     </>

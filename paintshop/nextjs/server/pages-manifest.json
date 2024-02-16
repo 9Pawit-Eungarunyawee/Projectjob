@@ -2,10 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/dashboard": "pages/dashboard.js",
+  "/buy": "pages/buy.js",
+  "/product/addproduct": "pages/product/addproduct.js",
   "/buy/add": "pages/buy/add.js",
-  "/product": "pages/product.js",
-  "/employee": "pages/employee.js",
-  "/sell": "pages/sell.js",
-  "/claim": "pages/claim.js",
-  "/product/addproduct": "pages/product/addproduct.js"
+  "/product": "pages/product.js"
 }

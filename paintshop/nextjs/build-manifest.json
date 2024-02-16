@@ -27,15 +27,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/buy/add.js"
     ],
-    "/claim": [
+    "/dashboard": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/claim.js"
-    ],
-    "/employee": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/employee.js"
+      "static/chunks/pages/dashboard.js"
     ],
     "/product": [
       "static/chunks/webpack.js",

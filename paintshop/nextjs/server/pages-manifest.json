@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/catalogadmin": "pages/catalogadmin.js",
   "/product": "pages/product.js",
-  "/buy": "pages/buy.js",
+  "/product/history": "pages/product/history.js",
   "/product/addproduct": "pages/product/addproduct.js"
 }

@@ -15,6 +15,7 @@ import { useContext, useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import TableLots from "./table";
 import { ProductContext } from "@/context/ProductContext";
+import Link from "next/link";
 
 export default function Buy() {
   const theme = createTheme({
@@ -30,23 +31,23 @@ export default function Buy() {
       },
     },
   });
- 
+
   const [searchTerm, setSearchTerm] = useState("");
- const [documentData,setDocumentData] = useState([])
+  const [documentData, setDocumentData] = useState([]);
   useEffect(() => {
     fetchData();
   }, []);
 
   const debouncedSearch = debounce(async (term) => {
     try {
-      const collectionName = "lots";
+      const collectionName = "buy";
       const field = "name";
       const results = await searchData(collectionName, field, term);
       setDocumentData(results);
     } catch (error) {
       console.error("Error searching data:", error);
     }
-  }, 500); 
+  }, 500);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -59,16 +60,15 @@ export default function Buy() {
     if (error) {
       console.error("Error fetching document:", error);
     } else if (result) {
-      const lotData = result.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-      console.log(lotData)
+      const lotData = result.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(lotData);
       setDocumentData(lotData);
     }
   };
-  
+
   return (
     <Layout>
       <ThemeProvider theme={theme}>
@@ -93,16 +93,17 @@ export default function Buy() {
           </Box>
         </Box>
         <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
-              <Button
-                variant="contained"
-                color="success"
-                sx={{ mr: 2, mb: 2, mt: 2 }}
-                
-              >
-                สร้างรายการซื้อ
-              </Button>
-            </Box>
-            <TableLots data={{data: documentData}}/>
+          <Link href="/buy/add" passHref>
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ mr: 2, mb: 2, mt: 2 }}
+            >
+              สร้างรายการซื้อ
+            </Button>
+          </Link>
+        </Box>
+        <TableLots data={{ data: documentData }} />
       </ThemeProvider>
     </Layout>
   );

@@ -4,8 +4,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export const ProductContext = createContext();
 
-
-
 export default function ProductProvider({ children }) {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +24,14 @@ export default function ProductProvider({ children }) {
           id: doc.id,
           ...doc.data(),
         }));
-      setProductData(Data);
+
+      // เรียงลำดับข้อมูลตามวันที่
+      const sortedData = Data.sort((a, b) => {
+        return b.create.createAt.toMillis() - a.create.createAt.toMillis();
+      });
+
+      // ตั้งค่าข้อมูลใหม่ที่เรียงลำดับแล้ว
+      setProductData(sortedData);
       setLoading(false);
     }
   };

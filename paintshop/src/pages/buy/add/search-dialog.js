@@ -29,6 +29,8 @@ export default function SearchDialog({
   handleCloseDialog,
   opendialog,
   productData,
+  index,
+  setProducts,
 }) {
   const theme = createTheme({
     palette: {
@@ -43,8 +45,8 @@ export default function SearchDialog({
       },
     },
   });
-  function createData(No, id, img, p_name, p_sell, p_left,p_price) {
-    return { No, id, img, p_name, p_sell, p_left,p_price };
+  function createData(No, id, img, p_name, p_sell, p_left, productSizes) {
+    return { No, id, img, p_name, p_sell, p_left, productSizes };
   }
   const rows = productData.map((dataItem, index) =>
     createData(
@@ -75,7 +77,7 @@ export default function SearchDialog({
     // hide last border
     "&:last-child td, &:last-child th": {
       border: 0,
-      padding:0
+      padding: 0,
     },
   }));
   const [page, setPage] = useState(0);
@@ -93,6 +95,24 @@ export default function SearchDialog({
     setPage(0);
   };
 
+  const handleSetProduct = (row) => {
+    console.log(row);
+    setProducts((prevProducts) => {
+      const updatedProducts = [...prevProducts];
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        product_name: row.p_name,
+        product_id:row.id,
+        product_size: row.productSizes.map((size) => ({
+          amount: "",
+          size: size.size,
+          cost: "",
+        })),
+      };
+      return updatedProducts;
+    });
+    handleCloseDialog();
+  };
   return (
     <ThemeProvider theme={theme}>
       <Dialog
@@ -142,27 +162,48 @@ export default function SearchDialog({
                         />
                       }
                     </StyledTableCell>
-                    <StyledTableCell align="center">{row.p_name}</StyledTableCell>
-                    <StyledTableCell align="center">{row.p_sell}</StyledTableCell>
-                    <StyledTableCell align="center">{row.p_left}</StyledTableCell>
-                    <StyledTableCell align="center">{row.p_price[0].price}</StyledTableCell>
-                    <StyledTableCell align="center"><Button variant="outlined">เลือก</Button></StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.p_name}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.p_sell}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.p_left}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.productSizes[0].price}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Button
+                        variant="outlined"
+                        onClick={() => handleSetProduct(row)}
+                      >
+                        เลือก
+                      </Button>
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
               <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[2, 5, 10, 25, { label: "ทั้งหมด", value: -1 }]}
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                labelRowsPerPage="รายการสินค้าต่อหน้า"
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      2,
+                      5,
+                      10,
+                      25,
+                      { label: "ทั้งหมด", value: -1 },
+                    ]}
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    labelRowsPerPage="รายการสินค้าต่อหน้า"
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </TableRow>
+              </TableFooter>
             </Table>
           </TableContainer>
         </DialogContent>

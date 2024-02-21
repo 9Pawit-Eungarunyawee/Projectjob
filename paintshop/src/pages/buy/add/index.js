@@ -17,6 +17,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useContext, useEffect, useState } from "react";
 import SearchDialog from "./search-dialog";
 import { ProductContext } from "@/context/ProductContext";
+import { useAuthContext } from "@/context/AuthContext";
+import addBuy from "@/firebase/addBuy";
+import { Timestamp } from "firebase/firestore";
 export default function Add() {
   const [alert, setAlert] = useState(null);
   const theme = createTheme({
@@ -35,11 +38,17 @@ export default function Add() {
   const goBack = () => {
     window.history.back();
   };
+  const { user } = useAuthContext();
   const { productData } = useContext(ProductContext);
+  const [name, setName] = useState("");
+  const [createAt, setCreateAt] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [shippingCost, setShippingCost] = useState(0);
   const [products, setProducts] = useState([
     {
       product_name: "",
       product_id: "",
+      product_exp: "",
       product_size: [{ amount: "", size: "", cost: "" }],
     },
   ]);
@@ -102,7 +111,7 @@ export default function Add() {
     if (products[index].product_size.length > 1) {
       const newProduct = { ...products[index] };
       const newProductSize = [...newProduct.product_size];
-      newProductSize.splice(id, 1); // ลบชุดที่มีดัชนี id
+      newProductSize.splice(0, 1); // ลบชุดที่มีดัชนี id
       newProduct.product_size = newProductSize;
       const updatedProducts = [...products];
       updatedProducts[index] = newProduct;
@@ -125,10 +134,58 @@ export default function Add() {
     setOpenDialog(false);
   };
 
+  const [totalCost, setTotalCost] = useState(0);
   useEffect(() => {
-    console.log(products);
-  }, [products]);
-  const createBuy = () => {};
+    let sum = 0;
+    products.forEach((product) => {
+      product.product_size.forEach((size) => {
+        const amount = parseFloat(size.amount);
+        const cost = parseFloat(size.cost);
+        if (amount && cost) {
+          sum += amount * cost;
+        }
+      });
+    });
+    if (discount) {
+      sum -= parseFloat(discount);
+    }
+    if (shippingCost) {
+      sum += parseFloat(shippingCost);
+    }
+
+    setTotalCost(sum);
+  }, [products, discount, shippingCost]);
+
+  // useEffect(() => {
+  //   console.log(products);
+  const handleForm = async (event) => {
+    event.preventDefault();
+    const buy = {
+      name: name,
+      createAt: createAt,
+      products: products,
+      discount: discount,
+      shippingCost: shippingCost,
+      user_id: user.uid,
+      totalCost: totalCost,
+    };
+    const result = await addBuy("buy", buy);
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          เพิ่มข้อมูลสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
   return (
     <Layout>
       <ThemeProvider theme={theme}>
@@ -151,6 +208,7 @@ export default function Add() {
           <ArrowBackOutlinedIcon />
           <Typography> ย้อนกลับ</Typography>
         </Button>
+
         <Grid
           container
           spacing={0}
@@ -164,179 +222,256 @@ export default function Add() {
           }}
         >
           <Grid item xs={12} sm={7}>
-            <Typography sx={{ mt: 1 }}>ข้อมูล:</Typography>
-            <TextField
-              variant="outlined"
-              label="ชื่อรายการ"
-              fullWidth
-              required
-              size="small"
-              sx={{ mt: 1, mb: 1 }}
-            />
-            <Typography sx={{ mt: 1 }}>วันที่:</Typography>
-            <TextField
-              variant="outlined"
-              fullWidth
-              required
-              size="small"
-              sx={{ mt: 1, mb: 1 }}
-              type="date"
-            />
-            <Typography sx={{ mt: 1 }}>สินค้า:</Typography>
-            {products.map((product, index) => (
-              <Box
-                key={index}
-                sx={{
-                  borderRadius: "10px",
-                  mt: 1,
-                  mb: 3,
-                  p: 2,
-                  boxShadow:
-                    "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
-                }}
-              >
-                <SearchDialog
-                  handleCloseDialog={handleCloseDialog}
-                  opendialog={opendialog}
-                  productData={productData}
-                />
-                <TextField
-                  variant="outlined"
-                  label="ชื่อสินค้า"
-                  value={products[index].product_name}
-                  onChange={(e) => handleInputChange(e, index, "product_name")}
-                  fullWidth
-                  size="small"
-                  sx={{ mt: 1, mb: 1 }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={handleOpenDialog}>
-                          <SearchIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
+            <form onSubmit={handleForm} className="form">
+              <Typography sx={{ mt: 1 }}>ข้อมูล:</Typography>
+              <TextField
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                variant="outlined"
+                label="ชื่อรายการ"
+                fullWidth
+                required
+                size="small"
+                sx={{ mt: 1, mb: 1 }}
+              />
+              <Typography sx={{ mt: 1 }}>วันที่:</Typography>
+              <TextField
+                variant="outlined"
+                value={createAt}
+                onChange={(e) => setCreateAt(e.target.value)}
+                fullWidth
+                required
+                size="small"
+                sx={{ mt: 1, mb: 1 }}
+                type="date"
+              />
+              <Typography sx={{ mt: 1 }}>สินค้า:</Typography>
+              {products.map((product, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    borderRadius: "10px",
+                    mt: 1,
+                    mb: 3,
+                    p: 2,
+                    boxShadow:
+                      "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
                   }}
-                />
-                <Typography sx={{ mt: 1 }}>รูปแบบสินค้า:</Typography>
-                {product.product_size.map((product_size, id) => (
-                  <Box sx={{ pr: 3, pl: 3 }} key={id}>
-                    <Typography sx={{ mt: 1 }}>รูปแบบที่ {id + 1} :</Typography>
-                    <TextField
-                      defaultValue={product_size.size}
-                      onChange={(e) =>
-                        handleInputSizeChange(e, index, id, "size")
-                      }
-                      variant="outlined"
-                      label="ขนาด"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                    />
-                    <TextField
-                      variant="outlined"
-                      defaultValue={product_size.amount}
-                      onChange={(e) =>
-                        handleInputSizeChange(e, index, id, "amount")
-                      }
-                      label="จำนวน"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                    />
-                    <TextField
-                      defaultValue={product_size.cost}
-                      onChange={(e) =>
-                        handleInputSizeChange(e, index, id, "cost")
-                      }
-                      variant="outlined"
-                      label="ราคาต่อหน่วย"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                    />
-                    <Button
-                      sx={{ mt: 1, mb: 1 }}
-                      variant="outlined"
-                      color="error"
-                      fullWidth
-                      onClick={() => removeInputSize(index, id)}
+                >
+                  <SearchDialog
+                    handleCloseDialog={handleCloseDialog}
+                    opendialog={opendialog}
+                    productData={productData}
+                    index={index}
+                    setProducts={setProducts}
+                  />
+                  <TextField
+                    variant="outlined"
+                    label="ชื่อสินค้า"
+                    id="product-name"
+                    name="product_name"
+                    disabled
+                    value={product.product_name}
+                    onChange={(e) =>
+                      handleInputChange(e, index, "product_name")
+                    }
+                    fullWidth
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleOpenDialog}>
+                            <SearchIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    InputLabelProps={{
+                      shrink: true,
+                      floating: true,
+                    }}
+                  />
+                  <Typography sx={{ mt: 1 }}>รูปแบบสินค้า:</Typography>
+                  {product.product_size.map((product_size, id) => (
+                    <Box
+                      sx={{
+                        m: 1,
+                        p: 2,
+                        mb: 2,
+                        borderRadius: "10px",
+                        boxShadow:
+                          "rgba(255, 255, 255, 0.2) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.9) 0px 0px 0px 1px",
+                      }}
+                      key={id}
                     >
-                      ลบรูปแบบสินค้า
-                    </Button>
-                    {id === product.product_size.length - 1 && (
+                      <Typography sx={{ mt: 1 }}>
+                        รูปแบบที่ {id + 1} :
+                      </Typography>
+                      <TextField
+                        value={product_size.size}
+                        onChange={(e) =>
+                          handleInputSizeChange(e, index, id, "size")
+                        }
+                        variant="outlined"
+                        label="ขนาดสินค้า"
+                        fullWidth
+                        required
+                        size="small"
+                        sx={{ mt: 1, mb: 1 }}
+                      />
+                      <TextField
+                        variant="outlined"
+                        value={product_size.amount}
+                        onChange={(e) => {
+                          const input = e.target.value;
+                          // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                          if (/^\d*$/.test(input) || input === "") {
+                            // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                            if (
+                              input === "" ||
+                              (parseInt(input) >= 0 && input[0] !== "0")
+                            ) {
+                              handleInputSizeChange(e, index, id, "amount");
+                            }
+                          }
+                        }}
+                        label="จำนวน"
+                        fullWidth
+                        required
+                        size="small"
+                        sx={{ mt: 1, mb: 1 }}
+                      />
+                      <TextField
+                        value={product_size.cost}
+                        onChange={(e) => {
+                          const input = e.target.value;
+                          // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                          if (/^\d*$/.test(input) || input === "") {
+                            // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                            if (
+                              input === "" ||
+                              (parseInt(input) >= 0 && input[0] !== "0")
+                            ) {
+                              handleInputSizeChange(e, index, id, "cost");
+                            }
+                          }
+                        }}
+                        variant="outlined"
+                        label="ราคาต่อหน่วย"
+                        fullWidth
+                        required
+                        size="small"
+                        sx={{ mt: 1, mb: 1 }}
+                      />
                       <Button
                         sx={{ mt: 1, mb: 1 }}
                         variant="outlined"
+                        color="error"
                         fullWidth
-                        onClick={() => addInputSize(index)}
+                        onClick={() => removeInputSize(index, id)}
                       >
-                        เพิ่มรูปแบบสินค้า
+                        ลบรูปแบบสินค้า
                       </Button>
-                    )}
-                  </Box>
-                ))}
+                      {id === product.product_size.length - 1 && (
+                        <Button
+                          sx={{ mt: 1, mb: 1 }}
+                          variant="outlined"
+                          fullWidth
+                          onClick={() => addInputSize(index)}
+                        >
+                          เพิ่มรูปแบบสินค้า
+                        </Button>
+                      )}
+                    </Box>
+                  ))}
 
-                <Typography sx={{ mt: 1 }}>วันหมดอายุ:</Typography>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  required
-                  size="small"
-                  sx={{ mt: 1, mb: 1 }}
-                  type="date"
-                />
-                <Button
-                  sx={{ mt: 1, mb: 1 }}
-                  variant="contained"
-                  fullWidth
-                  color="error"
-                  onClick={() => removeInputSet(index)}
-                >
-                  ลบสินค้า
-                </Button>
+                  <Typography sx={{ mt: 1 }}>วันหมดอายุ:</Typography>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    value={product.product_exp}
+                    onChange={(e) => handleInputChange(e, index, "product_exp")}
+                    required
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    type="date"
+                  />
+                  <Button
+                    sx={{ mt: 1, mb: 1 }}
+                    variant="contained"
+                    fullWidth
+                    color="error"
+                    onClick={() => removeInputSet(index)}
+                  >
+                    ลบสินค้า
+                  </Button>
+                </Box>
+              ))}
+              <Button
+                sx={{ mb: 1 }}
+                variant="contained"
+                fullWidth
+                onClick={addProduct}
+              >
+                เพิ่มสินค้า
+              </Button>
+              <Typography sx={{ mt: 1 }}>ส่วนลด :</Typography>
+              <TextField
+                variant="outlined"
+                value={discount}
+                onChange={(e) => {
+                  const input = e.target.value;
+                  // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                  if (/^\d*$/.test(input) || input === "") {
+                    // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                    if (input === "" || parseInt(input) >= -1) {
+                      setDiscount(e.target.value);
+                    }
+                  }
+                }}
+                label="ส่วนลด"
+                fullWidth
+                size="small"
+                sx={{ mt: 1, mb: 1 }}
+              />
+              <Typography sx={{ mt: 1 }}>ค่าส่ง :</Typography>
+              <TextField
+                variant="outlined"
+                value={shippingCost}
+                onChange={(e) => {
+                  const input = e.target.value;
+                  // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                  if (/^\d*$/.test(input) || input === "") {
+                    // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                    if (
+                      input === "" ||
+                      (parseInt(input) >= 0 && input[0] !== "0")
+                    ) {
+                      setShippingCost(e.target.value);
+                    }
+                  }
+                }}
+                label="ค่าส่ง"
+                fullWidth
+                size="small"
+                sx={{ mt: 1, mb: 1 }}
+              />
+
+              <Box sx={{ p: 3, bgcolor: "#EAE4E7", mt: 1 }}>
+                <Typography sx={{ mt: 1, fontSize: "1.3rem" }}>
+                  มูลค่ารวมสุทธิ : {isNaN(totalCost) ? "" : totalCost}
+                </Typography>
               </Box>
-            ))}
-            <Button
-              sx={{ mb: 1 }}
-              variant="contained"
-              fullWidth
-              onClick={addProduct}
-            >
-              เพิ่มสินค้า
-            </Button>
-            <Typography sx={{ mt: 1 }}>ส่วนลด :</Typography>
-            <TextField
-              variant="outlined"
-              label="ส่วนลด"
-              fullWidth
-              size="small"
-              sx={{ mt: 1, mb: 1 }}
-            />
-            <Typography sx={{ mt: 1 }}>ค่าส่ง :</Typography>
-            <TextField
-              variant="outlined"
-              label="ค่าส่ง"
-              fullWidth
-              size="small"
-              sx={{ mt: 1, mb: 1 }}
-            />
-            <Box sx={{ p: 3, bgcolor: "#EAE4E7", mt: 1 }}>
-              <Typography sx={{ mt: 1, fontSize: "1.3rem" }}>
-                มูลค่ารวมสุทธิ :
-              </Typography>
-            </Box>
-            <Button
-              sx={{ mb: 1, mt: 2 }}
-              variant="contained"
-              color="success"
-              onClick={createBuy}
-            >
-              สร้างรายการซื้อ
-            </Button>
+              <Button
+                sx={{ mb: 1, mt: 2 }}
+                variant="contained"
+                color="success"
+                type="submit"
+              >
+                สร้างรายการซื้อ
+              </Button>
+            </form>
           </Grid>
         </Grid>
       </ThemeProvider>

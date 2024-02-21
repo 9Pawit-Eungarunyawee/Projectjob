@@ -40,7 +40,7 @@ export default function Buy() {
 
   const debouncedSearch = debounce(async (term) => {
     try {
-      const collectionName = "lots";
+      const collectionName = "buy";
       const field = "name";
       const results = await searchData(collectionName, field, term);
       setDocumentData(results);

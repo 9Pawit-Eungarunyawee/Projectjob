@@ -57,12 +57,12 @@ export default function TableProduct({ data, onDelete }) {
   const [docuData, setDocData] = React.useState([]);
   React.useEffect(() => {
     if (data && data.data) {
-      setDocData(data.data);
+      setDocData(data.data.sort((a, b) => new Date(b.create.createAt) - new Date(a.create.createAt)))
     }
     console.log("doc มา table: ", data);
   }, [data]);
-  function createData(No, id, img, p_name, p_sell, p_left, p_price, status) {
-    return { No, id, img, p_name, p_sell, p_left, p_price, status };
+  function createData(No, id, img, p_name, p_sell, p_left, p_price, status,create) {
+    return { No, id, img, p_name, p_sell, p_left, p_price, status ,create};
   }
 
   const rows = docuData.map((dataItem, index) =>
@@ -76,7 +76,8 @@ export default function TableProduct({ data, onDelete }) {
       dataItem.productSizes[0].price
         .toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-      dataItem.status === true ? "พร้อมขาย" : "ไม่พร้อมขาย"
+      dataItem.status === true ? "พร้อมขาย" : "ไม่พร้อมขาย",
+      dataItem.create
     )
   );
 
@@ -126,7 +127,7 @@ export default function TableProduct({ data, onDelete }) {
           </Button>
         </DialogActions>
       </Dialog>
-      <TableContainer component={Paper} sx={{ borderRadius: "25px",mb:5 }}>
+      <TableContainer component={Paper} sx={{ borderRadius: "25px", mb: 5 }}>
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
@@ -209,7 +210,13 @@ export default function TableProduct({ data, onDelete }) {
           <TableFooter>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[2,5, 10, 25, { label: "ทั้งหมด", value: -1 }]}
+                rowsPerPageOptions={[
+                  2,
+                  5,
+                  10,
+                  25,
+                  { label: "ทั้งหมด", value: -1 },
+                ]}
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}

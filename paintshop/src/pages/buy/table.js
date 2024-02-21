@@ -1,5 +1,7 @@
+import { getCollection } from "@/firebase/getData";
 import {
   Box,
+  Button,
   IconButton,
   Paper,
   Table,
@@ -41,20 +43,40 @@ export default function TableLots({ data }) {
     }
     console.log("doc มา table: ", data);
   }, [data]);
-
-  function createData(No, id, cost, createAt, product) {
-    return { No, id, cost, createAt, product };
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  const fetchUserData = async () => {
+    const collectionName = "users";
+    const { result, error } = await getCollection(collectionName);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const Data = result.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setUsers(Data);
+    }
+  };
+  function createData(No, name, totalCost, user, createAt, products,status) {
+    return { No, name, totalCost, createAt, user, products,status };
   }
 
-  const rows = docuData.map((dataItem, index) =>
-    createData(
+  const rows = docuData.map((dataItem, index) => {
+    const user = users.find((user) => user.id === dataItem.user_id);
+    const name = user ? user.name : dataItem.user_id;
+    return createData(
       index + 1,
-      dataItem.id,
-      dataItem.cost,
+      dataItem.name,
+      dataItem.totalCost,
+      name,
       dataItem.createAt,
-      dataItem.product
-    )
-  );
+      dataItem.products,
+      dataItem.status
+    );
+  });
 
   useEffect(() => {
     console.log(rows);
@@ -67,10 +89,11 @@ export default function TableLots({ data }) {
             <TableRow>
               <StyledTableCell>No.</StyledTableCell>
               <StyledTableCell align="center">วันที่</StyledTableCell>
-              <StyledTableCell align="center">รายการ</StyledTableCell>
+              <StyledTableCell align="center">ชื่อรายการ</StyledTableCell>
               <StyledTableCell align="center">ผู้สร้าง</StyledTableCell>
-              <StyledTableCell align="center">มูลค่า</StyledTableCell>
+              <StyledTableCell align="center">มูลค่า(บาท)</StyledTableCell>
               <StyledTableCell align="center">สถานะ</StyledTableCell>
+              <StyledTableCell align="center"></StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -80,16 +103,32 @@ export default function TableLots({ data }) {
                   {row.No}
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  {row.createAt
-                    .toDate()
-                    .toLocaleString("th-TH", {
-                      dateStyle: "medium",
-                      
-                    })}
+                  {row.createAt.toDate().toLocaleString("th-TH", {
+                    dateStyle: "medium",
+                  })}
                 </StyledTableCell>
-                <StyledTableCell>{row.product[0].product_id}</StyledTableCell>
-                <StyledTableCell>{row.p_left}</StyledTableCell>
-                <StyledTableCell>{row.p_price}</StyledTableCell>
+                <StyledTableCell align="center">{row.name}</StyledTableCell>
+                <StyledTableCell align="center">{row.user}</StyledTableCell>
+                <StyledTableCell align="center">
+                  {row.totalCost}
+                </StyledTableCell>
+                <StyledTableCell align="center">
+                  <Box
+                    sx={{
+                      backgroundColor:
+                        row.status === "สำเร็จ"
+                          ? "rgba(169, 196, 112, 0.61)"
+                          : "rgba(254, 97, 106, 0.50)",
+                      p: 1,
+                      borderRadius: "10px",
+                    }}
+                  >
+                    {row.status}
+                  </Box>
+                </StyledTableCell>
+                <StyledTableCell align="center">
+                  <Button>ดูรายละเอียด</Button>
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

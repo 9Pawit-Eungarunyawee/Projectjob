@@ -360,7 +360,7 @@ export default function EditProduct() {
                       <MenuItem value={"5 แกลลอน"}>5 แกลลอน</MenuItem>
                     </TextField>
 
-                    <TextField
+                    {/* <TextField
                       value={productSizes.quantity}
                       variant="outlined"
                       onChange={(e) => {
@@ -381,7 +381,7 @@ export default function EditProduct() {
                       required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
-                    />
+                    /> */}
 
                     <TextField
                       value={productSizes.price}
@@ -397,7 +397,7 @@ export default function EditProduct() {
                           }
                         }
                       }}
-                      label="ราคา"
+                      label="ราคาขาย"
                       fullWidth
                       required
                       size="small"
@@ -418,7 +418,7 @@ export default function EditProduct() {
                           }
                         }
                       }}
-                      label="ต้นทุน"
+                      label="ราคาซื้อ"
                       fullWidth
                       required
                       size="small"

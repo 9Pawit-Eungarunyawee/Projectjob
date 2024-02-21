@@ -21,9 +21,11 @@ import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
 import { CatalogContext } from "@/context/CatalogContext";
+import { ProductContext } from "@/context/ProductContext";
 
 export default function AddProduct() {
   const { user } = useAuthContext();
+  const {fetchProductData} = useContext(ProductContext)
   const [imageUrl, setImageUrl] = useState("");
 
   const [productSizes, setProductSizes] = useState([
@@ -56,7 +58,7 @@ export default function AddProduct() {
   const goBack = () => {
     window.history.back();
   };
-  
+
   const handleStatusChange = (e) => {
     setStatus(e.target.checked);
   };
@@ -76,13 +78,11 @@ export default function AddProduct() {
   };
 
   const removeInputSet = (index) => {
-    
     if (productSizes.length > 1) {
       const newInputSets = [...productSizes];
       newInputSets.splice(index, 1); // ลบชุดที่มีดัชนี index
       setProductSizes(newInputSets);
-      
-    }else if(productSizes.length <= 1){
+    } else if (productSizes.length <= 1) {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
           ต้องมีรูปแบบสินค้าอย่างน้อย 1 รูปแบบ
@@ -108,7 +108,7 @@ export default function AddProduct() {
     // console.log(imageUrl);
   };
 
-  const { catalogData} = useContext(CatalogContext);
+  const { catalogData } = useContext(CatalogContext);
   const handleForm = async (event) => {
     event.preventDefault();
     const product = {
@@ -132,6 +132,11 @@ export default function AddProduct() {
         </Alert>
       );
       setOpen(true);
+      fetchProductData()
+      setTimeout(() => {
+        goBack();
+      }, 500);
+      
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
@@ -139,6 +144,7 @@ export default function AddProduct() {
         </Alert>
       );
       setOpen(true);
+      fetchProductData()
     }
   };
   const [open, setOpen] = useState(false);
@@ -152,11 +158,10 @@ export default function AddProduct() {
   return (
     <Layout>
       <ThemeProvider theme={theme}>
-        
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           {alert}
         </Snackbar>
-        <Typography sx={{ fontSize: "2rem", fontWeight: "600" ,mt:4}}>
+        <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 4 }}>
           เพิ่มสินค้า
         </Typography>
         <Button
@@ -286,24 +291,16 @@ export default function AddProduct() {
                   size="small"
                   sx={{ mt: 1, mb: 1 }}
                 />
-              
-                  <Typography> รูปแบบสินค้า: </Typography>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{ mr: 2, mb: 2, mt: 2 ,width:"200px"}}
-                    onClick={addInputSet}
-                  >
-                    เพิ่มรูปแบบสินค้า
-                  </Button>
-              
+
+                <Typography> รูปแบบสินค้า: </Typography>
+
                 {productSizes.map((productSizes, index) => (
                   <Box
                     key={index}
                     sx={{
-                      borderRadius:"10px",
-                      mb:3,
-                      p:2,
+                      borderRadius: "10px",
+                      mb: 3,
+                      p: 2,
                       boxShadow:
                         "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
                     }}
@@ -352,7 +349,7 @@ export default function AddProduct() {
                     <TextField
                       value={productSizes.price}
                       variant="outlined"
-                      label="ราคา"
+                      label="ราคาขาย"
                       onChange={(e) => {
                         const input = e.target.value;
                         // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
@@ -372,7 +369,7 @@ export default function AddProduct() {
                       sx={{ mt: 1, mb: 1 }}
                     />
 
-                    {/* <TextField
+                    <TextField
                       value={productSizes.cost}
                       onChange={(e) => {
                         const input = e.target.value;
@@ -388,12 +385,12 @@ export default function AddProduct() {
                         }
                       }}
                       variant="outlined"
-                      label="ต้นทุน"
+                      label="ราคาซื้อ"
                       fullWidth
                       required
                       size="small"
                       sx={{ mt: 1, mb: 1 }}
-                    /> */}
+                    />
                     <Button
                       variant="contained"
                       color="error"
@@ -404,7 +401,14 @@ export default function AddProduct() {
                     </Button>
                   </Box>
                 ))}
-
+                <Button
+                  variant="contained"
+                  fullWidth
+                  sx={{ mr: 2, mb: 2, mt: 2, width: "200px" }}
+                  onClick={addInputSet}
+                >
+                  เพิ่มรูปแบบสินค้า
+                </Button>
                 <Box sx={{ textAlign: "left" }}>
                   <Typography sx={{ mb: 1 }}>รูปภาพสินค้า:</Typography>
                   <Box>

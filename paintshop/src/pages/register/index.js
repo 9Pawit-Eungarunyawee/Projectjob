@@ -21,7 +21,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function AddEmployee() {
   const [profileUrl, setProfileUrl] = useState(
-    "/../public/default-profile.jpg"
+    "default-profile.jpg"
   );
   const [name, setName] = useState(null);
   const [tel, setTel] = useState(null);

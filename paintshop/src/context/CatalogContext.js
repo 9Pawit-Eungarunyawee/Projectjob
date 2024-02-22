@@ -24,12 +24,14 @@ export default function CatalogProvider({ children }) {
           id: doc.id,
           ...doc.data(),
         }));
-        setCatalogData(Data);
+      setCatalogData(Data);
       setLoading(false);
     }
   };
   return (
-    <CatalogContext.Provider value={{ catalogData, setCatalogData,fetchcatalogData }}>
+    <CatalogContext.Provider
+      value={{ catalogData, setCatalogData, fetchcatalogData }}
+    >
       {loading ? (
         <div>
           <Backdrop

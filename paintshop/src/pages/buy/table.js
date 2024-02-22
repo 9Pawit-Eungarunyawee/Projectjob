@@ -14,9 +14,11 @@ import {
   tableCellClasses,
 } from "@mui/material";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function TableLots({ data }) {
+  const router = useRouter();
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#018294",
@@ -60,8 +62,8 @@ export default function TableLots({ data }) {
       setUsers(Data);
     }
   };
-  function createData(No, name, totalCost, user, createAt, products,status) {
-    return { No, name, totalCost, createAt, user, products,status };
+  function createData(No,id, name, totalCost, user, createAt, products,status) {
+    return { No,id, name, totalCost, createAt, user, products,status };
   }
 
   const rows = docuData.map((dataItem, index) => {
@@ -69,6 +71,7 @@ export default function TableLots({ data }) {
     const name = user ? user.name : dataItem.user_id;
     return createData(
       index + 1,
+      dataItem.id,
       dataItem.name,
       dataItem.totalCost,
       name,
@@ -78,9 +81,12 @@ export default function TableLots({ data }) {
     );
   });
 
-  useEffect(() => {
-    console.log(rows);
-  }, [rows]);
+  function handleCard(id) {
+    router.push({
+      pathname: "buy/detail",
+      query: { id: JSON.stringify(id) },
+    });
+  }
   return (
     <>
       <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
@@ -127,7 +133,7 @@ export default function TableLots({ data }) {
                   </Box>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <Button>ดูรายละเอียด</Button>
+                  <Button onClick={()=>handleCard(row.id)}>ดูรายละเอียด</Button>
                 </StyledTableCell>
               </StyledTableRow>
             ))}

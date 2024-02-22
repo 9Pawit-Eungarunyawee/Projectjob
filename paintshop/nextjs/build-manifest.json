@@ -22,20 +22,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/product": [
+    "/buy": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/product.js"
+      "static/chunks/pages/buy.js"
     ],
-    "/product/addproduct": [
+    "/buy/detail": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/product/addproduct.js"
-    ],
-    "/product/history": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/product/history.js"
+      "static/chunks/pages/buy/detail.js"
     ]
   },
   "ampFirstPages": []

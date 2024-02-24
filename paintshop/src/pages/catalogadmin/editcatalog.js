@@ -222,6 +222,11 @@ export default function EditCatalog() {
       }
     }
   };
+
+  const editColor = (id)=>{
+    
+  }
+  
   return (
     <Layout>
       <ThemeProvider theme={theme}>
@@ -371,7 +376,15 @@ export default function EditCatalog() {
                       type="color"
                       sx={{ mt: 1, mb: 1 }}
                       onChange={handleInputColor}
-                      placeholder="#RRGGBB หรือ #RGB"
+                      InputLabelProps={{
+                        shrink: true,
+                        // ให้ label ลอยค้าง
+                        sx: {
+                          backgroundColor: "#FFF", // สีพื้นหลังของ label
+                          padding: "0 5px", // ให้พื้นที่ขอบของ label เป็นช่องว่าง
+                          zIndex: 1, // ให้ label อยู่ด้านบนสุด
+                        },
+                      }}
                     />
                     <TextField
                       variant="outlined"
@@ -435,6 +448,7 @@ export default function EditCatalog() {
                               transform: "scale(1.2)",
                             },
                           }}
+                          onClick={()=>editColor(color.id)}
                         />
                       </Tooltip>
                     ))}
@@ -448,6 +462,14 @@ export default function EditCatalog() {
                   type="submit"
                 >
                   แก้ไขแค็ตตาล็อก
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  sx={{ mr: 2, mb: 2, mt: 2 }}
+                  
+                >
+                  ลบแค็ตตาล็อก
                 </Button>
               </Grid>
             </Grid>

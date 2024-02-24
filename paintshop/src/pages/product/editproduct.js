@@ -47,7 +47,6 @@ export default function EditProduct() {
   const [catalogId, setCatalogId] = useState("");
   const [flim, setFlim] = useState("");
   const [grade, setGrade] = useState("");
-  const [lot, setLot] = useState("");
   const [detail, setDetail] = useState("");
 
   const [alert, setAlert] = useState(null);
@@ -140,7 +139,6 @@ export default function EditProduct() {
       setDetail(productData.detail);
       setProductSizes(productData.productSizes);
       setImageUrl(productData.img);
-      setLot(productData.lot);
       setStatus(productData.status);
       setCatalogId(productData.catalog_id.id);
     }
@@ -154,7 +152,6 @@ export default function EditProduct() {
       detail: detail,
       flim: flim,
       grade: grade,
-      lot: lot,
       area: area,
       status: status,
       img: imageUrl,
@@ -464,18 +461,7 @@ export default function EditProduct() {
                     />
                   </label>
                 </Box>
-                <Typography sx={{ mt: 1 }}>ล๊อตสินค้า:</Typography>
-                <TextField
-                  value={lot}
-                  onChange={(e) => setLot(e.target.value)}
-                  variant="outlined"
-                  disabled
-                  fullWidth
-                  required
-                  size="small"
-                  sx={{ mt: 1, mb: 1 }}
-                  type="date"
-                />
+             
                 <Box>
                   <FormControlLabel
                     sx={{ m: 0 }}

@@ -22,20 +22,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/product": [
+    "/catalogadmin": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/product.js"
+      "static/chunks/pages/catalogadmin.js"
     ],
-    "/product/addproduct": [
+    "/catalogadmin/editcatalog": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/product/addproduct.js"
-    ],
-    "/product/history": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/product/history.js"
+      "static/chunks/pages/catalogadmin/editcatalog.js"
     ]
   },
   "ampFirstPages": []

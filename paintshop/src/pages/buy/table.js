@@ -8,7 +8,9 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
+  TablePagination,
   TableRow,
   styled,
   tableCellClasses,
@@ -62,13 +64,22 @@ export default function TableLots({ data }) {
       setUsers(Data);
     }
   };
-  function createData(No,id, name, totalCost, user, createAt, products,status) {
-    return { No,id, name, totalCost, createAt, user, products,status };
+  function createData(
+    No,
+    id,
+    name,
+    totalCost,
+    user,
+    createAt,
+    products,
+    status
+  ) {
+    return { No, id, name, totalCost, createAt, user, products, status };
   }
 
   const rows = docuData.map((dataItem, index) => {
     const user = users.find((user) => user.id === dataItem.user_id);
-    const name = user ? user.name : dataItem.user_id;
+    const name = user ? user.name : "";
     return createData(
       index + 1,
       dataItem.id,
@@ -87,6 +98,22 @@ export default function TableLots({ data }) {
       query: { id: JSON.stringify(id) },
     });
   }
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <>
       <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
@@ -103,7 +130,10 @@ export default function TableLots({ data }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {(rowsPerPage > 0
+              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : rows
+            ).map((row) => (
               <StyledTableRow key={row.No}>
                 <StyledTableCell component="th" scope="row">
                   {row.No}
@@ -133,11 +163,32 @@ export default function TableLots({ data }) {
                   </Box>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <Button onClick={()=>handleCard(row.id)}>ดูรายละเอียด</Button>
+                  <Button onClick={() => handleCard(row.id)}>
+                    ดูรายละเอียด
+                  </Button>
                 </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[
+                  2,
+                  5,
+                  10,
+                  25,
+                  { label: "ทั้งหมด", value: -1 },
+                ]}
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                labelRowsPerPage="รายการสินค้าต่อหน้า"
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
     </>

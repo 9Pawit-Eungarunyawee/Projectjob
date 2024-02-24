@@ -32,7 +32,7 @@ export default function CatalogProvider({ children }) {
     <CatalogContext.Provider
       value={{ catalogData, setCatalogData, fetchcatalogData }}
     >
-      {loading ? (
+      {/* {loading ? (
         <div>
           <Backdrop
             sx={{
@@ -45,10 +45,12 @@ export default function CatalogProvider({ children }) {
             <CircularProgress color="inherit" />
             <Typography sx={{ m: 2 }}>กำลังโหลดแคตตาล็อก...</Typography>
           </Backdrop>
+       
         </div>
       ) : (
         children
-      )}
+      )} */}
+      {children}
     </CatalogContext.Provider>
   );
 }

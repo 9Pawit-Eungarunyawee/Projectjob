@@ -5,23 +5,55 @@ import {
   Button,
   InputAdornment,
   Snackbar,
+  Tab,
+  Tabs,
   TextField,
   ThemeProvider,
   Typography,
   createTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-
 import TableProduct from "./table";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-
 import { softDeleteData } from "@/firebase/addData";
 import { useAuthContext } from "@/context/AuthContext";
 import { debounce } from "lodash";
-
 import searchData from "@/firebase/searchData";
 import { ProductContext } from "@/context/ProductContext";
+import PropTypes from "prop-types";
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ pt: 3 }}>
+          <Box>{children}</Box>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 export default function Product() {
   const theme = createTheme({
@@ -39,7 +71,8 @@ export default function Product() {
   });
 
   const { user } = useAuthContext();
-  const { productData, setProductData ,fetchProductData} = useContext(ProductContext);
+  const { productData, setProductData, fetchProductData } =
+    useContext(ProductContext);
 
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
@@ -102,6 +135,12 @@ export default function Product() {
   const openhistory = () => {
     router.push("product/history");
   };
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <Layout>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -147,10 +186,46 @@ export default function Product() {
                 ประวัติการลบ
               </Button>
             </Box>
-            <TableProduct
-              data={{ data: productData }}
-              onDelete={handleDelete}
-            />
+            <Box sx={{ width: "100%" }}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="basic tabs example"
+                >
+                  <Tab
+                    label={<Typography>ทั้งหมด</Typography>}
+                    {...a11yProps(0)}
+                  />
+                  <Tab
+                    label={<Typography>พร้อมขาย</Typography>}
+                    {...a11yProps(1)}
+                  />
+                  <Tab
+                    label={<Typography>ไม่พร้อมขาย</Typography>}
+                    {...a11yProps(2)}
+                  />
+                </Tabs>
+              </Box>
+              <CustomTabPanel value={value} index={0}>
+                <TableProduct
+                  data={{ data: productData }}
+                  onDelete={handleDelete}
+                />
+              </CustomTabPanel>
+              <CustomTabPanel value={value} index={1}>
+                <TableProduct
+                  data={{ data: productData.filter(item => item.status)  }}
+                  onDelete={handleDelete}
+                />
+              </CustomTabPanel>
+              <CustomTabPanel value={value} index={2}>
+                <TableProduct
+                  data={{ data: productData.filter(item => !item.status) }}
+                  onDelete={handleDelete}
+                />
+              </CustomTabPanel>
+            </Box>
           </Box>
         </Box>
       </ThemeProvider>

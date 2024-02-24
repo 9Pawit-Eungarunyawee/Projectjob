@@ -321,28 +321,6 @@ export default function Add() {
                         sx={{ mt: 1, mb: 1 }}
                       />
                       <TextField
-                        variant="outlined"
-                        value={product_size.amount}
-                        onChange={(e) => {
-                          const input = e.target.value;
-                          // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
-                          if (/^\d*$/.test(input) || input === "") {
-                            // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
-                            if (
-                              input === "" ||
-                              (parseInt(input) >= 0 && input[0] !== "0")
-                            ) {
-                              handleInputSizeChange(e, index, id, "amount");
-                            }
-                          }
-                        }}
-                        label="จำนวน"
-                        fullWidth
-                        required
-                        size="small"
-                        sx={{ mt: 1, mb: 1 }}
-                      />
-                      <TextField
                         value={product_size.cost}
                         onChange={(e) => {
                           const input = e.target.value;
@@ -364,6 +342,29 @@ export default function Add() {
                         size="small"
                         sx={{ mt: 1, mb: 1 }}
                       />
+                      <TextField
+                        variant="outlined"
+                        value={product_size.amount}
+                        onChange={(e) => {
+                          const input = e.target.value;
+                          // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                          if (/^\d*$/.test(input) || input === "") {
+                            // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                            if (
+                              input === "" ||
+                              (parseInt(input) >= 0 && input[0] !== "0")
+                            ) {
+                              handleInputSizeChange(e, index, id, "amount");
+                            }
+                          }
+                        }}
+                        label="จำนวน"
+                        fullWidth
+                        required
+                        size="small"
+                        sx={{ mt: 1, mb: 1 }}
+                      />
+                      
                       <Button
                         sx={{ mt: 1, mb: 1 }}
                         variant="outlined"
@@ -373,7 +374,7 @@ export default function Add() {
                       >
                         ลบรูปแบบสินค้า
                       </Button>
-                      {id === product.product_size.length - 1 && (
+                      {/* {id === product.product_size.length - 1 && (
                         <Button
                           sx={{ mt: 1, mb: 1 }}
                           variant="outlined"
@@ -382,7 +383,7 @@ export default function Add() {
                         >
                           เพิ่มรูปแบบสินค้า
                         </Button>
-                      )}
+                      )} */}
                     </Box>
                   ))}
 

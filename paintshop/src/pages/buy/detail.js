@@ -1,9 +1,15 @@
 import Layout from "@/components/layout";
 import {
+  Alert,
   Box,
   Button,
+  Collapse,
   Grid,
+  IconButton,
+  Paper,
+  Snackbar,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -11,6 +17,7 @@ import {
   ThemeProvider,
   Typography,
   createTheme,
+  tableCellClasses,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -19,7 +26,9 @@ import { ProductContext } from "@/context/ProductContext";
 import { UserContext } from "@/context/UserContext";
 import getDoument from "@/firebase/getData";
 import styled from "@emotion/styled";
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { cancelBuy } from "@/firebase/addBuy";
 export default function Detail() {
   const theme = createTheme({
     palette: {
@@ -81,12 +90,13 @@ export default function Detail() {
     if (buyData !== undefined) {
       const user = userData.find((user) => user.id === buyData.user_id);
       const name = user ? user.name : buyData.user_id;
-      const tel = user ? user.tel: buyData.user_id;
+      const tel = user ? user.tel : buyData.user_id;
       setNameUser(name);
-      setTel(tel)
+      setTel(tel);
     }
   }, [buyData]);
   const { userData } = useContext(UserContext);
+
   const fetchData = async () => {
     const collectionName = "buy";
     const { result, error } = await getDoument(collectionName, buy_id);
@@ -98,9 +108,72 @@ export default function Detail() {
     }
   };
 
+  const { productData } = useContext(ProductContext);
+  function createData(No, product_exp, product_id, product_name, product_size) {
+    return { No, product_exp, product_id, product_name, product_size };
+  }
+
+  const rows =
+    buyData.products && Array.isArray(buyData.products)
+      ? buyData.products.map((dataItem, index) => {
+          return createData(
+            index + 1,
+            dataItem.product_exp,
+            dataItem.product_id,
+            dataItem.product_name,
+            dataItem.product_size
+          );
+        })
+      : [];
+  const [openRows, setOpenRows] = useState([]);
+  const handleRowToggle = (rowNo) => {
+    setOpenRows((prevOpenRows) => ({
+      ...prevOpenRows,
+      [rowNo]: !prevOpenRows[rowNo],
+    }));
+  };
+  function handleEdit(id) {
+    router.push({
+      pathname: "edit",
+      query: { id: JSON.stringify(id) },
+    });
+  }
+  const [alert, setAlert] = useState(null);
+  const [open, setOpen] = useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const handleCancel = async () => {
+    const result = await cancelBuy("buy", buy_id);
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          ยกเลิกรายการสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+      setTimeout(() => {
+        goBack();
+      }, 500);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถยกเลิกรายการได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
   return (
     <Layout>
       <ThemeProvider theme={theme}>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          {alert}
+        </Snackbar>
         <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5 }}>
           รายละเอียดรายการซื้อ
         </Typography>
@@ -117,14 +190,36 @@ export default function Detail() {
           <ArrowBackOutlinedIcon />
           <Typography> ย้อนกลับ</Typography>
         </Button>
+        <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
+          <Button
+            variant="contained"
+            color="success"
+            sx={{ mr: 2, mb: 2, mt: 2 }}
+            onClick={() => handleEdit(buy_id)}
+          >
+            แก้ไขรายการ
+          </Button>
+          {buyData.status === "สำเร็จ" ? (
+            <Button
+              variant="contained"
+              color="error"
+              sx={{ mr: 2, mb: 2, mt: 2 }}
+              onClick={handleCancel}
+            >
+              ยกเลิกรายการ
+            </Button>
+          ) : null}
+        </Box>
         <Box>
-          <Grid container spacing={1.5} sx={{ mt: 3 }}>
+          <Grid container spacing={1.5} sx={{ mb: 5 }}>
             <Grid item xs={12} lg={6}>
               <Box
                 sx={{
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
+                  boxShadow:
+                    "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
                 }}
               >
                 <Typography
@@ -154,7 +249,14 @@ export default function Detail() {
                     </Typography>
                   </Box>
                 </Box>
-                
+                <Box sx={{ display: { md: "flex" }, m: 2,pt:1,pb:1, bgcolor:buyData.status==="สำเร็จ"? "#A9C470": "#FE616A"}}>
+                  <Box sx={{ width: "12rem" }}>
+                    <Typography variant="text">สถานะรายการ:</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="data">{buyData.status}</Typography>
+                  </Box>
+                </Box>
               </Box>
             </Grid>
             <Grid item xs={12} lg={6}>
@@ -163,6 +265,8 @@ export default function Detail() {
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
+                  boxShadow:
+                    "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
                 }}
               >
                 <Typography
@@ -178,7 +282,7 @@ export default function Detail() {
                     <Typography variant="data">{nameUser}</Typography>
                   </Box>
                 </Box>
-                
+    
                 <Box sx={{ display: { md: "flex" }, m: 2 }}>
                   <Box sx={{ width: "12rem" }}>
                     <Typography variant="text">เบอร์ติดต่อ:</Typography>
@@ -187,26 +291,203 @@ export default function Detail() {
                     <Typography variant="data">{tel}</Typography>
                   </Box>
                 </Box>
+                <Box sx={{ display: { md: "flex" }, m: 2 ,p:1}}>
+                  <Box sx={{ width: "12rem" }}>
+                    <Typography variant="text"></Typography>
+                  </Box>
+                </Box>
               </Box>
             </Grid>
             <Grid item xs={12}>
-                <Box>
-                <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
-        <Table sx={{ minWidth: 700 }}>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>No.</StyledTableCell>
-              <StyledTableCell align="center">วันที่</StyledTableCell>
-              <StyledTableCell align="center">ชื่อรายการ</StyledTableCell>
-              <StyledTableCell align="center">ผู้สร้าง</StyledTableCell>
-              <StyledTableCell align="center">มูลค่า(บาท)</StyledTableCell>
-              <StyledTableCell align="center">สถานะ</StyledTableCell>
-              <StyledTableCell align="center"></StyledTableCell>
-            </TableRow>
-          </TableHead>
-          </Table>
-          </TableContainer>
+              <Box
+                sx={{
+                  bgcolor: "#fff",
+                  borderBottom: "1px solid #ccc",
+                  borderRadius: "10px",
+                  boxShadow:
+                    "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
+                }}
+              >
+                <Typography
+                  sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
+                >
+                  สินค้า
+                </Typography>
+                <Box sx={{ m: 2 }}>
+                  <TableContainer
+                    component={Paper}
+                    sx={{ borderRadius: "10px" }}
+                  >
+                    <Table sx={{ minWidth: 700 }}>
+                      <TableHead>
+                        <TableRow>
+                          <StyledTableCell align="center"></StyledTableCell>
+                          <StyledTableCell>No.</StyledTableCell>
+                          <StyledTableCell align="center">
+                            ชื่อสินค้า
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            วันหมดอายุ
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            รวม(บาท)
+                          </StyledTableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <>
+                            <StyledTableRow key={row.No}>
+                              <StyledTableCell>
+                                <IconButton
+                                  aria-label="expand row"
+                                  size="small"
+                                  onClick={() => handleRowToggle(row.No)}
+                                >
+                                  {openRows[row.No] ? (
+                                    <KeyboardArrowUpIcon />
+                                  ) : (
+                                    <KeyboardArrowDownIcon />
+                                  )}
+                                </IconButton>
+                              </StyledTableCell>
+                              <StyledTableCell a>{row.No}</StyledTableCell>
+                              <StyledTableCell align="center">
+                                {row.product_name}
+                              </StyledTableCell>
+                              <StyledTableCell align="center">
+                                {row.product_exp
+                                  ? row.product_exp
+                                      .toDate()
+                                      .toLocaleString("th-TH", {
+                                        dateStyle: "long",
+                                      })
+                                  : ""}
+                              </StyledTableCell>
+                              <StyledTableCell align="center">
+                                {row.product_size
+                                  .map((size) => {
+                                    const sum =
+                                      parseFloat(size.amount) *
+                                      parseFloat(size.cost);
+                                    return sum;
+                                  })
+                                  .reduce((acc, curr) => acc + curr, 0)}
+                              </StyledTableCell>
+                            </StyledTableRow>
+                            <TableRow>
+                              <TableCell
+                                style={{ paddingBottom: 0, paddingTop: 0 }}
+                                colSpan={6}
+                              >
+                                <Collapse
+                                  in={openRows[row.No]}
+                                  timeout="auto"
+                                  unmountOnExit
+                                >
+                                  <Box>
+                                    <Table>
+                                      <TableHead>
+                                        <TableRow>
+                                          <TableCell align="center">
+                                            รูปแบบสินค้า
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            จำนวน
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            ราคาต่อหน่วย(บาท)
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            รวม(บาท)
+                                          </TableCell>
+                                        </TableRow>
+                                      </TableHead>
+                                      <TableBody>
+                                        {row.product_size.map((size, index) => (
+                                          <TableRow key={index}>
+                                            <TableCell align="center">
+                                              {size.size}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                              {size.amount}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                              {size.cost}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                              {parseFloat(size.cost) *
+                                                parseFloat(size.amount)}
+                                            </TableCell>
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </Box>
+                                </Collapse>
+                              </TableCell>
+                            </TableRow>
+                          </>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Box>
+
+                <Box>
+                  <Box
+                    sx={{
+                      display: { xs: "flex" },
+                      m: 2,
+                      justifyContent: { xs: "space-between", md: "flex-start" },
+                    }}
+                  >
+                    <Box sx={{ width: "12rem" }}>
+                      <Typography variant="text">ส่วนลด:</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="data">
+                        {buyData.discount} บาท
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: { xs: "flex" },
+                      m: 2,
+                      justifyContent: { xs: "space-between", md: "flex-start" },
+                    }}
+                  >
+                    <Box sx={{ width: "12rem" }}>
+                      <Typography variant="text">ค่าส่ง:</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="data">
+                        {buyData.shippingCost} บาท
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: { xs: "flex" },
+                      m: 2,
+                      justifyContent: { xs: "space-between", md: "flex-start" },
+                      bgcolor: "#EAE4E7",
+                      pt: 2,
+                      pb: 2,
+                    }}
+                  >
+                    <Box sx={{ width: "12rem" }}>
+                      <Typography variant="text">มูลค่ารวมสุทธิ:</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="data">
+                        {buyData.totalCost} บาท
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
             </Grid>
           </Grid>
         </Box>

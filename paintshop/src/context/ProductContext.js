@@ -39,7 +39,7 @@ export default function ProductProvider({ children }) {
     <ProductContext.Provider
       value={{ productData, setProductData, fetchProductData }}
     >
-      {loading ? (
+      {/* {loading ? (
         <div>
           <Backdrop
             sx={{
@@ -52,10 +52,12 @@ export default function ProductProvider({ children }) {
             <CircularProgress color="inherit" />
             <Typography sx={{ m: 2 }}>กำลังโหลดสินค้า...</Typography>
           </Backdrop>
+          
         </div>
       ) : (
         children
-      )}
+      )} */}
+      {children}
     </ProductContext.Provider>
   );
 }

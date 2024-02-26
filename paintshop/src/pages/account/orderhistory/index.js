@@ -13,7 +13,8 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-
+import Wait from "./waiting";
+import All from "./all";
 const styles = {
   Active: {
     "&.Mui-selected": {
@@ -38,11 +39,7 @@ function CustomTabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -145,10 +142,10 @@ export default function Orderhistory() {
                     </Tabs>
                   </Box>
                   <CustomTabPanel value={value} index={0}>
-                    1
+                    <All />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={1}>
-                    2
+                    <Wait />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={2}>
                     3

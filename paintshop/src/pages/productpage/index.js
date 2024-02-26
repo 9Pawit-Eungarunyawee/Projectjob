@@ -17,6 +17,9 @@ import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FieldValue } from "firebase/firestore";
+import { ProductContext } from "@/context/ProductContext";
+import { debounce } from "lodash";
+import searchData from "@/firebase/searchData";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -24,8 +27,14 @@ function handleClick(event) {
 
 export default function Productpage() {
   const [documentData, setDocumentData] = React.useState(null);
+  const [lotData, setLotData] = React.useState(null);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
   const catalogId = JSON.parse(router.query.catalogData);
+  const format = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   function handleCard(productId) {
     router.push({
       pathname: "/colorselect/",
@@ -35,44 +44,53 @@ export default function Productpage() {
       },
     });
   }
-  React.useEffect(() => {
-    fetchAllData();
-    console.log(documentData);
-  }, []);
-  const fetchAllData = async () => {
-    const collection = "products";
-
-    // Check if catalogId is available
-    if (catalogId) {
-      console.log("Fetching data for catalogId:", catalogId);
-
-      const { result: querySnapshot, error } = await getCollection(collection, {
-        where: { catalog_id: catalogId }, // Filter products by catalog_id
-      });
-
-      if (error) {
-        console.error("Error fetching collection:", error);
-      } else {
-        const data = [];
-
-        querySnapshot.forEach((doc) => {
-          console.log("Document ID:", doc.id);
-          const catalogIdFromProduct = doc.data().catalog_id.id;
-          if (doc.data().delete == null) {
-            // Make sure to compare the right values
-            if (catalogIdFromProduct === catalogId) {
-              console.log("Matching product found:", doc.data());
-              data.push({ id: doc.id, ...doc.data() });
-            }
-          }
-        });
-        setDocumentData(data);
-      }
+  const debouncedSearchUser = debounce(async (term) => {
+    try {
+      const collectionName = "buy";
+      const field = "name";
+      const results = await searchData(collectionName, field, term);
+      setLotData(results);
+    } catch (error) {
+      console.error("Error searching data:", error);
     }
+  }, 500);
+
+  React.useEffect(() => {
+    handleSearch("");
+  }, []);
+  //ดึงของ
+  const debouncedSearchProduct = debounce(async (term) => {
+    try {
+      const collectionName = "products";
+      const field = "name";
+      const results = await searchData(collectionName, field, term);
+      const filteredResults = results.filter(
+        (doc) =>
+          doc.catalog_id.id === catalogId &&
+          doc.status === true &&
+          doc.delete === null
+      );
+      setDocumentData(filteredResults);
+    } catch (error) {
+      console.error("Error searching data:", error);
+    }
+  }, 500);
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchUser(term);
+    debouncedSearchProduct(term);
+  };
+  const findprice = (id) => {
+    console.log("lotData", lotData);
+    console.log("id", id);
+
+    const product = lotData.find((product) => product.id === id);
+    const price = product ? product.cost : id;
+    return price;
   };
   return (
     <Homelayout>
-      <Box sx={{ height: "100vh", width: "100%" }}>
+      <Box sx={{ width: "100%" }}>
         <Container
           maxWidth="false"
           sx={{
@@ -183,8 +201,8 @@ export default function Productpage() {
               <Grid item xs={12} md={9}>
                 <Grid container spacing={2}>
                   {documentData &&
-                    documentData.map((item) => (
-                      <Grid key={item.id} item xs={12} sm={6} md={3}>
+                    documentData.map((item, index) => (
+                      <Grid key={index} item xs={12} sm={6} md={3}>
                         <Card
                           sx={{
                             maxWidth: 350,
@@ -216,7 +234,7 @@ export default function Productpage() {
                                   textAlign: "left",
                                 }}
                               >
-                                {item.name}
+                                {item.name} {item.area}
                               </Typography>
                               <Box
                                 sx={{
@@ -226,19 +244,19 @@ export default function Productpage() {
                                   ml: 0,
                                 }}
                               ></Box>
-                              <Typography
-                                sx={{
-                                  color: "#FE616A",
-                                  fontWeight: "bold",
-                                  textAlign: "left",
-                                  mt: 1,
-                                }}
-                              >
-                                {item.productSizes[0].price
-                                  .toString()
-                                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                                บาท
-                              </Typography>
+
+                              <Box>
+                                <Typography
+                                  sx={{
+                                    color: "#FE616A",
+                                    fontWeight: "bold",
+                                    textAlign: "left",
+                                    mt: 1,
+                                  }}
+                                >
+                                  ฿{format(item.productSizes[0].price)}
+                                </Typography>
+                              </Box>
                             </CardContent>
                           </CardActionArea>
                         </Card>

@@ -19,12 +19,12 @@ import Image from "next/image";
 import searchUser from "@/firebase/searchData";
 import { useRouter } from "next/router";
 import { debounce } from "lodash";
+import { CatalogContext } from "@/context/CatalogContext";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
 export default function Catalog() {
-  const [documentData, setDocumentData] = React.useState(null);
   const router = useRouter();
   function handleCard(data) {
     router.push({
@@ -35,19 +35,20 @@ export default function Catalog() {
   const [searchTerm, setSearchTerm] = React.useState("");
   React.useEffect(() => {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch('')
+    handleSearch("");
   }, []);
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    // console.log(documentData);
-  }, [documentData]);
 
+  const { catalogData, setCatalogData, fetchcatalogData } =
+    React.useContext(CatalogContext);
+  React.useEffect(() => {
+    fetchcatalogData();
+  }, [catalogData]);
   const debouncedSearchUser = debounce(async (term) => {
     try {
       const collectionName = "catalog";
       const field = "name";
       const results = await searchUser(collectionName, field, term);
-      setDocumentData(results);
+      setCatalogData(results);
     } catch (error) {
       console.error("Error searching data:", error);
     }
@@ -58,28 +59,9 @@ export default function Catalog() {
     debouncedSearchUser(term);
   };
 
-  // const fetchAllData = async () => {
-  //   const collection = "catalog";
-
-  //   const { result: querySnapshot, error } = await getCollection(collection);
-
-  //   if (error) {
-  //     console.error("Error fetching collection:", error);
-  //   } else {
-  //     const data = [];
-  //     querySnapshot.forEach((doc) => {
-  //       console.log("Document ID:", doc.id);
-  //       console.log("Document data:", doc.data());
-  //       data.push({ id: doc.id, ...doc.data() });
-  //     });
-  //     setDocumentData(data);
-  //   }
-  // };
-
   return (
     <Homelayout>
-      
-      <Box sx={{ height: "100vh", width: "100%" }}>
+      <Box sx={{  width: "100%" }}>
         <Container
           maxWidth="false"
           sx={{
@@ -150,8 +132,8 @@ export default function Catalog() {
               เลือกแคตตาล็อก
             </Typography>
             <Grid container spacing={2}>
-              {documentData &&
-                documentData.map((item) => (
+              {catalogData &&
+                catalogData.map((item) => (
                   <Grid key={item.id} item xs={12} sm={6} md={4}>
                     <Card
                       sx={{ maxWidth: 400 }}

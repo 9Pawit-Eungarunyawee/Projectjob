@@ -17,8 +17,11 @@ import {
   Button,
   createTheme,
   ThemeProvider,
+  IconButton,
 } from "@mui/material";
 import Link from "next/link";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
 import { getUser } from "@/firebase/getData";
@@ -99,7 +102,7 @@ export default function Address() {
                   >
                     หน้าแรก
                   </Link>
-                  <Typography color="text.primary" >บัญชีของฉัน</Typography>
+                  <Typography color="text.primary">บัญชีของฉัน</Typography>
                 </Breadcrumbs>
               </div>
             </Box>
@@ -142,12 +145,24 @@ export default function Address() {
                   <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                       <TableHead>
-                        <TableRow style={{ backgroundColor: "#018294" ,}}>
-                          <TableCell sx={{color:"white"}}>ชื่อ</TableCell>
-                          <TableCell sx={{color:"white",whiteSpace: "nowrap"}}>เบอร์โทรศัพท์</TableCell>
-                          <TableCell sx={{color:"white"}}>ที่อยู่</TableCell>
-                          <TableCell></TableCell>
-                          <TableCell></TableCell>
+                        <TableRow style={{ backgroundColor: "#018294" }}>
+                          <TableCell sx={{ color: "white" }}>
+                            <Typography>ชื่อ</Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ color: "white", whiteSpace: "nowrap" }}
+                          >
+                            <Typography>เบอร์โทรศัพท์</Typography>
+                          </TableCell>
+                          <TableCell sx={{ color: "white" }}>
+                            <Typography>ที่อยู่</Typography>
+                          </TableCell>
+                          <TableCell sx={{ color: "white" }}>
+                            <Typography>แก้ไข</Typography>
+                          </TableCell>
+                          <TableCell sx={{ color: "white" }}>
+                            <Typography>ลบ</Typography>
+                          </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -163,40 +178,41 @@ export default function Address() {
                                         border: 0,
                                       },
                                       "&:hover": {
-                                        bgcolor:"#EEEDEB",
+                                        bgcolor: "#EEEDEB",
                                       },
                                     }}
                                   >
-                                    <TableCell
-                                      component="th"
-                                      scope="row"
-                                      sx={{ fontWeight: "bold" }}
-                                    >
-                                      {item.name}
-                                    </TableCell>
-                                    <TableCell>{item.tel}</TableCell>
-                                    <TableCell>
-                                      {address.address} อำเภอ {address.amphure}{" "}
-                                      ตำบล {address.tambon} จังหวัด{" "}
-                                      {address.province}{" "}{address.zipcode}
-                                    </TableCell>
-                                    <TableCell>
-                                      <Button
-                                        variant="contained"
-                                        color="edit"
-                                        
+                                    <TableCell component="th" scope="row">
+                                      <Typography
+                                        sx={{
+                                          fontWeight: "bold",
+                                          whiteSpace: "nowrap",
+                                        }}
                                       >
-                                        แก้ไข
-                                      </Button>
+                                        {item.name}
+                                      </Typography>
                                     </TableCell>
                                     <TableCell>
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        
-                                      >
-                                        ลบ
-                                      </Button>
+                                      {" "}
+                                      <Typography>{item.tel}</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography>
+                                        {address.address} อำเภอ{" "}
+                                        {address.amphure} ตำบล {address.tambon}{" "}
+                                        จังหวัด {address.province}{" "}
+                                        {address.zipcode}
+                                      </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <IconButton>
+                                        <EditIcon />
+                                      </IconButton>
+                                    </TableCell>
+                                    <TableCell>
+                                      <IconButton>
+                                        <DeleteIcon />
+                                      </IconButton>
                                     </TableCell>
                                   </TableRow>
                                 ))}

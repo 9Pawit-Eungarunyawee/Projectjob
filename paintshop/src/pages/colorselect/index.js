@@ -27,6 +27,7 @@ export default function Colorselect() {
   const [colorshadeData, setColorshadeData] = React.useState(null);
   const catalogId = JSON.parse(router.query.catalogData);
   const productId = JSON.parse(router.query.productId);
+
   function handleCard(colorId) {
     router.push({
       pathname: "/productsdetail/",
@@ -37,27 +38,27 @@ export default function Colorselect() {
       },
     });
   }
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   function handleClick(event) {
     event.preventDefault();
     console.info("You clicked a breadcrumb.");
   }
+
   React.useEffect(() => {
     fetchAllData();
     fetchColorshadeData();
   }, []);
+
   React.useEffect(() => {
     if (colorshadeData && colorshadeData.length > 0) {
       setValue(0);
       setSelectedColorId(colorshadeData[0].id);
     }
   }, [colorshadeData]);
-  React.useEffect(() => {
-    console.log(documentData);
-    console.log(colorshadeData);
-  }, [documentData, colorshadeData]);
 
   const fetchColorshadeData = async () => {
     const collection = "colorshade";
@@ -145,12 +146,21 @@ export default function Colorselect() {
       boxShadow: "4px 0px 4px 0px rgba(0, 0, 0, 0.25)",
       zIndex: "1",
     },
+    card: {
+      maxWidth: 300,
+      margin: "auto", // Center the card horizontally
+      marginBottom: 20, // Add margin between cards
+    },
+    cardContent: {
+      backgroundColor: "#FFFFFF",
+      height: 100,
+    },
   };
 
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
-        <Box sx={{ width: "100%", height: "40vh" }}>
+        <Box sx={{ width: "100%" }}>
           <Container
             maxWidth="false"
             sx={{
@@ -226,6 +236,7 @@ export default function Colorselect() {
               display: "flex",
               justifyContent: "center",
               bgcolor: "white",
+              minHeight: "60vh"
             }}
           >
             <Box sx={{ p: 3, width: "70vw" }}>
@@ -242,9 +253,11 @@ export default function Colorselect() {
               <Tabs
                 value={value}
                 onChange={handleChange}
+
                 centered
                 aria-label="basic tabs example"
                 sx={{
+                  width: "100%",
                   p: 2,
                   "& .css-1aquho2-MuiTabs-indicator": {
                     display: "none",
@@ -287,33 +300,31 @@ export default function Colorselect() {
                             color.colorshade_id === selectedColorId
                               ? ""
                               : "none",
+                          opacity:
+                            color.colorshade_id === selectedColorId ? 1 : 0,
+                          transition: "display 0s, opacity 0.5s linear",
                         }}
                       >
                         {selectedColorId &&
                         color.colorshade_id === selectedColorId ? (
                           <Card
-                            sx={{ maxWidth: 300 }}
+                            sx={styles.card}
                             onClick={() => handleCard(color.id)}
                           >
                             <CardActionArea>
                               <CardContent
                                 sx={{
                                   backgroundColor: color.code,
-                                  height: 150,
+                                  height: 100,
                                 }}
-                              >
+                              ></CardContent>
+                              <CardContent>
                                 <Typography>{color.code_name}</Typography>
                                 <Typography>{color.name}</Typography>
                               </CardContent>
                             </CardActionArea>
                           </Card>
-                        ) : (
-                          <Card sx={{ maxWidth: 300, display: "none" }}>
-                            <CardActionArea>
-                              <CardContent></CardContent>
-                            </CardActionArea>
-                          </Card>
-                        )}
+                        ) : null}
                       </Grid>
                     ))}
                 </Grid>

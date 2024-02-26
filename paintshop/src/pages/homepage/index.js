@@ -28,6 +28,7 @@ import Designcard from "../designcard";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { getCollection, getProduct } from "../../firebase/getData";
+import { CatalogContext } from "@/context/CatalogContext";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -72,7 +73,8 @@ export default function Homepage() {
   const [documentData, setDocumentData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
   const [productIds, setProductIds] = React.useState(null);
-
+  const { catalogData, setCatalogData, fetchcatalogData } =
+    React.useContext(CatalogContext);
   const router = useRouter();
   const theme = createTheme({
     palette: {
@@ -143,12 +145,12 @@ export default function Homepage() {
   };
   const [value, setValue] = React.useState(0);
   const initialCatalogId =
-    documentData && documentData[value] ? documentData[value].id : null;
+    catalogData && catalogData[value] ? catalogData[value].id : null;
   const [selectedCatalogId, setSelectedCatalogId] =
     React.useState(initialCatalogId);
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    const catalogId = documentData[newValue]?.id;
+    const catalogId = catalogData[newValue]?.id;
     if (catalogId) {
       setSelectedCatalogId(catalogId);
     }
@@ -160,11 +162,11 @@ export default function Homepage() {
     });
   }
   React.useEffect(() => {
-    if (documentData && documentData.length > 0) {
-      const initialCatalogId = documentData[0].id;
+    if (catalogData && catalogData.length > 0) {
+      const initialCatalogId = catalogData[0].id;
       setSelectedCatalogId(initialCatalogId);
     }
-  }, [documentData]);
+  }, [catalogData]);
 
   // Use useEffect to fetch product data when selectedCatalogId changes
   React.useEffect(() => {
@@ -198,15 +200,15 @@ export default function Homepage() {
           image: doc.data().img,
         }));
       setProductData(products);
-    
     }
   };
   console.log("โปรดัก", productData);
   console.log("ทดสอบ value", value);
+
   React.useEffect(() => {
-    fetchAllData();
-    console.log(documentData);
-  }, []);
+    fetchcatalogData;
+    console.log(catalogData);
+  }, [catalogData]);
   const fetchAllData = async () => {
     const collection = "catalog";
     const { result: querySnapshot, error } = await getCollection(collection);
@@ -218,13 +220,13 @@ export default function Homepage() {
       querySnapshot.forEach((doc) => {
         data.push({ id: doc.id, ...doc.data() });
       });
-      setDocumentData(data);
-      console.log("ทดสอบ", documentData);
+      setCatalogData(data);
+      console.log("ทดสอบ", catalogData);
     }
   };
   return (
     <Homelayout>
-      <Container maxWidth="false">
+      <Container maxWidth="false" >
         <ThemeProvider theme={theme}>
           <Box sx={{ width: "100%" }}>
             <Box
@@ -243,12 +245,22 @@ export default function Homepage() {
                 scrollButtons="auto"
                 sx={{ maxWidth: "80%" }}
               >
-                {documentData &&
-                  documentData.map((tab, index) => (
+                {catalogData &&
+                  catalogData.map((tab, index) => (
                     <Tab
                       key={index}
-                      icon={<HouseOutlinedIcon />}
-                      label={tab.name}
+                      label={
+                        <Box>
+                          <Image
+                            width={50}
+                            height={50}
+                            src={tab.img}
+                            alt={tab.name}
+                            style={{ objectFit: "scale-down" }}
+                          />
+                          <Typography>{tab.name}</Typography>
+                        </Box>
+                      }
                       sx={{
                         ...(value === index
                           ? styles.activeTab
@@ -260,8 +272,8 @@ export default function Homepage() {
                   ))}
               </Tabs>
             </Box>
-            {documentData &&
-              documentData.map((item, index) => (
+            {catalogData &&
+              catalogData.map((item, index) => (
                 <CustomTabPanel value={value} index={index} key={index}>
                   <Grid container spacing={2}>
                     <Grid item xs={5}>

@@ -2,8 +2,12 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/catalogadmin": "pages/catalogadmin.js",
-  "/product": "pages/product.js",
-  "/buy": "pages/buy.js",
-  "/product/addproduct": "pages/product/addproduct.js"
+  "/account/profile": "pages/account/profile.js",
+  "/account/orderhistory": "pages/account/orderhistory.js",
+  "/productsdetail": "pages/productsdetail.js",
+  "/account/orderhistory/detail": "pages/account/orderhistory/detail.js",
+  "/cart/selectaddress": "pages/cart/selectaddress.js",
+  "/cart/QR": "pages/cart/QR.js",
+  "/homepage": "pages/homepage.js",
+  "/cart": "pages/cart.js"
 }

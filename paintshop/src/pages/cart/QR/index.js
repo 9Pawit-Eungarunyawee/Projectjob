@@ -99,9 +99,10 @@ export default function QR() {
       user_id: user.user.uid,
       total_price: price,
       address:address,
-      date: currentDate,
+      createAt: currentDate,
       img: imageUrl,
-      status: "disapprove",
+      tracker:null,
+      status: "รอยืนยัน",
     };
 
     // Delete cart item first

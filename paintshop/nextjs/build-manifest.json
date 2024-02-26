@@ -22,25 +22,45 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/buy": [
+    "/account/orderhistory": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/buy.js"
+      "static/chunks/pages/account/orderhistory.js"
     ],
-    "/catalogadmin": [
+    "/account/orderhistory/detail": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/catalogadmin.js"
+      "static/chunks/pages/account/orderhistory/detail.js"
     ],
-    "/product": [
+    "/account/profile": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/product.js"
+      "static/chunks/pages/account/profile.js"
     ],
-    "/product/addproduct": [
+    "/cart": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/product/addproduct.js"
+      "static/chunks/pages/cart.js"
+    ],
+    "/cart/QR": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/cart/QR.js"
+    ],
+    "/cart/selectaddress": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/cart/selectaddress.js"
+    ],
+    "/homepage": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/homepage.js"
+    ],
+    "/productsdetail": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/productsdetail.js"
     ]
   },
   "ampFirstPages": []

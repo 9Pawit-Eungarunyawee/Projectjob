@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Container, CssBaseline } from "@mui/material";
+import { Container, CssBaseline, Grid } from "@mui/material";
 import Navbar from "./navbar";
+import Footer from "./footer";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 export default function Homelayout({ children }) {
@@ -15,11 +16,19 @@ export default function Homelayout({ children }) {
       <CssBaseline />
       <Container
         maxWidth="sx"
-        sx={{ bgcolor: "#FAF8F1" }}
+        sx={{
+          display: "grid",
+          gridTemplateRows: "auto 1fr auto",
+          minHeight: "100vh",
+          bgcolor: "#FAF8F1",
+        }}
         style={{ padding: "0px" }}
       >
         <Navbar />
-        {children}
+        <Grid item >
+          {children}
+        </Grid>
+        <Footer />
       </Container>
     </React.Fragment>
   );

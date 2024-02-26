@@ -1,0 +1,8 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/account/orderhistory/detail": "pages/account/orderhistory/detail.js",
+  "/homepage": "pages/homepage.js",
+  "/account/orderhistory": "pages/account/orderhistory.js"
+}

@@ -494,13 +494,13 @@ export default function Productsdetail() {
                           }}
                         />
                       </IconButton>
-                      <Typography>สินค้ามีทั้งหมด : </Typography>
+                      {/* <Typography>สินค้ามีทั้งหมด : </Typography>
                       <Typography>
-                        {item.productSizes[0].quantity
+                        {item.productSizes[0].amount
                           .toString()
                           .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </Typography>
-                      <Typography> ชิ้น </Typography>
+                      <Typography> ชิ้น </Typography> */}
                     </Box>
                     <Button
                       fullWidth

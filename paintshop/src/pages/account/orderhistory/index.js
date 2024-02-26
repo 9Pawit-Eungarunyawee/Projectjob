@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Wait from "./waiting";
 import All from "./all";
+import Prepare from "./prepare";
 const styles = {
   Active: {
     "&.Mui-selected": {
@@ -148,7 +149,7 @@ export default function Orderhistory() {
                     <Wait />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={2}>
-                    3
+                    <Prepare />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={3}>
                     4

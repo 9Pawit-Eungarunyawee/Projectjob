@@ -2,6 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/productpage": "pages/productpage.js",
   "/catalog": "pages/catalog.js",
-  "/homepage": "pages/homepage.js"
+  "/colorselect": "pages/colorselect.js"
 }

@@ -150,7 +150,7 @@ export default function Colorselect() {
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
-        <Box sx={{ width: "100%", height: "40vh" }}>
+        <Box sx={{ width: "100%"}}>
           <Container
             maxWidth="false"
             sx={{
@@ -228,7 +228,7 @@ export default function Colorselect() {
               bgcolor: "white",
             }}
           >
-            <Box sx={{ p: 3, width: "70vw" }}>
+            <Box sx={{ p: 3, width: "70vw" ,minHeight:"35vw"}}>
               <Typography
                 variant="h4"
                 sx={{
@@ -301,7 +301,9 @@ export default function Colorselect() {
                                   backgroundColor: color.code,
                                   height: 150,
                                 }}
-                              >
+                              ></CardContent>
+                              <CardContent>
+                                {" "}
                                 <Typography>{color.code_name}</Typography>
                                 <Typography>{color.name}</Typography>
                               </CardContent>

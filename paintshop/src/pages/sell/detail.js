@@ -23,21 +23,21 @@ export default function Detail() {
       },
     },
     typography: {
-        text: {
-          fontSize: "1.2rem",
-          padding: "1vw",
-          width: "10rem",
-        },
-        data: {
-          fontSize: "1.2rem",
-          fontWeight: "600",
-          whiteSpace: "pre-line",
-        },
+      text: {
+        fontSize: "1.2rem",
+        padding: "1vw",
+        width: "10rem",
       },
+      data: {
+        fontSize: "1.2rem",
+        fontWeight: "600",
+        whiteSpace: "pre-line",
+      },
+    },
   });
   const router = useRouter();
   const sell_id = JSON.parse(router.query.id);
-  const [show ,setShow] = useState(false)
+  const [show, setShow] = useState(false);
   const [sellData, setSellData] = useState([]);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function Detail() {
       const Data = result.data();
       console.log(Data);
       setSellData(Data);
-      setShow(true)
+      setShow(true);
     }
   };
 
@@ -74,7 +74,7 @@ export default function Detail() {
           onClick={goBack}
         >
           <ArrowBackOutlinedIcon />
-          <Typography> ย้อนกลับ</Typography>
+          <Typography>ย้อนกลับ</Typography>
         </Button>
 
         {show ? (
@@ -222,9 +222,7 @@ export default function Detail() {
               </Box>
             </Grid>
 
-            <Grid item xs={12}>
-                
-            </Grid>
+            <Grid item xs={12}></Grid>
           </Grid>
         ) : (
           <></>

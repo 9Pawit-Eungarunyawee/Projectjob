@@ -18,12 +18,11 @@ export default function CatalogProvider({ children }) {
     if (error) {
       console.error("Error fetching document:", error);
     } else if (result) {
-      const Data = result.docs
-        .filter((doc) => !doc.data().delete)
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+      const Data = result.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        
+      }));
       setCatalogData(Data);
       setLoading(false);
     }

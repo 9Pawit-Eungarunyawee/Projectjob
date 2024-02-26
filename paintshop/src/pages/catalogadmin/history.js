@@ -1,19 +1,28 @@
 import Layout from "@/components/layout";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Image from "next/image";
-import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
-import {  useEffect, useState } from "react";
-import { getCollection } from "@/firebase/getData";
-import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
+import { ThemeProvider } from "@emotion/react";
+import styled from "@emotion/styled";
+import {
+  Alert,
+  Box,
+  Button,
+  Paper,
+  Snackbar,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  createTheme,
+  tableCellClasses,
+} from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import { deleteData, restoreData } from "@/firebase/addData";
-
+import { useContext, useEffect, useState } from "react";
+import { CatalogContext } from "@/context/CatalogContext";
+import Image from "next/image";
+import { getCollection } from "@/firebase/getData";
+import { restoreCatalog } from "@/firebase/addCatalog";
 export default function History() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -50,72 +59,7 @@ export default function History() {
       },
     },
   });
-  const [documentData, setDocumentData] = useState([]);
-  useEffect(() => {
-    fetchData();
-  }, []);
-  const fetchData = async () => {
-    const collectionName = "products";
-    const { result, error } = await getCollection(collectionName);
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result) {
-      const productData = result.docs
-        .filter((doc) => doc.data().delete)
-        .map((doc) => ({
-          id: doc.id,
-          name: doc.data().name,
-          productSizes: doc.data().productSizes,
-          img: doc.data().img,
-          deleteAt: doc.data().delete.deleteAt,
-          deleteBy: doc.data().delete.deleteBy,
-        }));
-      setDocumentData(productData);
-    }
-  };
 
-  function createData(No, id, img, p_name, deleteAt, deleteBy) {
-    return { No, id, img, p_name, deleteAt, deleteBy };
-  }
-  const handleRestoreData = async (id) => {
-    const result = await restoreData("products", id);
-    fetchData();
-    if (result) {
-      setAlert(
-        <Alert severity="success" onClose={handleClose}>
-          กู้คืนข้อมูลสำเร็จ
-        </Alert>
-      );
-      setOpen(true);
-    } else {
-      setAlert(
-        <Alert severity="error" onClose={handleClose}>
-          ผิดพลาด! ไม่สามารถกู้คืนข้อมูลได้
-        </Alert>
-      );
-      setOpen(true);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    const result = await deleteData("products", id);
-    fetchData();
-    if (result) {
-      setAlert(
-        <Alert severity="success" onClose={handleClose}>
-          ลบข้อมูลถาวรสำเร็จ
-        </Alert>
-      );
-      setOpen(true);
-    } else {
-      setAlert(
-        <Alert severity="error" onClose={handleClose}>
-          ผิดพลาด! ไม่สามารถลบข้อมูลถาวรได้
-        </Alert>
-      );
-      setOpen(true);
-    }
-  };
   const [alert, setAlert] = useState(null);
   const [open, setOpen] = useState(false);
   const handleClose = (event, reason) => {
@@ -124,6 +68,33 @@ export default function History() {
     }
     setOpen(false);
   };
+
+  const [documentData, setDocumentData] = useState([]);
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    const collectionName = "catalog";
+    const { result, error } = await getCollection(collectionName);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const Data = result.docs
+        .filter((doc) => doc.data().delete)
+        .map((doc) => ({
+          id: doc.id,
+          name: doc.data().name,
+          img: doc.data().img,
+          deleteAt: doc.data().delete.deleteAt,
+          deleteBy: doc.data().delete.deleteBy,
+        }));
+      setDocumentData(Data);
+    }
+  };
+
+  function createData(No, id, img, c_name, deleteAt, deleteBy) {
+    return { No, id, img, c_name, deleteAt, deleteBy };
+  }
 
   const rows = documentData.map((dataItem, index) => {
     const timestamp = dataItem.deleteAt
@@ -141,16 +112,35 @@ export default function History() {
     );
   });
 
+  const handleRestoreData = async (id) => {
+    const result = await restoreCatalog("catalog", id);
+    fetchData();
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          กู้คืนข้อมูลสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถกู้คืนข้อมูลได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
   return (
     <Layout>
+      <ThemeProvider theme={theme}>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         {alert}
       </Snackbar>
-      <ThemeProvider theme={theme}>
         <Box>
           <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
             <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
-              ประวัติการลบสินค้า
+              ประวัติการลบแคตาล็อก
             </Typography>
             <Button
               sx={{
@@ -159,7 +149,7 @@ export default function History() {
                 fontWeight: "bold",
                 borderRadius: "50px",
                 boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                mb:2
+                mb: 2,
               }}
               onClick={goBack}
             >
@@ -172,23 +162,18 @@ export default function History() {
                   <TableRow>
                     <StyledTableCell align="center">No.</StyledTableCell>
                     <StyledTableCell align="center">รูปภาพ</StyledTableCell>
-                    <StyledTableCell>ชื่อสินค้า</StyledTableCell>
-                    <StyledTableCell>วันที่ลบ</StyledTableCell>
-                    <StyledTableCell>ผู้ลบ</StyledTableCell>
-                    <StyledTableCell align="center"></StyledTableCell>
+                    <StyledTableCell align="center">
+                      ชื่อแคตตาล็อก
+                    </StyledTableCell>
+                    <StyledTableCell align="center">วันที่ลบ</StyledTableCell>
+                    <StyledTableCell align="center">ผู้ลบ</StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {rows.map((row) => (
-                    <StyledTableRow key={row.No}>
-                      <StyledTableCell
-                        component="th"
-                        scope="row"
-                        align="center"
-                      >
-                        {row.No}
-                      </StyledTableCell>
+                    <StyledTableRow key={row.id}>
+                      <StyledTableCell align="center">{row.No}</StyledTableCell>
                       <StyledTableCell align="center">
                         {
                           <Image
@@ -200,23 +185,17 @@ export default function History() {
                           />
                         }
                       </StyledTableCell>
-                      <StyledTableCell>{row.p_name}</StyledTableCell>
-                      <StyledTableCell>{row.deleteAt}</StyledTableCell>
-                      <StyledTableCell>{row.deleteBy}</StyledTableCell>
                       <StyledTableCell align="center">
-                        <Button
+                        {row.c_name}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">{row.deleteAt}</StyledTableCell>
+                      <StyledTableCell align="center">{row.deleteBy}</StyledTableCell>
+                      <StyledTableCell align="center">
+                      <Button
                           color="primary"
                           onClick={() => handleRestoreData(row.id)}
                         >
                           กู้คืน
-                        </Button>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Button
-                          color="primary"
-                          onClick={() => handleDelete(row.id)}
-                        >
-                          ลบถาวร
                         </Button>
                       </StyledTableCell>
                     </StyledTableRow>

@@ -1,5 +1,5 @@
 import Layout from "@/components/layout";
-import addCatalog from "@/firebase/addCatalog";
+import addCatalog, { softDeleteCatalog } from "@/firebase/addCatalog";
 import addColor from "@/firebase/addColor";
 import editCatalog from "@/firebase/editCatalog";
 import getDoument, { getCollection, getColors } from "@/firebase/getData";
@@ -19,7 +19,9 @@ import { debounce } from "lodash";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
-
+import EditColor from "./editcolor";
+import { useAuthContext } from "@/context/AuthContext";
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 export default function EditCatalog() {
   const theme = createTheme({
     palette: {
@@ -34,6 +36,9 @@ export default function EditCatalog() {
       },
     },
   });
+  const goBack = () => {
+    window.history.back();
+  };
   const router = useRouter();
   const catalog_id = JSON.parse(router.query.catalog_id);
   const [name, setName] = useState("");
@@ -91,10 +96,7 @@ export default function EditCatalog() {
     } else if (result) {
       const colors = result.docs.map((doc) => ({
         id: doc.id,
-        name: doc.data().name,
-        code: doc.data().code,
-        codename: doc.data().code_name,
-        catalog_id: doc.data().catalog_id.id,
+        ...doc.data(),
       }));
       // console.log(colors);
       setAllColor(colors);
@@ -222,21 +224,76 @@ export default function EditCatalog() {
       }
     }
   };
+  const [editOpen, setEditOpen] = useState(false);
+  const [color, setColor] = useState([]);
+  const handleEditOpen = (c) => {
+    setEditOpen(true);
+    setColor(c);
+  };
 
-  const editColor = (id)=>{
-    
-  }
-  
+  const handleEditClose = () => {
+    setEditOpen(false);
+  };
+
+  const { user } = useAuthContext();
+  const handleSoftDelete = async () => {
+    const data = {
+      id: catalog_id,
+      user_id: user.uid,
+    };
+    const result = await softDeleteCatalog("catalog",data);
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          ลบแค็ตตาล็อกสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+      setTimeout(() => {
+        goBack();
+      }, 500);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถลบแค็ตตาล็อกได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
   return (
     <Layout>
       <ThemeProvider theme={theme}>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           {alert}
         </Snackbar>
+        <EditColor
+          editOpen={editOpen}
+          handleEditClose={handleEditClose}
+          color={color}
+          colorShade={colorShade}
+          setOpen={setOpen}
+          setAlert={setAlert}
+          handleClose={handleClose}
+          fetchAllColor={fetchAllColor}
+        />
         <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
           <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
             แก้ไขแคตตาล็อก
           </Typography>
+          <Button
+            sx={{
+              color: "#018294",
+              bgcolor: "white",
+              fontWeight: "bold",
+              borderRadius: "50px",
+              boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+            }}
+            onClick={goBack}
+          >
+            <ArrowBackOutlinedIcon />
+            <Typography> ย้อนกลับ</Typography>
+          </Button>
           <form onSubmit={handleForm} className="form">
             <Grid
               container
@@ -429,7 +486,7 @@ export default function EditCatalog() {
                               ชื่อสี: {color.name}
                             </Typography>
                             <Typography color="inherit">
-                              โค้ดเนม: {color.codename}
+                              โค้ดเนม: {color.code_name}
                             </Typography>
                           </Fragment>
                         }
@@ -448,8 +505,8 @@ export default function EditCatalog() {
                               transform: "scale(1.2)",
                             },
                           }}
-                          onClick={()=>editColor(color.id)}
-                        />
+                          onClick={() => handleEditOpen(color)}
+                        ></Box>
                       </Tooltip>
                     ))}
                 </Box>
@@ -467,7 +524,7 @@ export default function EditCatalog() {
                   variant="contained"
                   color="error"
                   sx={{ mr: 2, mb: 2, mt: 2 }}
-                  
+                  onClick={handleSoftDelete}
                 >
                   ลบแค็ตตาล็อก
                 </Button>

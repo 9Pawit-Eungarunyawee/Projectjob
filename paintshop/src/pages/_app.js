@@ -4,6 +4,7 @@ import CatalogProvider from "@/context/CatalogContext";
 import UserProvider from "@/context/UserContext";
 import "@/styles/globals.css";
 import BuyProvider from "@/context/BuyContext";
+import OrderProvider from "@/context/OrderContext";
 export default function App({ Component, pageProps }) {
   return (
     <AuthContextProvider>
@@ -11,7 +12,9 @@ export default function App({ Component, pageProps }) {
         <CatalogProvider>
           <UserProvider>
             <BuyProvider>
-              <Component {...pageProps} />
+              <OrderProvider>
+                <Component {...pageProps} />
+              </OrderProvider>
             </BuyProvider>
           </UserProvider>
         </CatalogProvider>

@@ -1,8 +1,9 @@
-import * as React from "react";
+
 import Box from "@mui/material/Box";
 import Layout from "@/components/layout";
 import {
   Button,
+  InputAdornment,
   Paper,
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   ThemeProvider,
   Typography,
   createTheme,
@@ -18,9 +20,15 @@ import {
 } from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useState } from "react";
 import { getCollection } from "@/firebase/getData";
+import { ProductContext } from "@/context/ProductContext";
+import { UserContext } from "@/context/UserContext";
+import { useRouter } from "next/router";
+import SearchIcon from "@mui/icons-material/Search";
+import searchData from "@/firebase/searchData";
+import { debounce } from "lodash";
 export default function Order() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -58,16 +66,18 @@ export default function Order() {
       },
     },
   });
-
+  const router = useRouter();
+  const {productData,fetchProductData} = useContext(ProductContext);
+  const {userData,fetchUserData} = useContext(UserContext);
   const [documentData, setDocumentData] = useState([]);
   const [users,setUsers]= useState([]);
-  const [products,setProducts]= useState([]);
   useEffect(() => {
     fetchUserData();
     fetchProductData();
     fetchData();
     
   }, []);
+
   const fetchData = async () => {
     const collectionName = "orders";
     const { result, error } = await getCollection(collectionName);
@@ -82,52 +92,46 @@ export default function Order() {
     }
   };
 
-  const fetchUserData = async () => {
-    const collectionName = "users";
-    const { result, error } = await getCollection(collectionName);
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result) {
-      const Data = result.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setUsers(Data);
-    }
-  };
+  // const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchProductData = async () => {
-    const collectionName = "products";
-    const { result, error } = await getCollection(collectionName);
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result) {
-      const Data = result.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setProducts(Data);
-    }
-  };
+  // const debouncedSearch = debounce(async (term) => {
+  //   try {
+  //     const collectionName = "sell";
+  //     const field = "name";
+  //     const results = await searchData(collectionName, field, term);
+  //     const sortedData = results.sort((a, b) => {
+  //       return b.date.toMillis() - a.date.toMillis();
+  //     });
+
+  //     // ตั้งค่าข้อมูลใหม่ที่เรียงลำดับแล้ว
+  //     setBuyData(sortedData);
+  //   } catch (error) {
+  //     console.error("Error searching data:", error);
+  //   }
+  // }, 500);
+
+  // const handleSearch = (term) => {
+  //   setSearchTerm(term);
+  //   debouncedSearch(term);
+  // };
   
   function createData(No, date,time, name, id, total_price, img, status) {
     return { No, date,time, name, id, total_price, img, status };
   }
   const rows = documentData.map((dataItem, index) => {
-    const date = dataItem.date
-      ? dataItem.date
+    const date = dataItem.createAt
+      ? dataItem.createAt
           .toDate()
           .toLocaleString("th-TH", { dateStyle: "medium"})
       : "";
-    const time = dataItem.date
-      ? dataItem.date
+    const time = dataItem.createAt
+      ? dataItem.createAt
           .toDate()
           .toLocaleString("th-TH", {timeStyle: "short" })
       : "";
-      const user = users.find(user => user.id === dataItem.user_id);
+      const user = userData.find(user => user.id === dataItem.user_id);
       const name = user ? user.name : dataItem.user_id;
       
- 
     return createData(
       index + 1,
       date,
@@ -139,28 +143,48 @@ export default function Order() {
       dataItem.status
     );
   });
+
+  function handleCard(id) {
+    router.push({
+      pathname: "sell/detail",
+      query: { id: JSON.stringify(id) },
+    });
+  }
   return (
     <Layout>
       <ThemeProvider theme={theme}>
         <Box>
           <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
             <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
-              จัดการคำสั่งซื้อ
+              รายการขาย
             </Typography>
-            
-           
-            <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
+            {/* <Box sx={{ mt: 1 }}>
+            <TextField
+              label="ค้นหา"
+              variant="outlined"
+              size="small"
+              onChange={(e) => handleSearch(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ fontSize: "1.4rem" }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box> */}
+            <TableContainer component={Paper} sx={{ borderRadius: "25px",mt:5 }}>
               <Table sx={{ minWidth: 700 }}>
                 <TableHead>
                   <TableRow>
                     <StyledTableCell align="center">No.</StyledTableCell>
                     <StyledTableCell align="center">วันที่</StyledTableCell>
                     <StyledTableCell align="center">เวลา</StyledTableCell>
-                    <StyledTableCell>ชื่อลูกค้า</StyledTableCell>
-                    <StyledTableCell>รายการคำสั่งซื้อ</StyledTableCell>
-                    <StyledTableCell>ยอดรวม</StyledTableCell>
-                    <StyledTableCell>หลักฐานการชำระเงิน</StyledTableCell>
-                    <StyledTableCell>สถานะคำสั่งซื้อ</StyledTableCell>
+                    <StyledTableCell align="center">ชื่อลูกค้า</StyledTableCell>
+                    <StyledTableCell align="center">รายการคำสั่งซื้อ</StyledTableCell>
+                    <StyledTableCell align="center">ยอดรวม</StyledTableCell>
+                    <StyledTableCell align="center">หลักฐานการชำระเงิน</StyledTableCell>
+                    <StyledTableCell align="center">สถานะคำสั่งซื้อ</StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
                   </TableRow>
                 </TableHead>
@@ -174,11 +198,11 @@ export default function Order() {
                       >
                         {row.No}
                       </StyledTableCell>
-                      <StyledTableCell>{row.date}</StyledTableCell>
-                      <StyledTableCell>{row.time}</StyledTableCell>
-                      <StyledTableCell>{row.name}</StyledTableCell>
-                      <StyledTableCell>{row.id}</StyledTableCell>
-                      <StyledTableCell>{row.total_price}</StyledTableCell>
+                      <StyledTableCell align="center">{row.date}</StyledTableCell>
+                      <StyledTableCell align="center">{row.time}</StyledTableCell>
+                      <StyledTableCell align="center">{row.name}</StyledTableCell>
+                      <StyledTableCell align="center">{row.id}</StyledTableCell>
+                      <StyledTableCell align="center">{row.total_price}</StyledTableCell>
                       <StyledTableCell align="center">
                         {
                           <Image
@@ -190,12 +214,11 @@ export default function Order() {
                           />
                         }
                       </StyledTableCell>
-                      <StyledTableCell>{row.status}</StyledTableCell>
-
+                      <StyledTableCell align="center">{row.status}</StyledTableCell>
                       <StyledTableCell align="center">
                         <Button
                           color="primary"
-                         
+                          onClick={() => handleCard(row.id)}
                         >
                           ดูรายละเอียด
                         </Button>

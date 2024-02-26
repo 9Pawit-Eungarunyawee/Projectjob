@@ -20,7 +20,7 @@ import {
   tableCellClasses,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import { ProductContext } from "@/context/ProductContext";
 import { UserContext } from "@/context/UserContext";
@@ -85,17 +85,20 @@ export default function Detail() {
   useEffect(() => {
     fetchData();
   }, []);
-
+  const { userData } = useContext(UserContext);
   useEffect(() => {
     if (buyData !== undefined) {
+      // หาข้อมูลผู้ใช้จาก userData โดยใช้ buyData.user_id เป็น ID
       const user = userData.find((user) => user.id === buyData.user_id);
-      const name = user ? user.name : buyData.user_id;
-      const tel = user ? user.tel : buyData.user_id;
-      setNameUser(name);
-      setTel(tel);
+      // ถ้าพบข้อมูลผู้ใช้ กำหนดชื่อและเบอร์โทร
+      if (user) {
+        setNameUser(user.name);
+        setTel(user.tel);
+      }
     }
-  }, [buyData]);
-  const { userData } = useContext(UserContext);
+  }, [buyData, userData]);
+
+
 
   const fetchData = async () => {
     const collectionName = "buy";
@@ -249,7 +252,16 @@ export default function Detail() {
                     </Typography>
                   </Box>
                 </Box>
-                <Box sx={{ display: { md: "flex" }, m: 2,pt:1,pb:1, bgcolor:buyData.status==="สำเร็จ"? "#A9C470": "#FE616A"}}>
+                <Box
+                  sx={{
+                    display: { md: "flex" },
+                    m: 2,
+                    pt: 1,
+                    pb: 1,
+                    bgcolor:
+                      buyData.status === "สำเร็จ" ? "#A9C470" : "#FE616A",
+                  }}
+                >
                   <Box sx={{ width: "12rem" }}>
                     <Typography variant="text">สถานะรายการ:</Typography>
                   </Box>
@@ -282,7 +294,7 @@ export default function Detail() {
                     <Typography variant="data">{nameUser}</Typography>
                   </Box>
                 </Box>
-    
+
                 <Box sx={{ display: { md: "flex" }, m: 2 }}>
                   <Box sx={{ width: "12rem" }}>
                     <Typography variant="text">เบอร์ติดต่อ:</Typography>
@@ -291,7 +303,7 @@ export default function Detail() {
                     <Typography variant="data">{tel}</Typography>
                   </Box>
                 </Box>
-                <Box sx={{ display: { md: "flex" }, m: 2 ,p:1}}>
+                <Box sx={{ display: { md: "flex" }, m: 2, p: 1 }}>
                   <Box sx={{ width: "12rem" }}>
                     <Typography variant="text"></Typography>
                   </Box>
@@ -322,13 +334,13 @@ export default function Detail() {
                       <TableHead>
                         <TableRow>
                           <StyledTableCell align="center"></StyledTableCell>
-                          <StyledTableCell>No.</StyledTableCell>
+                          <StyledTableCell align="center">No.</StyledTableCell>
                           <StyledTableCell align="center">
                             ชื่อสินค้า
                           </StyledTableCell>
-                          <StyledTableCell align="center">
+                          {/* <StyledTableCell align="center">
                             วันหมดอายุ
-                          </StyledTableCell>
+                          </StyledTableCell> */}
                           <StyledTableCell align="center">
                             รวม(บาท)
                           </StyledTableCell>
@@ -336,11 +348,11 @@ export default function Detail() {
                       </TableHead>
                       <TableBody>
                         {rows.map((row) => (
-                          <>
-                            <StyledTableRow key={row.No}>
-                              <StyledTableCell>
+                           <Fragment key={row.No}>
+                            <StyledTableRow>
+                              <StyledTableCell align="center">
                                 <IconButton
-                                  aria-label="expand row"
+                               
                                   size="small"
                                   onClick={() => handleRowToggle(row.No)}
                                 >
@@ -351,11 +363,11 @@ export default function Detail() {
                                   )}
                                 </IconButton>
                               </StyledTableCell>
-                              <StyledTableCell a>{row.No}</StyledTableCell>
+                              <StyledTableCell align="center">{row.No}</StyledTableCell>
                               <StyledTableCell align="center">
                                 {row.product_name}
                               </StyledTableCell>
-                              <StyledTableCell align="center">
+                              {/* <StyledTableCell align="center">
                                 {row.product_exp
                                   ? row.product_exp
                                       .toDate()
@@ -363,7 +375,7 @@ export default function Detail() {
                                         dateStyle: "long",
                                       })
                                   : ""}
-                              </StyledTableCell>
+                              </StyledTableCell> */}
                               <StyledTableCell align="center">
                                 {row.product_size
                                   .map((size) => {
@@ -427,7 +439,7 @@ export default function Detail() {
                                 </Collapse>
                               </TableCell>
                             </TableRow>
-                          </>
+                          </Fragment>
                         ))}
                       </TableBody>
                     </Table>

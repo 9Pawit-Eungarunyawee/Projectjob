@@ -70,7 +70,7 @@ export default function Add() {
       const Data = result.data();
       const newProducts = Data.products.map((product) => ({
         ...product,
-        product_exp: format(product.product_exp.toDate(), "yyyy-MM-dd"),
+        // product_exp: format(product.product_exp.toDate(), "yyyy-MM-dd"),
       }));
       setProducts(newProducts);
       setCreateAt(format(Data.createAt.toDate(), "yyyy-MM-dd"));
@@ -138,8 +138,9 @@ export default function Add() {
   const removeInputSize = (index, id) => {
     if (products[index].product_size.length > 1) {
       const newProduct = { ...products[index] };
-      const newProductSize = [...newProduct.product_size];
-      newProductSize.splice(0, 1); // ลบชุดที่มีดัชนี id
+      const newProductSize = newProduct.product_size.filter(
+        (size, idx) => idx !== id
+      );
       newProduct.product_size = newProductSize;
       const updatedProducts = [...products];
       updatedProducts[index] = newProduct;
@@ -204,6 +205,7 @@ export default function Add() {
           แก้ไขข้อมูลสำเร็จ
         </Alert>
       );
+      
       setOpen(true);
       setTimeout(() => {
         goBack();
@@ -320,7 +322,7 @@ export default function Add() {
                     }}
                     InputLabelProps={{
                       shrink: true,
-                      floating: true,
+                     
                     }}
                   />
                   <Typography sx={{ mt: 1 }}>รูปแบบสินค้า:</Typography>
@@ -418,7 +420,7 @@ export default function Add() {
                     </Box>
                   ))}
 
-                  <Typography sx={{ mt: 1 }}>วันหมดอายุ:</Typography>
+                  {/* <Typography sx={{ mt: 1 }}>วันหมดอายุ:</Typography>
                   <TextField
                     variant="outlined"
                     fullWidth
@@ -428,7 +430,7 @@ export default function Add() {
                     size="small"
                     sx={{ mt: 1, mb: 1 }}
                     type="date"
-                  />
+                  /> */}
                   <Button
                     sx={{ mt: 1, mb: 1 }}
                     variant="contained"

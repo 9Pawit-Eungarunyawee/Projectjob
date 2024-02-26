@@ -29,7 +29,7 @@ export default function AddProduct() {
   const [imageUrl, setImageUrl] = useState("");
 
   const [productSizes, setProductSizes] = useState([
-    { size: "", quantity: "", price: "", cost: "" },
+    { size: "", amount: "", price: "", cost: "" },
   ]);
 
   const [area, setArea] = useState("");
@@ -324,7 +324,7 @@ export default function AddProduct() {
                     </TextField>
 
                     {/* <TextField
-                      value={productSizes.quantity}
+                      value={productSizes.amount}
                       onChange={(e) => {
                         const input = e.target.value;
                         // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
@@ -334,7 +334,7 @@ export default function AddProduct() {
                             input === "" ||
                             (parseInt(input) >= 0 && input[0] !== "0")
                           ) {
-                            handleInputChange(e, index, "quantity");
+                            handleInputChange(e, index, "amount");
                           }
                         }
                       }}

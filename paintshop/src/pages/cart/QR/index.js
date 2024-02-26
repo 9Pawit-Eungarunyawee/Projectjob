@@ -99,7 +99,8 @@ export default function QR() {
       user_id: user.user.uid,
       total_price: price,
       address:address,
-      date: currentDate,
+      tracker:null,
+      createAt: currentDate,
       img: imageUrl,
       status: "disapprove",
     };

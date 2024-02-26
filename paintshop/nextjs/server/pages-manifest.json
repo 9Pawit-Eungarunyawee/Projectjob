@@ -2,7 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/buy/add": "pages/buy/add.js",
-  "/catalogadmin": "pages/catalogadmin.js",
-  "/catalogadmin/editcatalog": "pages/catalogadmin/editcatalog.js"
+  "/account/orderhistory": "pages/account/orderhistory.js",
+  "/account/orderhistory/detail": "pages/account/orderhistory/detail.js",
+  "/account/profile": "pages/account/profile.js"
 }

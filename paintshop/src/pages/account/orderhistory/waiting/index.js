@@ -130,7 +130,16 @@ export default function Wait() {
                   <Typography
                     sx={{
                       fontWeight: "bold",
-                      bgcolor: "#FE616A",
+                      bgcolor:
+                        item.status === "ยืนยัน"
+                          ? "#FFFF00"
+                          : item.status === "จัดเตรียมสินค้า" ||
+                            item.status === "จัดส่ง"
+                          ? "#FFA500"
+                          : item.status === "จัดส่งสำเร็จ"
+                          ? "#4CAF50"
+                          : "#FE616A",
+                      color: "#FFFFFF",
                       p: 0.5,
                       borderRadius: "4px",
                     }}

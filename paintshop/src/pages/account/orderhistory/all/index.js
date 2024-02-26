@@ -127,7 +127,15 @@ export default function All() {
                   <Typography
                     sx={{
                       fontWeight: "bold",
-                      bgcolor: item.status === "ยืนยัน" ? "#4CAF50" : "#FE616A",
+                      bgcolor:
+                        item.status === "ยืนยัน"
+                          ? "#FFFF00"
+                          : item.status === "จัดเตรียมสินค้า" ||
+                            item.status === "จัดส่ง"
+                          ? "#FFA500"
+                          : item.status === "จัดส่งสำเร็จ"
+                          ? "#4CAF50"
+                          : "#FE616A",
                       color: "#FFFFFF", // กำหนดสีตัวอักษรเป็นขาว
                       p: 0.5,
                       borderRadius: "4px",

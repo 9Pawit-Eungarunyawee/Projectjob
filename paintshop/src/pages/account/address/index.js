@@ -74,6 +74,9 @@ export default function Address() {
       setUserData(user);
     }
   };
+  const handleFormSubmitSuccess = () => {
+    fetchAllData();
+  };
   return (
     <ThemeProvider theme={theme}>
       <Homelayout>
@@ -99,7 +102,7 @@ export default function Address() {
                   >
                     หน้าแรก
                   </Link>
-                  <Typography color="text.primary" >บัญชีของฉัน</Typography>
+                  <Typography color="text.primary">บัญชีของฉัน</Typography>
                 </Breadcrumbs>
               </div>
             </Box>
@@ -137,15 +140,22 @@ export default function Address() {
                     >
                       ที่อยู่จัดส่งสินค้า
                     </Typography>
-                    <Addressdialog handleClickOpen={handleClickOpen} />
+                    <Addressdialog
+                      handleClickOpen={handleClickOpen}
+                      onFormSubmitSuccess={handleFormSubmitSuccess}
+                    />
                   </Grid>
                   <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                       <TableHead>
-                        <TableRow style={{ backgroundColor: "#018294" ,}}>
-                          <TableCell sx={{color:"white"}}>ชื่อ</TableCell>
-                          <TableCell sx={{color:"white",whiteSpace: "nowrap"}}>เบอร์โทรศัพท์</TableCell>
-                          <TableCell sx={{color:"white"}}>ที่อยู่</TableCell>
+                        <TableRow style={{ backgroundColor: "#018294" }}>
+                          <TableCell sx={{ color: "white" }}>ชื่อ</TableCell>
+                          <TableCell
+                            sx={{ color: "white", whiteSpace: "nowrap" }}
+                          >
+                            เบอร์โทรศัพท์
+                          </TableCell>
+                          <TableCell sx={{ color: "white" }}>ที่อยู่</TableCell>
                           <TableCell></TableCell>
                           <TableCell></TableCell>
                         </TableRow>
@@ -163,14 +173,17 @@ export default function Address() {
                                         border: 0,
                                       },
                                       "&:hover": {
-                                        bgcolor:"#EEEDEB",
+                                        bgcolor: "#EEEDEB",
                                       },
                                     }}
                                   >
                                     <TableCell
                                       component="th"
                                       scope="row"
-                                      sx={{ fontWeight: "bold" }}
+                                      sx={{
+                                        fontWeight: "bold",
+                                        whiteSpace: "nowrap",
+                                      }}
                                     >
                                       {item.name}
                                     </TableCell>
@@ -178,23 +191,15 @@ export default function Address() {
                                     <TableCell>
                                       {address.address} อำเภอ {address.amphure}{" "}
                                       ตำบล {address.tambon} จังหวัด{" "}
-                                      {address.province}{" "}{address.zipcode}
+                                      {address.province} {address.zipcode}
                                     </TableCell>
                                     <TableCell>
-                                      <Button
-                                        variant="contained"
-                                        color="edit"
-                                        
-                                      >
+                                      <Button variant="contained" color="edit">
                                         แก้ไข
                                       </Button>
                                     </TableCell>
                                     <TableCell>
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        
-                                      >
+                                      <Button variant="contained" color="error">
                                         ลบ
                                       </Button>
                                     </TableCell>

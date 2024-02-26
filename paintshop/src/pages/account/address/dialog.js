@@ -11,10 +11,11 @@ import {
   Autocomplete,
   createTheme,
   ThemeProvider,
+  Alert,
 } from "@mui/material";
 import addAddress from "@/firebase/addAddresses";
 import { useAuthContext } from "@/context/AuthContext";
-export default function Addressdialog() {
+export default function Addressdialog({ onFormSubmitSuccess }) {
   const theme = createTheme({
     palette: {
       primary: {
@@ -32,6 +33,8 @@ export default function Addressdialog() {
     },
   });
   const [open, setOpen] = React.useState(false);
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const [alert, setAlert] = React.useState(null);
   const [address, setAddress] = React.useState(null);
   const [provinces, setProvinces] = React.useState([]);
   const [amphures, setAmphures] = React.useState([]);
@@ -120,6 +123,16 @@ export default function Addressdialog() {
       user.user.uid,
       addAddresses
     );
+    if (!error) {
+      setAlert(<Alert severity="success">บันทึกข้อมูลสำเร็จ</Alert>);
+      onFormSubmitSuccess();
+      setOpenAlert(true);
+    } else {
+      setAlert(
+        <Alert severity="error">ผิดพลาด! ไม่สามารถบันทึกข้อมูลได้</Alert>
+      );
+      setOpenAlert(true);
+    }
   };
 
   const handleClickOpen = () => {

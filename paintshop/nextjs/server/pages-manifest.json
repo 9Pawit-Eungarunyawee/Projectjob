@@ -2,7 +2,11 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/account/orderhistory/detail": "pages/account/orderhistory/detail.js",
+  "/homepage": "pages/homepage.js",
+  "/buy": "pages/buy.js",
+  "/account/profile": "pages/account/profile.js",
+  "/product": "pages/product.js",
   "/account/orderhistory": "pages/account/orderhistory.js",
-  "/account/profile": "pages/account/profile.js"
+  "/catalogadmin": "pages/catalogadmin.js",
+  "/account/address": "pages/account/address.js"
 }

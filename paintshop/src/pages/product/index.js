@@ -22,6 +22,9 @@ import { debounce } from "lodash";
 import searchData from "@/firebase/searchData";
 import { ProductContext } from "@/context/ProductContext";
 import PropTypes from "prop-types";
+import { BuyContext } from "@/context/BuyContext";
+import { getCollection } from "@/firebase/getData";
+import { OrderContext } from "@/context/OrderContext";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -73,7 +76,8 @@ export default function Product() {
   const { user } = useAuthContext();
   const { productData, setProductData, fetchProductData } =
     useContext(ProductContext);
-
+  const { buyData } = useContext(BuyContext);
+  const { orderData } = useContext(OrderContext);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   function handleAdd() {
@@ -141,6 +145,146 @@ export default function Product() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const [productOutOfStock, setProductOutOfStock] = useState([]);
+  const [productAlmostOutOfStock, setProductAlmostOutOfStock] = useState([]);
+  useEffect(() => {
+    if (
+      productData != undefined &&
+      buyData != undefined &&
+      orderData != undefined
+    ) {
+      console.log(
+        "getProductOutOfStock:",
+        getProductOutOfStock(productData, buyData, orderData)
+      );
+      console.log(
+        "getProductAlmostOutOfStock:",
+        getProductAlmostOutOfStock(productData, buyData, orderData)
+      );
+
+      setProductOutOfStock(
+        getProductOutOfStock(productData, buyData, orderData)
+      );
+
+      setProductAlmostOutOfStock(
+        getProductAlmostOutOfStock(productData, buyData,orderData)
+      );
+    }
+  }, [productData, buyData, orderData]);
+
+  const getProductOutOfStock = (productData, buyData, orderData) => {
+    const productIdsInBuyData = new Set();
+    const productIdsInOrderData = new Set();
+
+    // รวบรวม product_id ทั้งหมดจาก buyData
+    buyData.forEach((buy) => {
+      buy.products.forEach((product) => {
+        productIdsInBuyData.add(product.product_id);
+      });
+    });
+
+    // รวบรวม product_id ทั้งหมดจาก orderData
+    orderData.forEach((order) => {
+      order.products.forEach((product) => {
+        productIdsInOrderData.add(product.product_id);
+      });
+    });
+
+    // สร้าง Map เพื่อเก็บจำนวนสินค้าใน buyData และ orderData ตาม product_id
+    const productAmountMap = new Map();
+
+    // นับจำนวนสินค้าใน buyData
+    buyData.forEach((buy) => {
+      buy.products.forEach((product) => {
+        product.product_size.forEach((size) => {
+          const productId = product.product_id;
+          const amount = parseInt(size.amount);
+          productAmountMap.set(
+            productId,
+            (productAmountMap.get(productId) || 0) + amount
+          );
+        });
+      });
+    });
+
+    // นับจำนวนสินค้าใน orderData
+    orderData.forEach((order) => {
+      order.products.forEach((product) => {
+        const productId = product.product_id;
+        const amount = parseInt(product.amount);
+        productAmountMap.set(
+          productId,
+          (productAmountMap.get(productId) || 0) - amount
+        );
+      });
+    });
+    // console.log("จำนวนสินค้าใน productAmountMap:", productAmountMap);
+    // กรองข้อมูล productData ตาม product_id ที่ไม่อยู่ใน buyData และ orderData หรือมีจำนวนเท่ากับ 0
+    const outOfStockProducts = productData.filter(
+      (product) => (productAmountMap.get(product.id) || 0) <= 0
+    );
+
+    return outOfStockProducts;
+  };
+
+  const getProductAlmostOutOfStock = (productData, buyData, orderData) => {
+    const productIdsInBuyData = new Set();
+    const productIdsInOrderData = new Set();
+
+    // รวบรวม product_id ทั้งหมดจาก buyData
+    buyData.forEach((buy) => {
+      buy.products.forEach((product) => {
+        productIdsInBuyData.add(product.product_id);
+      });
+    });
+
+    // รวบรวม product_id ทั้งหมดจาก orderData
+    orderData.forEach((order) => {
+      order.products.forEach((product) => {
+        productIdsInOrderData.add(product.product_id);
+      });
+    });
+
+    // สร้าง Map เพื่อเก็บจำนวนสินค้าใน buyData และ orderData ตาม product_id
+    const productAmountMap = new Map();
+
+    // นับจำนวนสินค้าใน buyData
+    buyData.forEach((buy) => {
+      buy.products.forEach((product) => {
+        product.product_size.forEach((size) => {
+          const productId = product.product_id;
+          const amount = parseInt(size.amount);
+          productAmountMap.set(
+            productId,
+            (productAmountMap.get(productId) || 0) + amount
+          );
+        });
+      });
+    });
+
+    // นับจำนวนสินค้าใน orderData
+    orderData.forEach((order) => {
+      order.products.forEach((product) => {
+        const productId = product.product_id;
+        const amount = parseInt(product.amount);
+        productAmountMap.set(
+          productId,
+          (productAmountMap.get(productId) || 0) - amount
+        );
+      });
+    });
+
+    console.log("จำนวนสินค้าใน buyData:", productAmountMap);
+
+    // กรองข้อมูล productData ตาม product_id ที่ไม่อยู่ใน buyData และ orderData หรือมีจำนวนน้อยกว่า 10
+    const almostOutOfStockProducts = productData.filter(
+      (product) =>
+        (productAmountMap.get(product.id) < 10 )&& (productAmountMap.get(product.id) > 0 ) || 0
+    );
+    return almostOutOfStockProducts;
+  };
+
   return (
     <Layout>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -205,6 +349,14 @@ export default function Product() {
                     label={<Typography>ไม่พร้อมขาย</Typography>}
                     {...a11yProps(2)}
                   />
+                  <Tab
+                    label={<Typography>สินค้าใกล้หมด</Typography>}
+                    {...a11yProps(3)}
+                  />
+                  <Tab
+                    label={<Typography>สินค้าหมด</Typography>}
+                    {...a11yProps(4)}
+                  />
                 </Tabs>
               </Box>
               <CustomTabPanel value={value} index={0}>
@@ -215,13 +367,26 @@ export default function Product() {
               </CustomTabPanel>
               <CustomTabPanel value={value} index={1}>
                 <TableProduct
-                  data={{ data: productData.filter(item => item.status)  }}
+                  data={{ data: productData.filter((item) => item.status) }}
                   onDelete={handleDelete}
                 />
               </CustomTabPanel>
               <CustomTabPanel value={value} index={2}>
                 <TableProduct
-                  data={{ data: productData.filter(item => !item.status) }}
+                  data={{ data: productData.filter((item) => !item.status) }}
+                  onDelete={handleDelete}
+                />
+              </CustomTabPanel>
+
+              <CustomTabPanel value={value} index={3}>
+                <TableProduct
+                  data={{ data: productAlmostOutOfStock }}
+                  onDelete={handleDelete}
+                />
+              </CustomTabPanel>
+              <CustomTabPanel value={value} index={4}>
+                <TableProduct
+                  data={{ data: productOutOfStock }}
                   onDelete={handleDelete}
                 />
               </CustomTabPanel>

@@ -37,10 +37,13 @@ export default function Catalogadmin() {
       },
     },
   });
-  const { catalogData, setCatalogData,fetchcatalogData } = React.useContext(CatalogContext);
+  const { catalogData, setCatalogData, fetchcatalogData } =
+    React.useContext(CatalogContext);
   const [searchTerm, setSearchTerm] = useState("");
 
-
+  useEffect(() => {
+    fetchcatalogData();
+  }, []);
   const debouncedSearchUser = debounce(async (term) => {
     try {
       const collectionName = "catalog";
@@ -67,6 +70,9 @@ export default function Catalogadmin() {
       query: { catalog_id: JSON.stringify(id) },
     });
   }
+  const goHistory = () => {
+    router.push("/catalogadmin/history");
+  };
   return (
     <Layout>
       <ThemeProvider theme={theme}>
@@ -93,16 +99,24 @@ export default function Catalogadmin() {
             sx={{
               display: "flex",
               justifyContent: { xl: "flex-end" },
-              width: "98%",
+              width: "100%",
             }}
           >
             <Button
               variant="contained"
               color="success"
               onClick={handleAdd}
-              sx={{ mt: 1 }}
+              sx={{ mr: 2, mb: 2, mt: 2 }}
             >
               เพิ่มแค็ตตาล็อก
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={goHistory}
+              sx={{ mb: 2, mt: 2 }}
+            >
+              ประวัติการลบ
             </Button>
           </Box>
           <Box
@@ -118,40 +132,42 @@ export default function Catalogadmin() {
           >
             <Grid container spacing={2}>
               {catalogData &&
-                catalogData.map((item) => (
-                  <Grid key={item.id} item xs={12} sm={6} md={4}>
-                    <Card
-                      sx={{ maxWidth: 400 }}
-                      onClick={() => handleCard(item.id)}
-                    >
-                      <CardActionArea>
-                        <CardMedia
-                          component="img"
-                          height="200"
-                          src={item.img}
-                          alt="ภาพ"
-                        />
-                        <CardContent>
-                          <Typography
-                            gutterBottom
-                            variant="h5"
-                            component="div"
-                            sx={{
-                              color: "#018294",
-                              fontSize: {
-                                xs: "1rem",
-                                sm: "1rem",
-                                md: "1.5rem",
-                              },
-                            }}
-                          >
-                            {item.name}
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
-                  </Grid>
-                ))}
+                catalogData
+                  .filter((doc) => !doc.delete)
+                  .map((item) => (
+                    <Grid key={item.id} item xs={12} sm={6} md={4}>
+                      <Card
+                        sx={{ maxWidth: 400 }}
+                        onClick={() => handleCard(item.id)}
+                      >
+                        <CardActionArea>
+                          <CardMedia
+                            component="img"
+                            height="200"
+                            src={item.img}
+                            alt="ภาพ"
+                          />
+                          <CardContent>
+                            <Typography
+                              gutterBottom
+                              variant="h5"
+                              component="div"
+                              sx={{
+                                color: "#018294",
+                                fontSize: {
+                                  xs: "1rem",
+                                  sm: "1rem",
+                                  md: "1.5rem",
+                                },
+                              }}
+                            >
+                              {item.name}
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </Grid>
+                  ))}
             </Grid>
           </Box>
         </Box>

@@ -20,7 +20,7 @@ import {
 } from "@/firebase/getData";
 import { ProductContext } from "@/context/ProductContext";
 import Link from "next/link";
-export default function Wait() {
+export default function Prepare() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [orderData, setOrderData] = React.useState("");
   const [color, setColor] = React.useState(null);
@@ -46,7 +46,7 @@ export default function Wait() {
       const field = "status";
       const results = await searchUser(collectionName, field, term);
       const filteredResults = results.filter(
-        (doc) => doc.status === "รอยืนยัน"
+        (doc) => doc.status === "จัดเตรียมสินค้า"
       );
       setOrderData(filteredResults);
     } catch (error) {

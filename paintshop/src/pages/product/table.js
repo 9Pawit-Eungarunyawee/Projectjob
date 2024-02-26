@@ -80,7 +80,17 @@ export default function TableProduct({ data, onDelete }) {
     status,
     create
   ) {
-    return { No, id, img, p_name, p_sell, p_left, productSizes, status, create };
+    return {
+      No,
+      id,
+      img,
+      p_name,
+      p_sell,
+      p_left,
+      productSizes,
+      status,
+      create,
+    };
   }
 
   const rows = docuData.map((dataItem, index) => {
@@ -127,9 +137,11 @@ export default function TableProduct({ data, onDelete }) {
   };
 
   const getProductTotalSize = (buyData, id) => {
-    const productsWithSameId = buyData
-      .flatMap((buy) => buy.products)
-      .filter((product) => product.product_id === id);
+    const productsWithSameId = buyData.flatMap((buy) =>
+      buy.products.filter(
+        (product) => product.product_id === id && buy.status === "สำเร็จ"
+      )
+    );
 
     if (productsWithSameId.length > 0) {
       const totalSize = productsWithSameId.reduce(
@@ -141,29 +153,38 @@ export default function TableProduct({ data, onDelete }) {
           ),
         0
       );
-      return totalSize;
+      // เพิ่มเงื่อนไขเช็คว่า totalSize เป็น 0 หรือไม่
+      if (totalSize === 0) {
+        return "ไม่มีสินค้า";
+      } else {
+        return totalSize;
+      }
     } else {
       return "ไม่มีสินค้า";
     }
   };
 
   const getProductTotalSameSize = (buyData, id, sizeName) => {
-    const productsWithSameId = buyData
-      .flatMap((buy) => buy.products)
-      .filter((product) => product.product_id === id);
-  
+    const productsWithSameId = buyData.flatMap((buy) =>
+      buy.products.filter(
+        (product) => product.product_id === id && buy.status === "สำเร็จ"
+      )
+    );
     if (productsWithSameId.length > 0) {
       const totalSize = productsWithSameId.reduce((acc, product) => {
         // รวบรวมและรวมจำนวนของขนาดที่มีชื่อเหมือนกัน
         const totalAmount = product.product_size
           .filter((size) => size.size === sizeName)
           .reduce((total, size) => total + parseInt(size.amount), 0);
-  
+
         acc += totalAmount;
+
         return acc;
       }, 0);
-  
-      return totalSize;
+
+      // ถ้า totalSize ไม่เป็น 0 ให้คืนค่า totalSize
+      // ในกรณีอื่น ให้คืนค่า "ไม่มีสินค้า"
+      return totalSize !== 0 ? totalSize : "ไม่มีสินค้า";
     } else {
       return "ไม่มีสินค้า";
     }
@@ -176,7 +197,7 @@ export default function TableProduct({ data, onDelete }) {
       [rowNo]: !prevOpenRows[rowNo],
     }));
   };
-  
+
   return (
     <>
       <Dialog open={dialogopen} onClose={handleDialogClose}>
@@ -209,8 +230,8 @@ export default function TableProduct({ data, onDelete }) {
               ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : rows
             ).map((row) => (
-              <>
-                <StyledTableRow key={row.No}>
+              <React.Fragment key={row.id}>
+                <StyledTableRow key={row.id}>
                   <StyledTableCell>
                     <IconButton
                       aria-label="expand row"
@@ -302,20 +323,31 @@ export default function TableProduct({ data, onDelete }) {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {row.productSizes && row.productSizes.map((size,i)=>(
-                            <TableRow key={i}>
-                              <TableCell align="center">{size.size}</TableCell>
-                              <TableCell align="center"></TableCell>
-                              <TableCell align="center">{getProductTotalSameSize(buyData, row.id,size.size)}</TableCell>
-                              <TableCell align="center">{size.price}</TableCell>
-                            </TableRow>
-                          ))}
+                          {row.productSizes &&
+                            row.productSizes.map((size, i) => (
+                              <TableRow key={i}>
+                                <TableCell align="center">
+                                  {size.size}
+                                </TableCell>
+                                <TableCell align="center"></TableCell>
+                                <TableCell align="center">
+                                  {getProductTotalSameSize(
+                                    buyData,
+                                    row.id,
+                                    size.size
+                                  )}
+                                </TableCell>
+                                <TableCell align="center">
+                                  {size.price}
+                                </TableCell>
+                              </TableRow>
+                            ))}
                         </TableBody>
                       </Table>
                     </Collapse>
                   </TableCell>
                 </TableRow>
-              </>
+              </React.Fragment>
             ))}
           </TableBody>
           <TableFooter>

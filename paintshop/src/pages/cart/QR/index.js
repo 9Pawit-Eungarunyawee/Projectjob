@@ -102,7 +102,7 @@ export default function QR() {
       tracker:null,
       createAt: currentDate,
       img: imageUrl,
-      status: "disapprove",
+      status: "รอยืนยัน",
     };
 
     // Delete cart item first

@@ -25,6 +25,7 @@ import { useRouter } from "next/router";
 import { debounce } from "lodash";
 import StepperData from "./stepper";
 import StepperDetail from "./stepperdetail";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import {
   getCollection,
   getColorDetails,
@@ -35,6 +36,8 @@ import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
 
 export default function DetailOrder() {
+  const shippingCost = 50;
+  const [total, setTotal] = React.useState(0);
   const { user, isAdmin } = useAuthContext();
   const [searchTerm, setSearchTerm] = React.useState("");
   const [orderData, setOrderData] = React.useState("");
@@ -122,6 +125,7 @@ export default function DetailOrder() {
     fetchProductData();
     fetchColorData();
   }, [orderData]);
+
   const fetchColorData = async (colorId) => {
     const collectionName = "colors";
     const { result, error } = await getCollection(collectionName);
@@ -137,6 +141,24 @@ export default function DetailOrder() {
     }
     return null;
   };
+  React.useEffect(() => {
+    let producttotal = 0;
+    if (Array.isArray(orderData)) {
+      orderData.forEach((item, index) => {
+        if (Array.isArray(item.products)) {
+          item.products.forEach((data) => {
+            // แปลง string เป็น integer ก่อนที่จะบวกเข้ากับ producttotal
+            const priceAsInt = parseInt(data.price);
+            // ตรวจสอบว่า priceAsInt เป็น NaN หรือไม่
+            if (!isNaN(priceAsInt)) {
+              producttotal += priceAsInt;
+            }
+          });
+        }
+      });
+      setTotal(producttotal);
+    }
+  }, [orderData]);
 
   return (
     <React.Fragment>
@@ -152,23 +174,19 @@ export default function DetailOrder() {
                   รายการคำสั่งซื้อ #{item.id}
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Link
-                    href="orderhistory/detail"
-                    passHref
-                    style={{ textDecoration: "none", marginRight: 5 }}
-                  >
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      style={{ textDecoration: "none" }}
-                    >
-                      ดูรายละเอียด
-                    </Typography>
-                  </Link>
                   <Typography
                     sx={{
                       fontWeight: "bold",
-                      bgcolor: item.status === "ยืนยัน" ? "#4CAF50" : "#FE616A",
+                      bgcolor:
+                        item.status === "ยืนยัน"
+                          ? "#FFFF00"
+                          : item.status === "จัดเตรียมสินค้า" ||
+                            item.status === "จัดส่ง"
+                          ? "#FFA500"
+                          : item.status === "จัดส่งสำเร็จ"
+                          ? "#4CAF50"
+                          : "#FE616A",
+
                       color: "#FFFFFF", // กำหนดสีตัวอักษรเป็นขาว
                       p: 0.5,
                       borderRadius: "4px",
@@ -181,37 +199,70 @@ export default function DetailOrder() {
             </CardContent>
 
             <CardContent sx={{ bgcolor: "#EEEDEB" }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Box>
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Grid item xs={12} sm={4}>
                   <Typography color="text.secondary">
                     วันที่สั่งซื้อ{" "}
                   </Typography>
                   <Typography sx={{ mb: 1.5, fontWeight: "bold" }}>
                     {formatTimestamp(item.createAt)}
                   </Typography>
-                </Box>
-                <Box sx={{ display: "flex" }}>
-                  <Box sx={{ mr: 4 }}>
-                    <Typography>ยอดสุทธิ </Typography>
-                    <Typography color="text.secondary">
-                      (รวมภาษีมูลค่าเพิ่ม)
-                    </Typography>
-                  </Box>
-                  <Typography
-                    sx={{
-                      mb: 1.5,
-                      fontWeight: "bold",
-                      color: "#018294",
-                      fontSize: 20,
-                    }}
-                  >
-                    ฿{format(item.total_price)}
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Typography color="text.secondary">การจัดส่ง</Typography>
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    {item.tracker || "-"}
                   </Typography>
-                </Box>
-              </Box>
+                </Grid>
+                <Grid item xs={12} sm={5} sx={{ textAlign: "center" }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        sx={{
+                          bgcolor: "#018294",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            bgcolor: "#018294",
+                          },
+                        }}
+                      >
+                        ได้รับสินค้าแล้ว
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        sx={{
+                          bgcolor: "#BBE2EC",
+                          fontWeight: "bold",
+                          color: "#018294",
+                          "&:hover": {
+                            bgcolor: "#BBE2EC",
+                          },
+                        }}
+                      >
+                        ไม่ได้รับสินค้า
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
             </CardContent>
             <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                sx={{ fontWeight: "bold" }}
+              >
                 สถานะคำสั่งซื้อ
               </Typography>
               <Grid container spacing={2}>
@@ -226,30 +277,44 @@ export default function DetailOrder() {
                     {orderData[index].address &&
                       orderData[index].address.map((doc, a) => (
                         <Grid item xs={12} sm={5} key={a}>
-                          <Typography>ที่อยู่จัดส่ง</Typography>
-                          {userData &&
-                            userData.map((item, index) => (
-                              <Box key={index}>
-                                <Typography sx={{ fontWeight: "bold" }}>
-                                  {item.name}
-                                </Typography>
-                              </Box>
-                            ))}
-                          <Typography>
-                            บ้านเลขที่ {doc.address} อำเภอ
-                            {doc.amphure} ตำบล
-                            {doc.tambon} จังหวัด
-                            {doc.province} รหัสไปรษณีย์
-                            {doc.zipcode}
-                          </Typography>
-                          {userData &&
-                            userData.map((item, index) => (
-                              <Box key={index}>
-                                <Typography sx={{ fontWeight: "bold" }}>
-                                  เบอร์โทร : {item.tel}
-                                </Typography>
-                              </Box>
-                            ))}
+                          <Box sx={{ display: "flex" }}>
+                            {" "}
+                            <PlaceOutlinedIcon />
+                            <Box>
+                              <Typography
+                                variant="h6"
+                                sx={{
+                                  fontWeight: "bold",
+                                  alignItems: "center",
+                                }}
+                              >
+                                ที่อยู่จัดส่ง
+                              </Typography>
+                              {userData &&
+                                userData.map((item, index) => (
+                                  <Box key={index}>
+                                    <Typography sx={{ fontWeight: "bold" }}>
+                                      {item.name}
+                                    </Typography>
+                                  </Box>
+                                ))}
+                              <Typography>
+                                บ้านเลขที่ {doc.address} อำเภอ
+                                {doc.amphure} ตำบล
+                                {doc.tambon} จังหวัด
+                                {doc.province} รหัสไปรษณีย์
+                                {doc.zipcode}
+                              </Typography>
+                              {userData &&
+                                userData.map((item, index) => (
+                                  <Box key={index}>
+                                    <Typography sx={{ fontWeight: "bold" }}>
+                                      เบอร์โทร : {item.tel}
+                                    </Typography>
+                                  </Box>
+                                ))}
+                            </Box>
+                          </Box>
                         </Grid>
                       ))}
                   </Grid>
@@ -257,93 +322,140 @@ export default function DetailOrder() {
               </Grid>
             </CardContent>
             <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                sx={{ fontWeight: "bold" }}
+              >
                 รายละเอียดคำสั่งซื้อ
               </Typography>
             </CardContent>
-            {orderData[index].products &&
-              orderData[index].products.map((data, i) => (
-                <CardActionArea key={i}>
-                  <Grid container spacing={2}>
-                    <Grid
-                      item
-                      xs={12}
-                      sm={3}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        sx={{ width: 100 }}
-                        image={findProduct(data.product_id).img}
-                        alt={findProduct(data.product_id).name}
-                      />
-                      <Box
+            <Card>
+              {orderData[index].products &&
+                orderData[index].products.map((data, i) => (
+                  <CardActionArea key={i}>
+                    <Grid container spacing={2}>
+                      <Grid
+                        item
+                        xs={12}
+                        sm={3}
                         sx={{
-                          ml: 2,
-                          width: 40,
-                          height: 40,
-                          borderRadius: "50%",
-                          bgcolor: findColor(data.color_id).code,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
-                      ></Box>
-                    </Grid>
-                    <Grid item xs={12} sm={9}>
-                      <CardContent>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} sm={9}>
-                            <Box>
-                              <Typography
-                                gutterBottom
-                                variant="h5"
-                                component="div"
-                              >
-                                {findProduct(data.product_id).name}{" "}
-                                {findProduct(data.product_id).area}
-                              </Typography>
-                              <Box sx={{ display: "flex" }}>
+                      >
+                        <CardMedia
+                          component="img"
+                          sx={{ width: 100 }}
+                          image={findProduct(data.product_id).img}
+                          alt={findProduct(data.product_id).name}
+                        />
+                        <Box
+                          sx={{
+                            ml: 2,
+                            width: 40,
+                            height: 40,
+                            borderRadius: "50%",
+                            bgcolor: findColor(data.color_id).code,
+                          }}
+                        ></Box>
+                      </Grid>
+                      <Grid item xs={12} sm={9}>
+                        <CardContent>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sm={9}>
+                              <Box>
                                 <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                  sx={{ pr: 2 }}
+                                  gutterBottom
+                                  variant="h5"
+                                  component="div"
                                 >
-                                  จำนวน : {data.amount}
+                                  {findProduct(data.product_id).name}{" "}
+                                  {findProduct(data.product_id).area}
                                 </Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  ขนาด : {data.size}
-                                </Typography>
+                                <Box sx={{ display: "flex" }}>
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{ pr: 2 }}
+                                  >
+                                    จำนวน : {data.amount}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    ขนาด : {data.size}
+                                  </Typography>
+                                </Box>
                               </Box>
-                            </Box>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={12}
-                            sm={3}
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography
-                              variant="h6"
-                              sx={{ fontWeight: "bold" }}
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              sm={3}
+                              sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
                             >
-                              ฿{format(data.price)}
-                            </Typography>
+                              <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold" }}
+                              >
+                                ฿{format(data.price)}
+                              </Typography>
+                            </Grid>
                           </Grid>
-                        </Grid>
-                      </CardContent>
+                        </CardContent>
+                      </Grid>
                     </Grid>
+                  </CardActionArea>
+                ))}
+              <CardContent>
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                  <Grid item xs={12} sm={11}>
+                    <Typography>ยอดรวมสินค้า</Typography>
                   </Grid>
-                </CardActionArea>
-              ))}
+                  <Grid item xs={12} sm={1}>
+                    <Typography sx={{ fontWeight: "bold" }}>
+                      ฿{format(total)}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                  <Grid item xs={12} sm={11}>
+                    <Typography>ค่าจัดส่ง</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={1}>
+                    <Typography sx={{ fontWeight: "bold" }}>
+                      ฿{shippingCost}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={11}>
+                    <Box sx={{ display: "flex" }}>
+                      <Typography sx={{ fontWeight: "bold" }}>
+                        ยอดสุทธิ
+                      </Typography>
+                      <Typography>(รวมภาษีมูลค่าเพิ่ม)</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={1}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold", color: "#018294" }}
+                    >
+                      ฿{format(item.total_price)}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
           </Card>
         ))}
     </React.Fragment>

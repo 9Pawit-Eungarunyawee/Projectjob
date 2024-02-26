@@ -48,10 +48,6 @@ export default function Employee() {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
     handleSearch("");
   }, []);
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    console.log(documentData);
-  }, [documentData]);
 
   const debouncedSearchUser = debounce(async (term) => {
     try {

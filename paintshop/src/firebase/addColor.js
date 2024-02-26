@@ -5,6 +5,7 @@ import {
   collection,
   addDoc,
   setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
@@ -35,3 +36,49 @@ export default async function addColor(collectionName, data) {
 
   return { result, error };
 }
+
+export async function editColor(colllection, id, data) {
+  let result = null;
+  let error = null;
+
+  try {
+    const colorShadeRef = doc(db, "colorshade", data.colorshade_id);
+
+    const colorData = {
+      colorshade_id: colorShadeRef,
+      name: data.name,
+      code: data.code,
+      code_name: data.code_name,
+    };
+    result = await setDoc(doc(db, colllection, id), colorData, {
+      merge: true,
+    });
+    console.log("แก้ไขสำเร็จ", result);
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
+  }
+
+  return { result, error };
+}
+
+const deleteColor = async (collectionName, id) => {
+  let result = null;
+  let error = null;
+  // อ้างอิงไปยังเอกสารที่ต้องการลบ
+  const docRef = doc(db, collectionName, id);
+
+  try {
+    // ลบเอกสาร
+    await deleteDoc(docRef);
+
+    console.log("ลบข้อมูลสำเร็จ");
+    result = "Success";
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการลบข้อมูล:", error);
+  }
+
+  return { result, error };
+};
+export {deleteColor}

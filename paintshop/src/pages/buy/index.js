@@ -33,7 +33,7 @@ function CustomTabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ pt: 2 ,mb:5}}>
+        <Box sx={{ pt: 2, mb: 5 }}>
           <Box>{children}</Box>
         </Box>
       )}
@@ -75,8 +75,6 @@ export default function Buy() {
   };
   const [searchTerm, setSearchTerm] = useState("");
 
-
-
   const debouncedSearch = debounce(async (term) => {
     try {
       const collectionName = "buy";
@@ -98,73 +96,72 @@ export default function Buy() {
     debouncedSearch(term);
   };
 
-  const {buyData,setBuyData} = useContext(BuyContext);
+  const { buyData, setBuyData, fetchBuyData } = useContext(BuyContext);
 
+  useEffect(() => {
+    fetchBuyData();
+  }, []);
   return (
     <Layout>
-  <ThemeProvider theme={theme}>
-      <Box sx={{ height: "100%", width: "100%", mt: 5 }} variant="div">
-        <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
-          รายการซื้อ
-        </Typography>
-        <Box sx={{ mt: 1 }}>
-          <TextField
-            label="ค้นหา"
-            variant="outlined"
-            size="small"
-            onChange={(e) => handleSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ fontSize: "1.4rem" }} />
-                </InputAdornment>
-              ),
-            }}
-          />
+      <ThemeProvider theme={theme}>
+        <Box sx={{ height: "100%", width: "100%", mt: 5 }} variant="div">
+          <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
+            รายการซื้อ
+          </Typography>
+          <Box sx={{ mt: 1 }}>
+            <TextField
+              label="ค้นหา"
+              variant="outlined"
+              size="small"
+              onChange={(e) => handleSearch(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ fontSize: "1.4rem" }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
         </Box>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
-        <Link href="/buy/add" passHref>
-          <Button
-            variant="contained"
-            color="success"
-            sx={{ mr: 2, mt: 2 }}
-          >
-            สร้างรายการซื้อ
-          </Button>
-        </Link>
-      </Box>
-      <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
-          >
-            <Tab label={<Typography>ทั้งหมด</Typography>} {...a11yProps(0)} />
-            <Tab label={<Typography>สำเร็จ</Typography>} {...a11yProps(1)} />
-            <Tab label={<Typography>ยกเลิก</Typography>} {...a11yProps(2)} />
-          </Tabs>
+        <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
+          <Link href="/buy/add" passHref>
+            <Button variant="contained" color="success" sx={{ mr: 2, mt: 2 }}>
+              สร้างรายการซื้อ
+            </Button>
+          </Link>
         </Box>
-        <CustomTabPanel value={value} index={0}>
-          <TableLots data={{ data: buyData }} />
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          <TableLots
-            data={{
-              data: buyData.filter((item) => item.status === "สำเร็จ"),
-            }}
-          />
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={2}>
-          <TableLots
-            data={{
-              data: buyData.filter((item) => item.status === "ยกเลิก"),
-            }}
-          />
-        </CustomTabPanel>
-      </Box>
-  </ThemeProvider>
-</Layout>
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label={<Typography>ทั้งหมด</Typography>} {...a11yProps(0)} />
+              <Tab label={<Typography>สำเร็จ</Typography>} {...a11yProps(1)} />
+              <Tab label={<Typography>ยกเลิก</Typography>} {...a11yProps(2)} />
+            </Tabs>
+          </Box>
+          <CustomTabPanel value={value} index={0}>
+            <TableLots data={{ data: buyData }} />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <TableLots
+              data={{
+                data: buyData.filter((item) => item.status === "สำเร็จ"),
+              }}
+            />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={2}>
+            <TableLots
+              data={{
+                data: buyData.filter((item) => item.status === "ยกเลิก"),
+              }}
+            />
+          </CustomTabPanel>
+        </Box>
+      </ThemeProvider>
+    </Layout>
   );
 }

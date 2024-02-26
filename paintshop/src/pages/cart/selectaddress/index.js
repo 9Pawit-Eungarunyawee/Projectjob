@@ -87,7 +87,7 @@ export default function Selectaddress() {
         total,
         productDetails: JSON.stringify(productDetails),
         cartId: JSON.stringify(cartID),
-        addressDetails:JSON.stringify(addressDetails),
+        addressDetails: JSON.stringify(addressDetails),
       },
     });
   };
@@ -294,8 +294,11 @@ export default function Selectaddress() {
                                 key={index}
                               >
                                 <Grid item xs={12} sm={3}>
-                                  {console.log("ดาต้าาาาาาาา", data.addresses[selectedAddressIndex])}
-                                  {data && <Typography>{data.name}</Typography>}
+                                  {console.log(
+                                    "ดาต้าาาาาาาา",
+                                    data.addresses[selectedAddressIndex]
+                                  )}
+                                  {data && <Typography sx={{fontWeight:"bold"}}>{data.name}</Typography>}
                                 </Grid>
                                 <Grid item xs={12} sm={9}>
                                   <Typography>
@@ -331,7 +334,14 @@ export default function Selectaddress() {
                     </Card>
                   </Box>
                   <Box sx={{ mt: 2, mb: 2 }}>
-                    <Typography>รายการสั่งซื้อ</Typography>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      รายการสั่งซื้อ
+                    </Typography>
                     <TableContainer component={Paper}>
                       <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>

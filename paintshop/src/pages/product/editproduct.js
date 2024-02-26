@@ -39,7 +39,7 @@ export default function EditProduct() {
   const [imageUrl, setImageUrl] = useState("");
 
   const [productSizes, setProductSizes] = useState([
-    { size: "", quantity: "", price: "", cost: "" },
+    { size: "", amount: "", price: "", cost: "" },
   ]);
   const [area, setArea] = useState("");
   const [status, setStatus] = useState(false);
@@ -358,7 +358,7 @@ export default function EditProduct() {
                     </TextField>
 
                     {/* <TextField
-                      value={productSizes.quantity}
+                      value={productSizes.amount}
                       variant="outlined"
                       onChange={(e) => {
                         const input = e.target.value;
@@ -369,7 +369,7 @@ export default function EditProduct() {
                             input === "" ||
                             (parseInt(input) >= 0 && input[0] !== "0")
                           ) {
-                            handleInputChange(e, index, "quantity");
+                            handleInputChange(e, index, "amount");
                           }
                         }
                       }}

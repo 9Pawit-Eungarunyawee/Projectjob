@@ -150,7 +150,7 @@ export default function History() {
         <Box>
           <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
             <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
-              ประวัติการลบ
+              ประวัติการลบสินค้า
             </Typography>
             <Button
               sx={{
@@ -200,7 +200,6 @@ export default function History() {
                           />
                         }
                       </StyledTableCell>
-
                       <StyledTableCell>{row.p_name}</StyledTableCell>
                       <StyledTableCell>{row.deleteAt}</StyledTableCell>
                       <StyledTableCell>{row.deleteBy}</StyledTableCell>

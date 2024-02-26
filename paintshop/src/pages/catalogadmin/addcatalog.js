@@ -17,7 +17,7 @@ import {
 import { debounce } from "lodash";
 import Image from "next/image";
 import { Fragment, useEffect, useState } from "react";
-
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 export default function AddCatalog() {
   const theme = createTheme({
     palette: {
@@ -32,7 +32,9 @@ export default function AddCatalog() {
       },
     },
   });
-
+  const goBack = () => {
+    window.history.back();
+  };
   const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [detail, setDetail] = useState("");
@@ -212,6 +214,19 @@ export default function AddCatalog() {
           <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
             เพิ่มแค็ตตาล็อก
           </Typography>
+          <Button
+            sx={{
+              color: "#018294",
+              bgcolor: "white",
+              fontWeight: "bold",
+              borderRadius: "50px",
+              boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+            }}
+            onClick={goBack}
+          >
+            <ArrowBackOutlinedIcon />
+            <Typography> ย้อนกลับ</Typography>
+          </Button>
           <form onSubmit={handleForm} className="form">
             <Grid
               container

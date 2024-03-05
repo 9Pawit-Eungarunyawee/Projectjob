@@ -246,7 +246,7 @@ export default function Homepage() {
                 sx={{ maxWidth: "80%" }}
               >
                 {catalogData &&
-                  catalogData.map((tab, index) => (
+                  catalogData.filter((c)=>(!c.delete)).map((tab, index) => (
                     <Tab
                       key={index}
                       label={
@@ -322,7 +322,7 @@ export default function Homepage() {
                       <Typography>ผลิตภัณฑ์ที่แนะนำ</Typography>
                       <Box sx={{ display: "flex", gap: "16px", p: 2 }}>
                         {productData && productData.length > 0 ? (
-                          productData.slice(0, 3).map((product) => (
+                          productData.filter((c)=>(!c.delete && c.status !== false)).slice(0, 3).map((product) => (
                             <Box
                               key={product.id}
                               sx={{

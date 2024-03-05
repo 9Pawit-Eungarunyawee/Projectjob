@@ -34,7 +34,9 @@ export default function Productpage() {
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
-
+  const goBack = () => {
+    window.history.back();
+  };
   function handleCard(productId) {
     router.push({
       pathname: "/colorselect/",
@@ -142,6 +144,7 @@ export default function Productpage() {
                     borderRadius: "50px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                   }}
+                  onClick={goBack}
                 >
                   <ArrowBackOutlinedIcon />
                   <Typography> ย้อนกลับ</Typography>
@@ -160,49 +163,11 @@ export default function Productpage() {
         >
           <Box sx={{ p: 3, width: "70vw" }}>
             <Grid container spacing={2}>
-              <Grid
-                item
-                xs={12}
-                md={3}
-                sx={{ display: { xs: "none", md: "block" } }}
-              >
-                <Box
-                  sx={{
-                    p: 2,
-                    bgcolor: "white",
-                    border: "1px solid #7a7a7a",
-                  }}
-                >
-                  <Typography
-                    variant="h4"
-                    sx={{
-                      fontWeight: "bold",
-                      pb: 2,
-                      color: "#7A7A7A",
-                      fontSize: "20px",
-                    }}
-                  >
-                    ฟิล์มสี
-                  </Typography>
-                  <Box
-                    sx={{
-                      borderTop: "1px solid #7a7a7a",
-                      pt: 2,
-                    }}
-                  ></Box>
-                  {documentData &&
-                    documentData.map((data) => (
-                      <Box key={data.id}>
-                        <Typography>{data.film}</Typography>
-                      </Box>
-                    ))}
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={9}>
+              <Grid item xs={12} >
                 <Grid container spacing={2}>
                   {documentData &&
                     documentData.map((item, index) => (
-                      <Grid key={index} item xs={12} sm={6} md={3}>
+                      <Grid key={index} item xs={12} sm={6} md={2}>
                         <Card
                           sx={{
                             maxWidth: 350,

@@ -20,11 +20,13 @@ import {
 } from "@/firebase/getData";
 import { ProductContext } from "@/context/ProductContext";
 import Link from "next/link";
+import { useAuthContext } from "@/context/AuthContext";
 export default function Wait() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [orderData, setOrderData] = React.useState("");
   const [color, setColor] = React.useState(null);
   const router = useRouter();
+  const user = useAuthContext();
   function handlePush(data) {
     router.push({
       pathname: "/account/orderhistory/detail",
@@ -41,12 +43,13 @@ export default function Wait() {
 
   React.useEffect(() => {}, [orderData]);
   const debouncedSearchUser = debounce(async (term) => {
+    const uid = user.user.uid;
     try {
       const collectionName = "orders";
       const field = "status";
       const results = await searchUser(collectionName, field, term);
       const filteredResults = results.filter(
-        (doc) => doc.status === "รอยืนยัน"
+        (doc) => doc.status === "รอยืนยัน" && doc.user_id === uid
       );
       setOrderData(filteredResults);
     } catch (error) {

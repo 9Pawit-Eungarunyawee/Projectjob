@@ -22,6 +22,7 @@ import {
   ThemeProvider,
   Icon,
   useMediaQuery,
+  Alert,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -43,6 +44,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import searchUser from "@/firebase/searchData";
 import { debounce } from "lodash";
+import { deleteData } from "@/firebase/addData";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -59,6 +61,8 @@ export default function Cart() {
   const [total, setTotal] = React.useState(0);
   const [totalQuantity, setTotalQuantity] = React.useState(0);
   const user = useAuthContext();
+  const [alert, setAlert] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
   const isMobile = useMediaQuery("(max-width:600px)");
   const handleConfirmOrder = () => {
     router.push({
@@ -87,7 +91,9 @@ export default function Cart() {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
     // console.log(documentData);
   }, [documentData]);
-
+  const goBack = () => {
+    window.history.back();
+  };
   const debouncedSearchUser = debounce(async (term) => {
     const uid = user.user.uid;
     console.log("Fetched data:", {
@@ -161,6 +167,33 @@ export default function Cart() {
       setTotal(total);
     }
   }, [groupedProductData]);
+  const handleDelete = async (id) => {
+    const result = await deleteData("cart", id);
+
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          ลบข้อมูลสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+      debouncedSearchUser(searchTerm);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถลบข้อมูลได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
@@ -189,29 +222,21 @@ export default function Cart() {
                   <Typography color="text.primary">รถเข็น</Typography>
                 </Breadcrumbs>
               </div>
-              <Link
-                style={{ textDecoration: "none" }}
-                sx={{
-                  color: "inherit",
-                  "&:hover": { textDecoration: "underline" },
-                }}
-                href="/homepage"
-              >
-                <Box sx={{ pt: 2 }}>
-                  <Button
-                    sx={{
-                      color: "#018294",
-                      bgcolor: "white",
-                      fontWeight: "bold",
-                      borderRadius: "50px",
-                      boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
-                  >
-                    <ArrowBackOutlinedIcon />
-                    <Typography> ย้อนกลับ</Typography>
-                  </Button>
-                </Box>
-              </Link>
+              <Box sx={{ pt: 2 }}>
+                <Button
+                  sx={{
+                    color: "#018294",
+                    bgcolor: "white",
+                    fontWeight: "bold",
+                    borderRadius: "50px",
+                    boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                  }}
+                  onClick={goBack}
+                >
+                  <ArrowBackOutlinedIcon />
+                  <Typography> ย้อนกลับ</Typography>
+                </Button>
+              </Box>
             </Box>
           </Container>
           <Container
@@ -292,7 +317,9 @@ export default function Cart() {
                                   <TableCell>฿{format(item.price)}</TableCell>
                                   <TableCell>{item.amount}</TableCell>
                                   <TableCell>
-                                    <IconButton>
+                                    <IconButton
+                                      onClick={() => handleDelete(item.id)}
+                                    >
                                       <DeleteOutlineIcon />
                                     </IconButton>
                                   </TableCell>

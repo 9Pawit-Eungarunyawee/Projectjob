@@ -271,14 +271,10 @@ export default function DetailOrder() {
                 </Grid>
                 <Grid item xs={12}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={7}>
-                      <StepperDetail />
-                    </Grid>
                     {orderData[index].address &&
                       orderData[index].address.map((doc, a) => (
-                        <Grid item xs={12} sm={5} key={a}>
-                          <Box sx={{ display: "flex" }}>
-                            {" "}
+                        <Grid item xs={12} sm={6} key={a}>
+                          <Box sx={{ display: "flex" ,mr:2}}>
                             <PlaceOutlinedIcon />
                             <Box>
                               <Typography
@@ -302,8 +298,8 @@ export default function DetailOrder() {
                                 บ้านเลขที่ {doc.address} อำเภอ
                                 {doc.amphure} ตำบล
                                 {doc.tambon} จังหวัด
-                                {doc.province} รหัสไปรษณีย์
-                                {doc.zipcode}
+                                {doc.province} รหัสไปรษณีย์ 
+                                 {doc.zipcode}
                               </Typography>
                               {userData &&
                                 userData.map((item, index) => (
@@ -317,6 +313,9 @@ export default function DetailOrder() {
                           </Box>
                         </Grid>
                       ))}
+                    <Grid item xs={12} sm={6}>
+                      <StepperDetail />
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -365,7 +364,7 @@ export default function DetailOrder() {
                       <Grid item xs={12} sm={9}>
                         <CardContent>
                           <Grid container spacing={2}>
-                            <Grid item xs={12} sm={9}>
+                            <Grid item xs={12} sm={10}>
                               <Box>
                                 <Typography
                                   gutterBottom
@@ -395,7 +394,7 @@ export default function DetailOrder() {
                             <Grid
                               item
                               xs={12}
-                              sm={3}
+                              sm={2}
                               sx={{
                                 display: "flex",
                                 justifyContent: "center",

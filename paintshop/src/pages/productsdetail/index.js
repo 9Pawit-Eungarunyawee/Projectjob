@@ -44,6 +44,9 @@ export default function Productsdetail() {
   const [selectedPrice, setSelectedPrice] = React.useState(null);
   const [alert, setAlert] = React.useState(null);
   const user  = useAuthContext();
+  const goBack = () => {
+    window.history.back();
+  };
   React.useEffect(() => {
     // ตรวจสอบว่ามีไซส์ที่ตรงกับ sizeData หรือไม่
     if (documentData) {
@@ -291,14 +294,6 @@ export default function Productsdetail() {
                   ))}
               </Breadcrumbs>
             </div>
-            <Link
-              style={{ textDecoration: "none" }}
-              sx={{
-                color: "inherit",
-                "&:hover": { textDecoration: "underline" },
-              }}
-              href={`/colorselect?catalogData=${router.query.catalogData}&productId=${router.query.productId}`}
-            >
               <Box sx={{ pt: 2 }}>
                 <Button
                   sx={{
@@ -308,12 +303,12 @@ export default function Productsdetail() {
                     borderRadius: "50px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                   }}
+                  onClick={goBack}
                 >
                   <ArrowBackOutlinedIcon />
                   <Typography>ย้อนกลับ</Typography>
                 </Button>
               </Box>
-            </Link>
           </Box>
         </Container>
         <Container

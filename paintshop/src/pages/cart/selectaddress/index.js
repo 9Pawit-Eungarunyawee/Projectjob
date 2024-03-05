@@ -176,7 +176,11 @@ export default function Selectaddress() {
       setTotal(total);
     }
   }, [groupedProductData]);
+  const goBack = () => {
+    window.history.back();
+  };
 
+  
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
@@ -217,14 +221,6 @@ export default function Selectaddress() {
                   </Typography>
                 </Breadcrumbs>
               </div>
-              <Link
-                style={{ textDecoration: "none" }}
-                sx={{
-                  color: "inherit",
-                  "&:hover": { textDecoration: "underline" },
-                }}
-                href="/cart"
-              >
                 <Box sx={{ pt: 2 }}>
                   <Button
                     sx={{
@@ -234,12 +230,12 @@ export default function Selectaddress() {
                       borderRadius: "50px",
                       boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
+                    onClick={goBack}
                   >
                     <ArrowBackOutlinedIcon />
                     <Typography> ย้อนกลับ</Typography>
                   </Button>
                 </Box>
-              </Link>
             </Box>
           </Container>
           <Container
@@ -298,7 +294,11 @@ export default function Selectaddress() {
                                     "ดาต้าาาาาาาา",
                                     data.addresses[selectedAddressIndex]
                                   )}
-                                  {data && <Typography sx={{fontWeight:"bold"}}>{data.name}</Typography>}
+                                  {data && (
+                                    <Typography sx={{ fontWeight: "bold" }}>
+                                      {data.name}
+                                    </Typography>
+                                  )}
                                 </Grid>
                                 <Grid item xs={12} sm={9}>
                                   <Typography>

@@ -58,7 +58,9 @@ export default function Catalog() {
     setSearchTerm(term);
     debouncedSearchUser(term);
   };
-
+  const goBack = () => {
+    window.history.back();
+  };
   return (
     <Homelayout>
       <Box sx={{  width: "100%" }}>
@@ -86,14 +88,6 @@ export default function Catalog() {
                 <Typography color="text.primary">แค็ตตาล็อก</Typography>
               </Breadcrumbs>
             </div>
-            <Link
-              style={{ textDecoration: "none" }}
-              sx={{
-                color: "inherit",
-                "&:hover": { textDecoration: "underline" },
-              }}
-              href="/homepage"
-            >
               <Box sx={{ pt: 2 }}>
                 <Button
                   sx={{
@@ -103,12 +97,12 @@ export default function Catalog() {
                     borderRadius: "50px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                   }}
+                  onClick={goBack}
                 >
                   <ArrowBackOutlinedIcon />
                   <Typography> ย้อนกลับ</Typography>
                 </Button>
               </Box>
-            </Link>
           </Box>
         </Container>
         <Container
@@ -133,7 +127,7 @@ export default function Catalog() {
             </Typography>
             <Grid container spacing={2}>
               {catalogData &&
-                catalogData.map((item) => (
+                catalogData.filter((c)=>(!c.delete)).map((item) => (
                   <Grid key={item.id} item xs={12} sm={6} md={4}>
                     <Card
                       sx={{ maxWidth: 400 }}

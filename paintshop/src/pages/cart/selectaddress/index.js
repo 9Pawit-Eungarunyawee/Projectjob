@@ -180,7 +180,6 @@ export default function Selectaddress() {
     window.history.back();
   };
 
-  
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
@@ -221,21 +220,21 @@ export default function Selectaddress() {
                   </Typography>
                 </Breadcrumbs>
               </div>
-                <Box sx={{ pt: 2 }}>
-                  <Button
-                    sx={{
-                      color: "#018294",
-                      bgcolor: "white",
-                      fontWeight: "bold",
-                      borderRadius: "50px",
-                      boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
-                    onClick={goBack}
-                  >
-                    <ArrowBackOutlinedIcon />
-                    <Typography> ย้อนกลับ</Typography>
-                  </Button>
-                </Box>
+              <Box sx={{ pt: 2 }}>
+                <Button
+                  sx={{
+                    color: "#018294",
+                    bgcolor: "white",
+                    fontWeight: "bold",
+                    borderRadius: "50px",
+                    boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                  }}
+                  onClick={goBack}
+                >
+                  <ArrowBackOutlinedIcon />
+                  <Typography> ย้อนกลับ</Typography>
+                </Button>
+              </Box>
             </Box>
           </Container>
           <Container
@@ -335,10 +334,13 @@ export default function Selectaddress() {
                   </Box>
                   <Box sx={{ mt: 2, mb: 2 }}>
                     <Typography
-                      gutterBottom
-                      variant="h5"
-                      component="div"
-                      sx={{ fontWeight: "bold" }}
+                      variant="h4"
+                      sx={{
+                        fontWeight: "bold",
+                        pb: 2,
+                        color: "#018294",
+                        fontSize: "30px",
+                      }}
                     >
                       รายการสั่งซื้อ
                     </Typography>
@@ -401,6 +403,124 @@ export default function Selectaddress() {
                         </TableBody>
                       </Table>
                     </TableContainer>
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        fontWeight: "bold",
+                        pb: 2,
+                        color: "#018294",
+                        fontSize: "30px",
+                      }}
+                    >
+                      วิธีการชำระเงิน
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ pb: 1, display: "flex", alignItems: "center" }}
+                    >
+                      <Box
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: "#018294",
+                          color: "#fff",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginRight: "5px",
+                        }}
+                      >
+                        1
+                      </Box>
+                      หลังกด “ชำระเงิน” คุณจะได้รับ QR Code เพื่อชำระ QR Code จะกำหนดเวลา 5 นาที
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ pb: 1, display: "flex", alignItems: "center" }}
+                    >
+                      <Box
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: "#018294",
+                          color: "#fff",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginRight: "5px",
+                        }}
+                      >
+                        2
+                      </Box>
+                      เปิดแอปพลิเคชันธนาคารที่คุณมี
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ pb: 1, display: "flex", alignItems: "center" }}
+                    >
+                      <Box
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: "#018294",
+                          color: "#fff",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginRight: "5px",
+                        }}
+                      >
+                        3
+                      </Box>
+                      ไปยังเมนู “สแกน” หรือ “สแกนจ่าย”
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ pb: 1, display: "flex", alignItems: "center" }}
+                    >
+                      <Box
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: "#018294",
+                          color: "#fff",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginRight: "5px",
+                        }}
+                      >
+                        4
+                      </Box>
+                      ตรวจสอบข้อมูลการชำระเงินให้ถูกต้องก่อนดำเนินรายการต่อ
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ pb: 1, display: "flex", alignItems: "center" }}
+                    >
+                      <Box
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: "#018294",
+                          color: "#fff",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginRight: "5px",
+                        }}
+                      >
+                        5
+                      </Box>
+                      หลังจากชำระเงินในแอปพลิเคชันธนาคารแล้ว ส่งรูปหลักฐานการชำระเงิน
+                    </Typography>
                   </Box>
                 </Grid>
                 {isMobile ? (

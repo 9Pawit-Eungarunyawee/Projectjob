@@ -34,6 +34,7 @@ import {
 import { ProductContext } from "@/context/ProductContext";
 import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
+import updateOrder from "@/firebase/updateOrder";
 
 export default function DetailOrder() {
   const shippingCost = 50;
@@ -44,6 +45,32 @@ export default function DetailOrder() {
   const [userData, setUserData] = React.useState("");
   const [color, setColor] = React.useState(null);
   const [activeStep, setActiveStep] = React.useState(0);
+  function handlePush(data) {
+    router.push({
+      pathname: "/account/claim/refund",
+      query: { Order: JSON.stringify(data) },
+    });
+  }
+  const handleReceiveProduct = async (orderId, index) => {
+    try {
+      const { result, error } = await updateOrder("orders", orderId, {
+        status: "จัดส่งสำเร็จ",
+      });
+      if (error) {
+        console.error("Error updating order:", error);
+      } else {
+        console.log("Order updated successfully:", result);
+        // อัปเดตสถานะของรายการคำสั่งซื้อในตัวแปร orderData ทันที
+        const updatedOrderData = [...orderData];
+        updatedOrderData[index].status = "จัดส่งสำเร็จ";
+        setOrderData(updatedOrderData);
+        // รีเฟรชหน้าหลังจากการอัปเดตสถานะ
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error updating order:", error);
+    }
+  };
 
   const handleStep = (step) => () => {
     setActiveStep(step);
@@ -181,7 +208,7 @@ export default function DetailOrder() {
                         item.status === "ยืนยัน"
                           ? "#FFFF00"
                           : item.status === "จัดเตรียมสินค้า" ||
-                            item.status === "จัดส่ง"
+                            item.status === "อยู่ระหว่างจัดส่ง"
                           ? "#FFA500"
                           : item.status === "จัดส่งสำเร็จ"
                           ? "#4CAF50"
@@ -220,39 +247,62 @@ export default function DetailOrder() {
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={5} sx={{ textAlign: "center" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        sx={{
-                          bgcolor: "#018294",
-                          fontWeight: "bold",
-                          "&:hover": {
+                  {item.status !== "จัดส่งสำเร็จ" && (
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          sx={{
                             bgcolor: "#018294",
-                          },
-                        }}
-                      >
-                        ได้รับสินค้าแล้ว
-                      </Button>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        sx={{
-                          bgcolor: "#BBE2EC",
-                          fontWeight: "bold",
-                          color: "#018294",
-                          "&:hover": {
+                            fontWeight: "bold",
+                            "&:hover": {
+                              bgcolor: "#018294",
+                            },
+                          }}
+                          onClick={() => handleReceiveProduct(item.id, index)}
+                        >
+                          ได้รับสินค้าแล้ว
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          sx={{
                             bgcolor: "#BBE2EC",
-                          },
-                        }}
-                      >
-                        ไม่ได้รับสินค้า
-                      </Button>
+                            fontWeight: "bold",
+                            color: "#018294",
+                            "&:hover": {
+                              bgcolor: "#BBE2EC",
+                            },
+                          }}
+                        >
+                          ไม่ได้รับสินค้า
+                        </Button>
+                      </Grid>
                     </Grid>
-                  </Grid>
+                  )}
+                  {item.status === "จัดส่งสำเร็จ" && (
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={12}>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          sx={{
+                            bgcolor: "#018294",
+                            fontWeight: "bold",
+                            "&:hover": {
+                              bgcolor: "#018294",
+                            },
+                          }}
+                          onClick={() => handlePush(item.id)}
+                        >
+                          คืนสินค้า
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
             </CardContent>
@@ -274,7 +324,7 @@ export default function DetailOrder() {
                     {orderData[index].address &&
                       orderData[index].address.map((doc, a) => (
                         <Grid item xs={12} sm={6} key={a}>
-                          <Box sx={{ display: "flex" ,mr:2}}>
+                          <Box sx={{ display: "flex", mr: 2 }}>
                             <PlaceOutlinedIcon />
                             <Box>
                               <Typography
@@ -298,8 +348,8 @@ export default function DetailOrder() {
                                 บ้านเลขที่ {doc.address} อำเภอ
                                 {doc.amphure} ตำบล
                                 {doc.tambon} จังหวัด
-                                {doc.province} รหัสไปรษณีย์ 
-                                 {doc.zipcode}
+                                {doc.province} รหัสไปรษณีย์
+                                {doc.zipcode}
                               </Typography>
                               {userData &&
                                 userData.map((item, index) => (

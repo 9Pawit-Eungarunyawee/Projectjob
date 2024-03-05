@@ -21,7 +21,7 @@ import {
 import { ProductContext } from "@/context/ProductContext";
 import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
-export default function All() {
+export default function Success() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [orderData, setOrderData] = React.useState("");
   const [color, setColor] = React.useState(null);
@@ -48,7 +48,9 @@ export default function All() {
       const collectionName = "orders";
       const field = "status";
       const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter((doc) => doc.user_id === uid);
+      const filteredResults = results.filter(
+        (doc) => doc.status === "จัดส่งสำเร็จ" && doc.user_id === uid
+      );
       setOrderData(filteredResults);
     } catch (error) {
       console.error("Error searching data:", error);
@@ -140,7 +142,7 @@ export default function All() {
                           : item.status === "จัดส่งสำเร็จ"
                           ? "#4CAF50"
                           : "#FE616A",
-                      color: "#FFFFFF", // กำหนดสีตัวอักษรเป็นขาว
+                      color: "#FFFFFF",
                       p: 0.5,
                       borderRadius: "4px",
                     }}

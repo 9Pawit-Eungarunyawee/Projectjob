@@ -8,6 +8,8 @@ import {
   FormControlLabel,
   Radio,
   Button,
+  DialogActions,
+  Box,
 } from "@mui/material";
 import { debounce } from "lodash";
 import { useRouter } from "next/router";
@@ -60,9 +62,21 @@ export default function SelectAddressDialog({ onSelectAddress }) {
 
   return (
     <React.Fragment>
-      <Button onClick={handleClickOpen} sx={{ color: "#018294" }}>เปลี่ยนที่อยู่</Button>
+      <Button onClick={handleClickOpen} sx={{ color: "#018294" }}>
+        เปลี่ยนที่อยู่
+      </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>เลือกที่อยู่</DialogTitle>
+        <DialogTitle
+          variant="h4"
+          sx={{
+            fontWeight: "bold",
+            pb: 2,
+            color: "#018294",
+            fontSize: "30px",
+          }}
+        >
+          เลือกที่อยู่
+        </DialogTitle>
         <DialogContent>
           <FormControl component="fieldset">
             <RadioGroup
@@ -73,19 +87,32 @@ export default function SelectAddressDialog({ onSelectAddress }) {
             >
               {addressData &&
                 addressData.map((address, index) => (
-                  <FormControlLabel
-                    key={index}
-                    value={index.toString()}
-                    control={<Radio />}
-                    label={`${address.address} อำเภอ ${address.amphure} ตำบล ${address.tambon} จังหวัด ${address.province}`}
-                  />
+                  <Box key={index}>
+                    <FormControlLabel
+                      sx={{
+                        mt: 2, // margin-top
+                        mb: 2,
+                      }}
+                      value={index.toString()}
+                      control={<Radio />}
+                      label={`${address.address} อำเภอ ${address.amphure} ตำบล ${address.tambon} จังหวัด ${address.province}`}
+                    />
+                    <Box sx={{ borderBottom: "1px solid #CCC" }}></Box>
+                  </Box>
                 ))}
             </RadioGroup>
           </FormControl>
-          <Button onClick={handleConfirm} variant="contained" color="primary">
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleConfirm}
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+          >
             ยืนยัน
           </Button>
-        </DialogContent>
+        </DialogActions>
       </Dialog>
     </React.Fragment>
   );

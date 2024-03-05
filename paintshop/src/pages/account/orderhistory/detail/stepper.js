@@ -197,7 +197,7 @@ export default function Steppers() {
       case "จัดเตรียมสินค้า":
         active = 2;
         break;
-      case "อยู่ระหว่างจัดส่ง":
+      case "ส่งมอบสินค้า":
         active = 3;
         break;
       case "จัดส่งสำเร็จ":

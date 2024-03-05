@@ -19,12 +19,11 @@ const generate = require("promptpay-qr");
 export default function QR() {
   const router = useRouter();
   const user = useAuthContext();
-  const total = JSON.parse(router.query.total);
+  const sumtotal = JSON.parse(router.query.total);
   const productDetails = JSON.parse(router.query.productDetails);
   const addressDetails = JSON.parse(router.query.addressDetails);
   const cartID = JSON.parse(router.query.cartId);
-  console.log("Cart ID:", cartID);
-  const [price, setPrice] = React.useState(total);
+  const [price, setPrice] = React.useState(sumtotal);
   const [phoneNumber, setphoneNumber] = React.useState("0960868037");
   const [qrCode, setqrCode] = React.useState("null");
   const [countdown, setCountdown] = React.useState(5 * 60);

@@ -16,6 +16,8 @@ import PropTypes from "prop-types";
 import Wait from "./waiting";
 import All from "./all";
 import Prepare from "./prepare";
+import Shipping from "./shipping";
+import Success from "./success";
 const styles = {
   Active: {
     "&.Mui-selected": {
@@ -136,8 +138,13 @@ export default function Orderhistory() {
                         sx={{ ...styles.Active }}
                       />
                       <Tab
-                        label="ส่งมอบสินค้า"
+                        label="อยู่ระหว่างจัดส่ง"
                         {...a11yProps(3)}
+                        sx={{ ...styles.Active }}
+                      />
+                      <Tab
+                        label="จัดส่งสำเร็จ"
+                        {...a11yProps(4)}
                         sx={{ ...styles.Active }}
                       />
                     </Tabs>
@@ -152,7 +159,10 @@ export default function Orderhistory() {
                     <Prepare />
                   </CustomTabPanel>
                   <CustomTabPanel value={value} index={3}>
-                    4
+                    <Shipping />
+                  </CustomTabPanel>
+                  <CustomTabPanel value={value} index={4}>
+                    <Success />
                   </CustomTabPanel>
                 </Grid>
               </Grid>

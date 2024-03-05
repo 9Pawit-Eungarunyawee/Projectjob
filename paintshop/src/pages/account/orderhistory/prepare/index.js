@@ -137,7 +137,7 @@ export default function Prepare() {
                         item.status === "ยืนยัน"
                           ? "#FFFF00"
                           : item.status === "จัดเตรียมสินค้า" ||
-                            item.status === "จัดส่ง"
+                            item.status === "อยู่ระหว่างจัดส่ง"
                           ? "#FFA500"
                           : item.status === "จัดส่งสำเร็จ"
                           ? "#4CAF50"

@@ -247,6 +247,7 @@ export default function Colorselect() {
                   display: "flex",
                   justifyContent:"center",
                   "& .css-1aeflc-MuiTabs-flexContainer": {
+                    display:'flex',
                     justifyContent:"center",
                   },
                   "& .css-1aquho2-MuiTabs-indicator": {

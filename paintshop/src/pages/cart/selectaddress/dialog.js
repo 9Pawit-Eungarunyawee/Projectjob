@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import addAddress from "@/firebase/addAddresses";
 import { useAuthContext } from "@/context/AuthContext";
+import { getUser } from "@/firebase/getData";
 export default function Addressdialog() {
   const [open, setOpen] = React.useState(false);
   const [address, setAddress] = React.useState(null);
@@ -23,6 +24,7 @@ export default function Addressdialog() {
   const [amphureName, setAmphureName] = React.useState(undefined);
   const [tambonName, setTambonName] = React.useState(undefined);
   const [zipNum, setZipNum] = React.useState(undefined);
+  const [userData, setUserData] = React.useState(null);
   const user = useAuthContext();
   const [selected, setSelected] = React.useState({
     province_id: undefined,
@@ -81,7 +83,27 @@ export default function Addressdialog() {
       })
       .catch((error) => console.log("error", error));
   }, []);
+  React.useEffect(() => {
+    fetchAllData();
+  }, []);
+  const fetchAllData = async () => {
+    const collection = "users";
+    const uid = user.user.uid;
+    const { result, error } = await getUser(collection, uid);
 
+    if (error) {
+      console.error("Error fetching collection:", error);
+    } else {
+      const user = result.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        email: doc.data().email,
+        tel: doc.data().tel,
+      }));
+
+      setUserData(user);
+    }
+  };
   const handleForm = async (event) => {
     event.preventDefault();
     console.log("Handling form submission");
@@ -102,8 +124,12 @@ export default function Addressdialog() {
       user.user.uid,
       addAddresses
     );
+    fetchAllData();
   };
 
+  const handleFormSubmitSuccess = () => {
+    fetchAllData();
+  };
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -117,12 +143,9 @@ export default function Addressdialog() {
       <Button onClick={handleClickOpen} sx={{ color: "#018294" }}>
         เพิ่มที่อยู่
       </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-      >
+      <Dialog open={open} onClose={handleClose}>
         <DialogTitle sx={{ fontWeight: "bold" }}>ที่อยู่จัดส่ง</DialogTitle>
-        <form onSubmit={handleForm} className="form" >
+        <form onSubmit={handleForm} className="form">
           <DialogContent>
             <Grid container spacing={2}>
               <Grid xs={12} item>

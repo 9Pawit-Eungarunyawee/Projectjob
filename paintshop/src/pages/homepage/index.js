@@ -13,6 +13,7 @@ import {
   TabList,
   Grid,
   Button,
+  useMediaQuery,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import Image from "next/image";
@@ -73,6 +74,7 @@ export default function Homepage() {
   const [documentData, setDocumentData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
   const [productIds, setProductIds] = React.useState(null);
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
   const { catalogData, setCatalogData, fetchcatalogData } =
     React.useContext(CatalogContext);
   const router = useRouter();
@@ -226,7 +228,7 @@ export default function Homepage() {
   };
   return (
     <Homelayout>
-      <Container maxWidth="false" >
+      <Container maxWidth="false">
         <ThemeProvider theme={theme}>
           <Box sx={{ width: "100%" }}>
             <Box
@@ -246,30 +248,32 @@ export default function Homepage() {
                 sx={{ maxWidth: "80%" }}
               >
                 {catalogData &&
-                  catalogData.filter((c)=>(!c.delete)).map((tab, index) => (
-                    <Tab
-                      key={index}
-                      label={
-                        <Box>
-                          <Image
-                            width={50}
-                            height={50}
-                            src={tab.img}
-                            alt={tab.name}
-                            style={{ objectFit: "scale-down" }}
-                          />
-                          <Typography>{tab.name}</Typography>
-                        </Box>
-                      }
-                      sx={{
-                        ...(value === index
-                          ? styles.activeTab
-                          : styles.inactiveTab),
-                        py: 2,
-                      }}
-                      {...a11yProps(index)}
-                    />
-                  ))}
+                  catalogData
+                    .filter((c) => !c.delete)
+                    .map((tab, index) => (
+                      <Tab
+                        key={index}
+                        label={
+                          <Box>
+                            <Image
+                              width={50}
+                              height={50}
+                              src={tab.img}
+                              alt={tab.name}
+                              style={{ objectFit: "scale-down" }}
+                            />
+                            <Typography>{tab.name}</Typography>
+                          </Box>
+                        }
+                        sx={{
+                          ...(value === index
+                            ? styles.activeTab
+                            : styles.inactiveTab),
+                          py: 2,
+                        }}
+                        {...a11yProps(index)}
+                      />
+                    ))}
               </Tabs>
             </Box>
             {catalogData &&
@@ -322,27 +326,30 @@ export default function Homepage() {
                       <Typography>ผลิตภัณฑ์ที่แนะนำ</Typography>
                       <Box sx={{ display: "flex", gap: "16px", p: 2 }}>
                         {productData && productData.length > 0 ? (
-                          productData.filter((c)=>(!c.delete && c.status !== false)).slice(0, 3).map((product) => (
-                            <Box
-                              key={product.id}
-                              sx={{
-                                borderRadius: "50%",
-                                overflow: "hidden",
-                                position: "relative",
-                                width: 202,
-                                height: 202,
-                              }}
-                            >
-                              <Image
-                                src={product.image}
-                                alt={product.name}
-                                layout="responsive"
-                                width={202}
-                                height={202}
-                                loading="lazy"
-                              />
-                            </Box>
-                          ))
+                          productData
+                            .filter((c) => !c.delete && c.status !== false)
+                            .slice(0, isSmallScreen ? 2 : 3)
+                            .map((product) => (
+                              <Box
+                                key={product.id}
+                                sx={{
+                                  borderRadius: "50%",
+                                  overflow: "hidden",
+                                  position: "relative",
+                                  width: 202,
+                                  height: 202,
+                                }}
+                              >
+                                <Image
+                                  src={product.image}
+                                  alt={product.name}
+                                  layout="responsive"
+                                  width={202}
+                                  height={202}
+                                  loading="lazy"
+                                />
+                              </Box>
+                            ))
                         ) : (
                           <Typography>No products available</Typography>
                         )}

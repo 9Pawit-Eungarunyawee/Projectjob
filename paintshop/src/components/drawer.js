@@ -22,6 +22,9 @@ import { getUser } from "@/firebase/getData";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import AnnouncementOutlinedIcon from "@mui/icons-material/AnnouncementOutlined";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 const DrawerComp = () => {
   const [userData, setUserData] = React.useState(null);
   const [openDrawer, setOpenDrawer] = React.useState(false);
@@ -159,15 +162,114 @@ const DrawerComp = () => {
               <Box display="flex" alignItems="center" width="100%">
                 {userData &&
                   userData.map((item, index) => (
-                    <Box key={index} display="flex" alignItems="center" width="100%">
+                    <Box
+                      key={index}
+                      display="flex"
+                      alignItems="center"
+                      width="100%"
+                    >
                       <Avatar
                         src={item.img}
                         alt="profile"
                         sx={{ width: 32, height: 32, ml: 1 }}
                       />
-                      <Typography sx={{color:"black",pl:1,fontWeight:"bold"}}>{item.name}</Typography>
+                      <Typography
+                        sx={{ color: "black", pl: 1, fontWeight: "bold" }}
+                      >
+                        {item.name}
+                      </Typography>
                     </Box>
                   ))}
+              </Box>
+            </Link>
+          </ListItem>
+        </List>
+        <List sx={{ borderBottom: "1px solid #D3D3D3", p: 2 }}>
+          <ListItem>
+            <Link
+              href="/account/address"
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%", // Set width to 100%
+              }}
+              onClick={(e) => setActiveLink("/account/address")}
+            >
+              <Box
+                sx={
+                  activeLink === "/account/address"
+                    ? styles.BoxActive
+                    : styles.Box
+                }
+                display="flex"
+                alignItems="center"
+                width="100%" // Set width to 100%
+              >
+                <PlaceOutlinedIcon sx={{ pr: 1, pl: 1, color: "black" }} />
+                <Typography variant="menu" noWrap sx={{ color: "black" }}>
+                  ที่อยู่
+                </Typography>
+              </Box>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link
+              href="/account/orderhistory"
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%", // Set width to 100%
+              }}
+              onClick={(e) => setActiveLink("/account/orderhistory")}
+            >
+              <Box
+                sx={
+                  activeLink === "/account/orderhistory"
+                    ? styles.BoxActive
+                    : styles.Box
+                }
+                display="flex"
+                alignItems="center"
+                width="100%" // Set width to 100%
+              >
+                <DescriptionOutlinedIcon
+                  sx={{ pr: 1, pl: 1, color: "black" }}
+                />
+                <Typography variant="menu" noWrap sx={{ color: "black" }}>
+                  รายการคำสั่งซื้อ
+                </Typography>
+              </Box>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link
+              href="/account/claim"
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%", // Set width to 100%
+              }}
+              onClick={(e) => setActiveLink("/account/claim")}
+            >
+              <Box
+                sx={
+                  activeLink === "/account/claim"
+                    ? styles.BoxActive
+                    : styles.Box
+                }
+                display="flex"
+                alignItems="center"
+                width="100%" // Set width to 100%
+              >
+                <AnnouncementOutlinedIcon
+                  sx={{ pr: 1, pl: 1, color: "black" }}
+                />
+                <Typography variant="menu" noWrap sx={{ color: "black" }}>
+                  การเคลมสินค้า
+                </Typography>
               </Box>
             </Link>
           </ListItem>

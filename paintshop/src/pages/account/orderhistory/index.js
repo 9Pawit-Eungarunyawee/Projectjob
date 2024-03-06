@@ -114,6 +114,8 @@ export default function Orderhistory() {
                   <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                     <Tabs
                       value={value}
+                      variant="scrollable"
+                      scrollButtons="auto"
                       onChange={handleChange}
                       aria-label="basic tabs example"
                       sx={{

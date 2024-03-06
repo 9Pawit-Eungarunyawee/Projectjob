@@ -42,11 +42,12 @@ export default function Add() {
     window.history.back();
   };
   const { user } = useAuthContext();
-  const { productData } = useContext(ProductContext);
+  const { productData ,fetchProductData} = useContext(ProductContext);
   const [name, setName] = useState("");
   const [createAt, setCreateAt] = useState("");
   const [discount, setDiscount] = useState(0);
   const [shippingCost, setShippingCost] = useState(0);
+  const [status,setStatus] = useState(0);
   const [products, setProducts] = useState([
     {
       product_name: "",
@@ -77,6 +78,7 @@ export default function Add() {
       setName(Data.name);
       setDiscount(Data.discount);
       setShippingCost(Data.shippingCost);
+      setStatus(Data.status)
     }
   };
 
@@ -187,6 +189,7 @@ export default function Add() {
 
   // useEffect(() => {
   //   console.log(products);
+
   const handleForm = async (event) => {
     event.preventDefault();
     const buy = {
@@ -197,6 +200,7 @@ export default function Add() {
       shippingCost: shippingCost,
       user_id: user.uid,
       totalCost: totalCost,
+      status:status
     };
     const result = await editBuy("buy", buy_id, buy);
     if (result) {
@@ -207,6 +211,7 @@ export default function Add() {
       );
       
       setOpen(true);
+      fetchProductData()
       setTimeout(() => {
         goBack();
       }, 500);

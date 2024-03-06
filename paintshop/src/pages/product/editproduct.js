@@ -61,7 +61,7 @@ export default function EditProduct() {
   const addInputSet = () => {
     setProductSizes([
       ...productSizes,
-      { size: "", quantity: "", price: "", cost: "" },
+      { size: "", amount: "", price: "", cost: "" },
     ]);
   };
   useEffect(() => {

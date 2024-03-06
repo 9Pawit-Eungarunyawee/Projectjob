@@ -183,7 +183,7 @@ export default function TableLots({ data }) {
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                labelRowsPerPage="รายการสินค้าต่อหน้า"
+                labelRowsPerPage="รายการต่อหน้า"
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

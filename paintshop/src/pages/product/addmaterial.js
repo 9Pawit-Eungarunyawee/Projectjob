@@ -1,5 +1,3 @@
-import Layout from "@/components/layout";
-import { getCollection } from "@/firebase/getData";
 import addData from "@/firebase/addData";
 import { useAuthContext } from "@/context/AuthContext";
 import {
@@ -22,10 +20,10 @@ import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
 import { CatalogContext } from "@/context/CatalogContext";
 import { ProductContext } from "@/context/ProductContext";
-
-export default function AddProduct() {
+import Layout from "@/components/layout";
+export default function AddMaterial() {
   const { user } = useAuthContext();
-  const {fetchProductData} = useContext(ProductContext)
+  const { fetchProductData } = useContext(ProductContext);
   const [imageUrl, setImageUrl] = useState("");
 
   const [productSizes, setProductSizes] = useState([
@@ -38,7 +36,6 @@ export default function AddProduct() {
   const [catalogId, setCatalogId] = useState("");
   const [flim, setFlim] = useState("");
   const [grade, setGrade] = useState("");
-  const [lot, setLot] = useState("");
   const [detail, setDetail] = useState("");
 
   const [alert, setAlert] = useState(null);
@@ -113,12 +110,7 @@ export default function AddProduct() {
     event.preventDefault();
     const product = {
       name: name,
-      catalog_id: catalogId,
       detail: detail,
-      flim: flim,
-      grade: grade,
-      lot: lot,
-      area: area,
       status: status,
       img: imageUrl,
       productSizes: productSizes,
@@ -132,11 +124,10 @@ export default function AddProduct() {
         </Alert>
       );
       setOpen(true);
-      fetchProductData()
+      fetchProductData();
       setTimeout(() => {
         goBack();
       }, 500);
-      
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
@@ -144,7 +135,7 @@ export default function AddProduct() {
         </Alert>
       );
       setOpen(true);
-      fetchProductData()
+      fetchProductData();
     }
   };
   const [open, setOpen] = useState(false);

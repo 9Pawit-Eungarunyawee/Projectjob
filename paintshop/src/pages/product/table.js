@@ -27,6 +27,7 @@ import { Delete } from "@mui/icons-material";
 import { BuyContext } from "@/context/BuyContext";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { OrderContext } from "@/context/OrderContext";
 export default function TableProduct({ data, onDelete }) {
   const router = useRouter();
   const handleClick = (id) => {
@@ -69,6 +70,7 @@ export default function TableProduct({ data, onDelete }) {
     console.log("doc มา table: ", data);
   }, [data]);
   const { buyData } = React.useContext(BuyContext);
+  const { orderData } = React.useContext(OrderContext);
   function createData(
     No,
     id,
@@ -136,58 +138,99 @@ export default function TableProduct({ data, onDelete }) {
     setDialogOpen(false);
   };
 
-  const getProductTotalSize = (buyData, id) => {
-    const productsWithSameId = buyData.flatMap((buy) =>
-      buy.products.filter(
-        (product) => product.product_id === id && buy.status === "สำเร็จ"
-      )
-    );
+  // const getProductTotalSize = (id) => {
+  //   const buyProductsWithSameId = buyData.flatMap((buy) =>
+  //     buy.products.filter(
+  //       (product) => product.product_id === id && buy.status === "สำเร็จ"
+  //     )
+  //   );
 
-    if (productsWithSameId.length > 0) {
-      const totalSize = productsWithSameId.reduce(
-        (acc, product) =>
-          acc +
-          product.product_size.reduce(
-            (accSize, size) => accSize + parseInt(size.amount),
-            0
-          ),
-        0
+  //   const OrderProductsWithSameId = orderData.flatMap((order) =>
+  //     order.products.filter((product) => product.product_id === id)
+  //   );
+
+  //   // console.log("buyProductsWithSameId", buyProductsWithSameId);
+  //   // console.log("OrderProductsWithSameId", OrderProductsWithSameId);
+
+  //   if (buyProductsWithSameId.length > 0) {
+  //     const buyTotalSize = buyProductsWithSameId.reduce(
+  //       (acc, product) =>
+  //         acc +
+  //         product.product_size.reduce(
+  //           (accSize, size) => accSize + parseInt(size.amount),
+  //           0
+  //         ),
+  //       0
+  //     );
+  //     // เพิ่มเงื่อนไขเช็คว่า buyTotalSize เป็น 0 หรือไม่
+  //     if (buyTotalSize === 0) {
+  //       return 0;
+  //     } else {
+  //       // หา OrderTotalSize จาก OrderProductsWithSameId
+  //       const orderTotalSize = OrderProductsWithSameId.reduce(
+  //         (acc, product) => acc + parseInt(product.amount),
+  //         0
+  //       );
+
+  //       // หาค่าต่างระหว่าง buyTotalSize กับ orderTotalSize
+  //       // console.log("buyTotalSize",buyTotalSize)
+  //       // console.log("orderTotalSize",orderTotalSize)
+  //       const difference = buyTotalSize - orderTotalSize;
+
+  //       return difference;
+  //     }
+  //   } else {
+  //     return 0;
+  //   }
+  // };
+
+  // const getProductTotalSameSize = (id, sizeName) => {
+  //   const buyTotalSize = buyData.reduce((acc, buy) => {
+  //     const productsWithSameId = buy.products.filter(
+  //       (product) =>
+  //         product.product_id === id && buy.status === "สำเร็จ" &&
+  //         product.product_size.some((size) => size.size === sizeName)
+  //     );
+
+  //     const totalAmount = productsWithSameId.reduce((total, product) => {
+  //       const size = product.product_size.find(
+  //         (size) => size.size === sizeName
+  //       );
+  //       return total + parseInt(size.amount);
+  //     }, 0);
+
+  //     return acc + totalAmount;
+  //   }, 0);
+  const getProductTotalSize = (id) => {
+    const orderTotalSize = orderData.reduce((acc, order) => {
+      const orderProductsWithSameId = order.products.filter(
+        (product) => product.product_id === id 
       );
-      // เพิ่มเงื่อนไขเช็คว่า totalSize เป็น 0 หรือไม่
-      if (totalSize === 0) {
-        return "ไม่มีสินค้า";
-      } else {
-        return totalSize;
-      }
-    } else {
-      return "ไม่มีสินค้า";
-    }
+
+      const totalAmount = orderProductsWithSameId.reduce((total, product) => {
+        return total + parseInt(product.amount);
+      }, 0);
+      return acc + totalAmount;
+    }, 0);
+
+    console.log(" orderTotalSize",orderTotalSize)
+    return  orderTotalSize;
   };
 
-  const getProductTotalSameSize = (buyData, id, sizeName) => {
-    const productsWithSameId = buyData.flatMap((buy) =>
-      buy.products.filter(
-        (product) => product.product_id === id && buy.status === "สำเร็จ"
-      )
-    );
-    if (productsWithSameId.length > 0) {
-      const totalSize = productsWithSameId.reduce((acc, product) => {
-        // รวบรวมและรวมจำนวนของขนาดที่มีชื่อเหมือนกัน
-        const totalAmount = product.product_size
-          .filter((size) => size.size === sizeName)
-          .reduce((total, size) => total + parseInt(size.amount), 0);
+  const getProductTotalSameSize = (id,sizeName) => {
+    const orderTotalSize = orderData.reduce((acc, order) => {
+      const orderProductsWithSameId = order.products.filter(
+        (product) => product.product_id === id && product.size === sizeName
+      );
 
-        acc += totalAmount;
-
-        return acc;
+      const totalAmount = orderProductsWithSameId.reduce((total, product) => {
+        return total + parseInt(product.amount);
       }, 0);
+      return acc + totalAmount;
+    }, 0);
 
-      // ถ้า totalSize ไม่เป็น 0 ให้คืนค่า totalSize
-      // ในกรณีอื่น ให้คืนค่า "ไม่มีสินค้า"
-      return totalSize !== 0 ? totalSize : "ไม่มีสินค้า";
-    } else {
-      return "ไม่มีสินค้า";
-    }
+    console.log(" orderTotalSize",orderTotalSize)
+    return  orderTotalSize;
   };
 
   const [openRows, setOpenRows] = React.useState([]);
@@ -261,9 +304,10 @@ export default function TableProduct({ data, onDelete }) {
                   </StyledTableCell>
 
                   <StyledTableCell align="center">{row.p_name}</StyledTableCell>
-                  <StyledTableCell align="center"></StyledTableCell>
+                  <StyledTableCell align="center">{getProductTotalSize(row.id)}</StyledTableCell>
                   <StyledTableCell align="center">
-                    {getProductTotalSize(buyData, row.id)}
+                    {/* {getProductTotalSize(row.id)} */}
+                    { row.productSizes.reduce((total, size) => total + size.amount, 0)}
                   </StyledTableCell>
 
                   <StyledTableCell align="center">
@@ -329,13 +373,10 @@ export default function TableProduct({ data, onDelete }) {
                                 <TableCell align="center">
                                   {size.size}
                                 </TableCell>
-                                <TableCell align="center"></TableCell>
+                                <TableCell align="center">{getProductTotalSameSize(row.id, size.size)}</TableCell>
                                 <TableCell align="center">
-                                  {getProductTotalSameSize(
-                                    buyData,
-                                    row.id,
-                                    size.size
-                                  )}
+                                  {/* {getProductTotalSameSize(row.id, size.size)} */}
+                                  {size.amount}
                                 </TableCell>
                                 <TableCell align="center">
                                   {size.price}

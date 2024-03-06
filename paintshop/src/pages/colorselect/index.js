@@ -237,10 +237,14 @@ export default function Colorselect() {
               <Tabs
                 value={value}
                 onChange={handleChange}
+                variant="scrollable"
+                scrollButtons="auto"
                 centered
                 aria-label="basic tabs example"
+                justifyContent="center"
                 sx={{
                   p: 2,
+                  display: "flex",
                   "& .css-1aquho2-MuiTabs-indicator": {
                     display: "none",
                   },

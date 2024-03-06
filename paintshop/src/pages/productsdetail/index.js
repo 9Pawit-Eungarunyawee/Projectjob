@@ -43,7 +43,7 @@ export default function Productsdetail() {
   const [number, setNumber] = React.useState(1);
   const [selectedPrice, setSelectedPrice] = React.useState(null);
   const [alert, setAlert] = React.useState(null);
-  const user  = useAuthContext();
+  const user = useAuthContext();
   const goBack = () => {
     window.history.back();
   };
@@ -68,14 +68,14 @@ export default function Productsdetail() {
   React.useEffect(() => {
     console.log(selectedPrice);
   }, [selectedPrice]);
-  const updatecart = async (product_id,) => {
+  const updatecart = async (product_id) => {
     const cart = {
       product_id: product_id, // ใช้อ้างอิง
       color_id: colorId,
       user_id: user.user.uid,
       price: selectedPrice,
       amount: number,
-      size:sizeData,
+      size: sizeData,
     };
     const result = await addCart("cart", cart);
     if (result) {
@@ -107,7 +107,17 @@ export default function Productsdetail() {
   };
   const handleAdd = () => {
     const count = number + 1;
-    setNumber(count);
+    // ตรวจสอบว่าจำนวนที่ต้องการเพิ่มเข้าไปไม่เกินจำนวนสินค้าที่มี
+    const maxAmount =
+      documentData && documentData.length > 0
+        ? documentData[0].productSizes[0].amount
+        : 0;
+    if (count <= maxAmount) {
+      setNumber(count);
+    } else {
+      // แจ้งเตือนหรือจัดการเพิ่มเติมเมื่อมีการเพิ่มจำนวนสินค้าเกินจำนวนที่มีอยู่
+      console.log("Cannot add more items, maximum amount reached");
+    }
   };
   const handleRemove = () => {
     if (number === 1) {
@@ -294,21 +304,21 @@ export default function Productsdetail() {
                   ))}
               </Breadcrumbs>
             </div>
-              <Box sx={{ pt: 2 }}>
-                <Button
-                  sx={{
-                    color: "#018294",
-                    bgcolor: "white",
-                    fontWeight: "bold",
-                    borderRadius: "50px",
-                    boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  }}
-                  onClick={goBack}
-                >
-                  <ArrowBackOutlinedIcon />
-                  <Typography>ย้อนกลับ</Typography>
-                </Button>
-              </Box>
+            <Box sx={{ pt: 2 }}>
+              <Button
+                sx={{
+                  color: "#018294",
+                  bgcolor: "white",
+                  fontWeight: "bold",
+                  borderRadius: "50px",
+                  boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                }}
+                onClick={goBack}
+              >
+                <ArrowBackOutlinedIcon />
+                <Typography>ย้อนกลับ</Typography>
+              </Button>
+            </Box>
           </Box>
         </Container>
         <Container
@@ -342,8 +352,6 @@ export default function Productsdetail() {
                         }}
                       />
                     </Box>
-
-                    
                   </Grid>
                 ))}
               {documentData &&
@@ -489,13 +497,13 @@ export default function Productsdetail() {
                           }}
                         />
                       </IconButton>
-                      {/* <Typography>สินค้ามีทั้งหมด : </Typography>
+                      <Typography>สินค้ามีทั้งหมด : </Typography>
                       <Typography>
                         {item.productSizes[0].amount
                           .toString()
                           .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </Typography>
-                      <Typography> ชิ้น </Typography> */}
+                      <Typography> ชิ้น </Typography>
                     </Box>
                     <Button
                       fullWidth

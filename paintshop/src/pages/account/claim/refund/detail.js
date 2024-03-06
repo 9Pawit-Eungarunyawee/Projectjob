@@ -62,7 +62,7 @@ export default function Refunddetail() {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [color, setColor] = React.useState(null);
-  const [reason, setReason] = React.useState("เลือกเหตุผลที่คุณต้องการ");
+  const [reason, setReason] = React.useState("");
   const [reasonDetail, setReasonDetail] = React.useState("");
   const [bankDetail, setBankDetail] = React.useState("");
   const [alert, setAlert] = React.useState(null);
@@ -306,17 +306,20 @@ export default function Refunddetail() {
                   </Grid>
                 </CardActionArea>
               ))}
-            {orderData[index].products &&
-              orderData[index].products.map((data, index) => (
-                <CardContent key={index}>
-                  <form
-                    onSubmit={(event) =>
-                      handleForm(event, findProduct(data.product_id).productId)
-                    }
-                    className="form"
-                  >
-                    <Grid>
-                      {/* {" "}
+            <CardContent>
+              <form
+                onSubmit={(event) =>
+                  handleForm(
+                    event,
+                    orderData[index].products.map(
+                      (data) => findProduct(data.product_id).productId
+                    )
+                  )
+                }
+                className="form"
+              >
+                <Grid>
+                  {/* {" "}
                       <Grid>
                         <Box>
                           {videoUrl ? (
@@ -361,100 +364,97 @@ export default function Refunddetail() {
                           onChange={handleVideoUpload}
                         />
                       </Grid> */}
-                      <Grid mt={2}>
-                        <Box>
-                          {imageSet.map((url, index) => (
-                            <Image
-                              key={index}
-                              src={url}
-                              alt={`Uploaded Image ${index + 1}`}
-                              priority
-                              height="150"
-                              width="150"
-                              style={{
-                                border: "1px solid rgba(0, 0, 0, 0.50)",
-                                marginRight: "10px",
-                              }}
-                            />
-                          ))}
-                        </Box>
-                        <label htmlFor="upload-image">
-                          <Button variant="contained" component="span">
-                            เพิ่มรูปภาพสินค้า
-                          </Button>
-                          <input
-                            id="upload-image"
-                            hidden
-                            accept="image/*"
-                            type="file"
-                            onChange={handleFileUpload}
-                          />
-                        </label>
-                      </Grid>
-                    </Grid>
-
-                    <Grid>
-                      <Box>
-                      <Typography>เหตุผล*</Typography>
-                        <TextField
-                          value={reason}
-                          onChange={(e) => setReason(e.target.value)}
-                          select
-                          fullWidth
-                          label="เหตุผล"
-                          sx={{ mt: 1, mb: 1, fontSize: "0.9rem" }}
-                          required
-                        >
-                          <MenuItem value={"สีที่สั่งไม่ตรงตามที่ต้องการ"}>
-                            สีที่สั่งไม่ตรงตามที่ต้องการ
-                          </MenuItem>
-                          <MenuItem value={"สินค้ามีข้อบกพร่อง,ชำรุด"}>
-                            สินค้ามีข้อบกพร่อง,ชำรุด
-                          </MenuItem>
-                          <MenuItem
-                            value={"ได้รับสินค้าไม่ครบตามที่สั่งซื้อไป"}
-                          >
-                            ได้รับสินค้าไม่ครบตามที่สั่งซื้อไป
-                          </MenuItem>
-                          <MenuItem value={"ไม่ได้รับสินค้า"}>
-                            ไม่ได้รับสินค้า
-                          </MenuItem>
-                        </TextField>
-                      </Box>
-                      <Box>
-                        <Typography>รายละเอียด*</Typography>
-                        <TextField
-                          id="outlined-multiline-static"
-                          multiline
-                          rows={4}
-                          fullWidth
-                          required
-                          sx={{ mt: 1, mb: 1 }}
-                          value={reasonDetail}
-                          onChange={(e) => setReasonDetail(e.target.value)}
+                  <Grid mt={2}>
+                    <Box>
+                      {imageSet.map((url, index) => (
+                        <Image
+                          key={index}
+                          src={url}
+                          alt={`Uploaded Image ${index + 1}`}
+                          priority
+                          height="150"
+                          width="150"
+                          style={{
+                            border: "1px solid rgba(0, 0, 0, 0.50)",
+                            marginRight: "10px",
+                          }}
                         />
-                      </Box>
-                      <Box>
-                        <Typography>ใส่ช่องทางการโอนเงิน*</Typography>
-                        <TextField
-                          id="outlined-basic"
-                          variant="outlined"
-                          required
-                          fullWidth
-                          sx={{ mt: 1, mb: 1 }}
-                          value={bankDetail}
-                          onChange={(e) => setBankDetail(e.target.value)}
-                        />
-                      </Box>
-                    </Grid>
-                    <Grid>
-                      <Button variant="contained" type="submit">
-                        ยืนยัน
+                      ))}
+                    </Box>
+                    <label htmlFor="upload-image">
+                      <Button variant="contained" component="span">
+                        เพิ่มรูปภาพสินค้า
                       </Button>
-                    </Grid>
-                  </form>
-                </CardContent>
-              ))}
+                      <input
+                        id="upload-image"
+                        hidden
+                        accept="image/*"
+                        type="file"
+                        onChange={handleFileUpload}
+                      />
+                    </label>
+                  </Grid>
+                </Grid>
+
+                <Grid>
+                  <Box>
+                    <Typography>เหตุผล*</Typography>
+                    <TextField
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                      select
+                      fullWidth
+                      label="เหตุผล"
+                      sx={{ mt: 1, mb: 1, fontSize: "0.9rem" }}
+                      required
+                    >
+                      <MenuItem value={"สีที่สั่งไม่ตรงตามที่ต้องการ"}>
+                        สีที่สั่งไม่ตรงตามที่ต้องการ
+                      </MenuItem>
+                      <MenuItem value={"สินค้ามีข้อบกพร่อง,ชำรุด"}>
+                        สินค้ามีข้อบกพร่อง,ชำรุด
+                      </MenuItem>
+                      <MenuItem value={"ได้รับสินค้าไม่ครบตามที่สั่งซื้อไป"}>
+                        ได้รับสินค้าไม่ครบตามที่สั่งซื้อไป
+                      </MenuItem>
+                      <MenuItem value={"ไม่ได้รับสินค้า"}>
+                        ไม่ได้รับสินค้า
+                      </MenuItem>
+                    </TextField>
+                  </Box>
+                  <Box>
+                    <Typography>รายละเอียด*</Typography>
+                    <TextField
+                      id="outlined-multiline-static"
+                      multiline
+                      rows={4}
+                      fullWidth
+                      required
+                      sx={{ mt: 1, mb: 1 }}
+                      value={reasonDetail}
+                      onChange={(e) => setReasonDetail(e.target.value)}
+                    />
+                  </Box>
+                  <Box>
+                    <Typography>ใส่ช่องทางการโอนเงิน*</Typography>
+                    <TextField
+                      id="outlined-basic"
+                      variant="outlined"
+                      required
+                      fullWidth
+                      sx={{ mt: 1, mb: 1 }}
+                      value={bankDetail}
+                      onChange={(e) => setBankDetail(e.target.value)}
+                    />
+                  </Box>
+                </Grid>
+                <Grid>
+                  <Button variant="contained" type="submit">
+                    ยืนยัน
+                  </Button>
+                </Grid>
+              </form>
+            </CardContent>
           </Card>
         ))}
     </React.Fragment>

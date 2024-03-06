@@ -245,6 +245,10 @@ export default function Colorselect() {
                 sx={{
                   p: 2,
                   display: "flex",
+                  justifyContent:"center",
+                  "& .css-1aeflc-MuiTabs-flexContainer": {
+                    justifyContent:"center",
+                  },
                   "& .css-1aquho2-MuiTabs-indicator": {
                     display: "none",
                   },

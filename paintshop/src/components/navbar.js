@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { Badge, createTheme, ThemeProvider } from "@mui/material";
 import {
   AppBar,
   Button,
@@ -30,11 +30,14 @@ import { getAuth, signOut } from "firebase/auth";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { getUser } from "@/firebase/getData";
+import { debounce } from "lodash";
+import searchUser from "@/firebase/searchData";
 
 let settings = ["โปรไฟล์", "ออกจากระบบ"];
 
 export default function Navbar() {
   const [userData, setUserData] = React.useState(null);
+  const [cartItemCount, setCartItemCount] = React.useState(0);
   const { role, user } = useAuthContext();
   if (role == "admin") {
     settings = ["โปรไฟล์", "แดชบอร์ด", "ออกจากระบบ"];
@@ -49,6 +52,7 @@ export default function Navbar() {
   const [activeLink, SetActiveLink] = React.useState("");
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [documentData, setDocumentData] = React.useState(null);
   React.useEffect(() => {
     fetchAllData();
   }, []);
@@ -92,6 +96,36 @@ export default function Navbar() {
     } catch (error) {
       console.error("An error occurred while signing out:", error);
     }
+  };
+  const [searchTerm, setSearchTerm] = React.useState("");
+  React.useEffect(() => {
+    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
+    handleSearch("");
+  }, []);
+  React.useEffect(() => {
+    const cartItems = documentData ? documentData.length : 0;
+    setCartItemCount(cartItems);
+  }, [documentData]);
+  const goBack = () => {
+    window.history.back();
+  };
+  const debouncedSearchCart = debounce(async (term) => {
+    const uid = user.uid;
+    try {
+      const collectionName = "cart";
+      const field = "user_id";
+      const results = await searchUser(collectionName, field, term);
+      const filteredResults = results.filter((doc) => doc.user_id == uid);
+      setDocumentData(filteredResults);
+    } catch (error) {
+      console.error("Error searching data:", error);
+    }
+  }, 500);
+
+  // กำหนดเวลา debounce ที่คุณต้องการ
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchCart(term);
   };
   const router = useRouter();
   const handleUserMenu = (setting) => {
@@ -224,7 +258,9 @@ export default function Navbar() {
               </IconButton>
               <Link href={"/cart"}>
                 <IconButton color="black">
-                  <ShoppingCartOutlinedIcon />
+                  <Badge badgeContent={cartItemCount} color="error">
+                    <ShoppingCartOutlinedIcon />
+                  </Badge>
                 </IconButton>
               </Link>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

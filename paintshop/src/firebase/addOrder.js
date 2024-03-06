@@ -7,6 +7,8 @@ import {
   setDoc,
   deleteDoc,
 } from "firebase/firestore";
+import getDoument from "./getData";
+import editData from "./editData";
 
 const db = getFirestore(firebase_app);
 
@@ -20,11 +22,11 @@ export default async function addOrder(collectionName, data) {
   try {
     // เตรียมข้อมูลที่ต้องการเพิ่ม
     const orderData = {
-      products: data.products, 
+      products: data.products,
       user_id: data.user_id,
       total_price: data.total_price,
-      address:data.address,
-      tracker:null,
+      address: data.address,
+      tracker: null,
       createAt: currentDate,
       img: img,
       status: data.status,
@@ -66,3 +68,197 @@ const deleteCartItem = async (cart_ids) => {
 };
 
 export { deleteCartItem };
+
+const editOrder = async (id, data) => {
+  let result = null;
+  let error = null;
+  try {
+    result = await setDoc(doc(db, "orders", id), data, {
+      merge: true,
+    });
+    console.log("แก้ไขข้อมูลสำเร็จ");
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
+  }
+
+  return { result, error };
+};
+
+export { editOrder };
+
+const confirmOrder = async (id) => {
+  let result = null;
+  let error = null;
+
+  try {
+    const { result: orderResult, error: orderError } = await getDoument(
+      "orders",
+      id
+    );
+    if (orderError) {
+      throw orderError;
+    }
+    const orderData = orderResult.data();
+    // console.log(orderData)
+    // ลูปเพื่ออัปเดตข้อมูลของสินค้า (product) ที่เกี่ยวข้องกับการซื้อ
+    for (let i = 0; i < orderData.products.length; i++) {
+      try {
+        // ค้นหาข้อมูลของสินค้า (product) ที่ต้องการแก้ไข
+        console.log(
+          "orderData.products[i].product_id",
+          orderData.products[i].product_id
+        );
+        const { result: productResult, error: productError } = await getDoument(
+          "products",
+          orderData.products[i].product_id
+        );
+        if (productError) {
+          console.error("Error fetching product document:", productError);
+          continue;
+        }
+        const productData = productResult.data();
+        // console.log(productData)
+        // คำนวณค่า amount ใหม่โดยการลบค่า amount จาก buy และบวกค่า amount จาก buy ใหม่
+        const updatedProductSizes = productData.productSizes.map((size) => {
+          const matchingSize = orderData.products.find(
+            (productSize) => productSize.size === size.size
+          );
+          // console.log("parseInt(matchingSize.amount)",matchingSize)
+          // console.log("parseInt(size.amount)",size)
+          if (matchingSize && matchingSize.amount !== undefined) {
+            // คำนวณค่า newSizeAmount โดยการเพิ่มจำนวนสินค้าจาก data และลบออกจากจำนวนสินค้าที่มีอยู่เดิม
+            const newSizeAmount =
+              parseInt(size.amount) - parseInt(matchingSize.amount);
+            return {
+              ...size,
+              amount: newSizeAmount,
+            };
+          } else {
+            return size;
+          }
+        });
+        // อัปเดตข้อมูลของสินค้า (product) ในฐานข้อมูล
+        const updatedProductData = {
+          productSizes: updatedProductSizes,
+        };
+
+        const { result: editResult, error: editError } = await editData(
+          "products",
+          orderData.products[i].product_id,
+          updatedProductData
+        );
+
+        if (editError) {
+          console.error("Error editing product:", editError);
+        } else {
+          console.log("Product edited successfully:", editResult);
+        }
+      } catch (error) {
+        console.error("Error fetching product document:", error);
+      }
+    }
+
+    const data = {
+      status: "จัดเตรียมสินค้า",
+    };
+    result = await setDoc(doc(db, "orders", id), data, {
+      merge: true,
+    });
+    console.log("แก้ไขข้อมูลสำเร็จ");
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
+  }
+
+  return { result, error };
+};
+export { confirmOrder };
+
+const cancelOrder = async (id) => {
+  let result = null;
+  let error = null;
+  const docRef = doc(db, "orders", id);
+  try {
+    const { result: orderResult, error: orderError } = await getDoument(
+      "orders",
+      id
+    );
+    if (orderError) {
+      throw orderError;
+    }
+    const orderData = orderResult.data();
+    // console.log(orderData)
+    // ลูปเพื่ออัปเดตข้อมูลของสินค้า (product) ที่เกี่ยวข้องกับการซื้อ
+    for (let i = 0; i < orderData.products.length; i++) {
+      try {
+        // ค้นหาข้อมูลของสินค้า (product) ที่ต้องการแก้ไข
+        console.log(
+          "orderData.products[i].product_id",
+          orderData.products[i].product_id
+        );
+        const { result: productResult, error: productError } = await getDoument(
+          "products",
+          orderData.products[i].product_id
+        );
+        if (productError) {
+          console.error("Error fetching product document:", productError);
+          continue;
+        }
+        const productData = productResult.data();
+        // console.log(productData)
+        // คำนวณค่า amount ใหม่โดยการลบค่า amount จาก buy และบวกค่า amount จาก buy ใหม่
+        const updatedProductSizes = productData.productSizes.map((size) => {
+          const matchingSize = orderData.products.find(
+            (productSize) => productSize.size === size.size
+          );
+          // console.log("parseInt(matchingSize.amount)",matchingSize)
+          // console.log("parseInt(size.amount)",size)
+          if (matchingSize && matchingSize.amount !== undefined) {
+            // คำนวณค่า newSizeAmount โดยการเพิ่มจำนวนสินค้าจาก data และลบออกจากจำนวนสินค้าที่มีอยู่เดิม
+            const newSizeAmount =
+              parseInt(size.amount) + parseInt(matchingSize.amount);
+            return {
+              ...size,
+              amount: newSizeAmount,
+            };
+          } else {
+            return size;
+          }
+        });
+        // อัปเดตข้อมูลของสินค้า (product) ในฐานข้อมูล
+        const updatedProductData = {
+          productSizes: updatedProductSizes,
+        };
+
+        const { result: editResult, error: editError } = await editData(
+          "products",
+          orderData.products[i].product_id,
+          updatedProductData
+        );
+
+        if (editError) {
+          console.error("Error editing product:", editError);
+        } else {
+          console.log("Product edited successfully:", editResult);
+        }
+      } catch (error) {
+        console.error("Error fetching product document:", error);
+      }
+    }
+
+    const data = {
+      status: "ยกเลิก",
+    };
+    result = await setDoc(doc(db, "orders", id), data, {
+      merge: true,
+    });
+    console.log("แก้ไขข้อมูลสำเร็จ");
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
+  }
+
+  return { result, error };
+};
+export { cancelOrder };

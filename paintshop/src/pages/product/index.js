@@ -150,138 +150,39 @@ export default function Product() {
   const [productAlmostOutOfStock, setProductAlmostOutOfStock] = useState([]);
   useEffect(() => {
     if (
-      productData != undefined &&
-      buyData != undefined &&
-      orderData != undefined
+      productData != undefined
     ) {
-      console.log(
-        "getProductOutOfStock:",
-        getProductOutOfStock(productData, buyData, orderData)
-      );
-      console.log(
-        "getProductAlmostOutOfStock:",
-        getProductAlmostOutOfStock(productData, buyData, orderData)
-      );
+      // console.log(
+      //   "getProductOutOfStock:",
+      //   getProductOutOfStock(productData, buyData, orderData)
+      // );
+      // console.log(
+      //   "getProductAlmostOutOfStock:",
+      //   getProductAlmostOutOfStock(productData, buyData, orderData)
+      // );
 
       setProductOutOfStock(
-        getProductOutOfStock(productData, buyData, orderData)
+        getProductOutOfStock(productData)
       );
 
       setProductAlmostOutOfStock(
-        getProductAlmostOutOfStock(productData, buyData,orderData)
+        getProductAlmostOutOfStock(productData)
       );
     }
-  }, [productData, buyData, orderData]);
+  }, [productData]);
 
-  const getProductOutOfStock = (productData, buyData, orderData) => {
-    const productIdsInBuyData = new Set();
-    const productIdsInOrderData = new Set();
-
-    // รวบรวม product_id ทั้งหมดจาก buyData
-    buyData.forEach((buy) => {
-      buy.products.forEach((product) => {
-        productIdsInBuyData.add(product.product_id);
-      });
+  const getProductOutOfStock = (productData) => {
+    const outOfStockProducts = productData.filter((product) => {
+      return product.productSizes.some((size) => size.amount === 0);
     });
-
-    // รวบรวม product_id ทั้งหมดจาก orderData
-    orderData.forEach((order) => {
-      order.products.forEach((product) => {
-        productIdsInOrderData.add(product.product_id);
-      });
-    });
-
-    // สร้าง Map เพื่อเก็บจำนวนสินค้าใน buyData และ orderData ตาม product_id
-    const productAmountMap = new Map();
-
-    // นับจำนวนสินค้าใน buyData
-    buyData.forEach((buy) => {
-      buy.products.forEach((product) => {
-        product.product_size.forEach((size) => {
-          const productId = product.product_id;
-          const amount = parseInt(size.amount);
-          productAmountMap.set(
-            productId,
-            (productAmountMap.get(productId) || 0) + amount
-          );
-        });
-      });
-    });
-
-    // นับจำนวนสินค้าใน orderData
-    orderData.forEach((order) => {
-      order.products.forEach((product) => {
-        const productId = product.product_id;
-        const amount = parseInt(product.amount);
-        productAmountMap.set(
-          productId,
-          (productAmountMap.get(productId) || 0) - amount
-        );
-      });
-    });
-    // console.log("จำนวนสินค้าใน productAmountMap:", productAmountMap);
-    // กรองข้อมูล productData ตาม product_id ที่ไม่อยู่ใน buyData และ orderData หรือมีจำนวนเท่ากับ 0
-    const outOfStockProducts = productData.filter(
-      (product) => (productAmountMap.get(product.id) || 0) <= 0
-    );
-
+  
     return outOfStockProducts;
   };
 
-  const getProductAlmostOutOfStock = (productData, buyData, orderData) => {
-    const productIdsInBuyData = new Set();
-    const productIdsInOrderData = new Set();
-
-    // รวบรวม product_id ทั้งหมดจาก buyData
-    buyData.forEach((buy) => {
-      buy.products.forEach((product) => {
-        productIdsInBuyData.add(product.product_id);
-      });
+  const getProductAlmostOutOfStock = (productData) => {
+    const almostOutOfStockProducts = productData.filter((product) => {
+      return product.productSizes.some((size) => size.amount < 11 && size.amount > 0 );
     });
-
-    // รวบรวม product_id ทั้งหมดจาก orderData
-    orderData.forEach((order) => {
-      order.products.forEach((product) => {
-        productIdsInOrderData.add(product.product_id);
-      });
-    });
-
-    // สร้าง Map เพื่อเก็บจำนวนสินค้าใน buyData และ orderData ตาม product_id
-    const productAmountMap = new Map();
-
-    // นับจำนวนสินค้าใน buyData
-    buyData.forEach((buy) => {
-      buy.products.forEach((product) => {
-        product.product_size.forEach((size) => {
-          const productId = product.product_id;
-          const amount = parseInt(size.amount);
-          productAmountMap.set(
-            productId,
-            (productAmountMap.get(productId) || 0) + amount
-          );
-        });
-      });
-    });
-
-    // นับจำนวนสินค้าใน orderData
-    orderData.forEach((order) => {
-      order.products.forEach((product) => {
-        const productId = product.product_id;
-        const amount = parseInt(product.amount);
-        productAmountMap.set(
-          productId,
-          (productAmountMap.get(productId) || 0) - amount
-        );
-      });
-    });
-
-    console.log("จำนวนสินค้าใน buyData:", productAmountMap);
-
-    // กรองข้อมูล productData ตาม product_id ที่ไม่อยู่ใน buyData และ orderData หรือมีจำนวนน้อยกว่า 10
-    const almostOutOfStockProducts = productData.filter(
-      (product) =>
-        (productAmountMap.get(product.id) < 10 )&& (productAmountMap.get(product.id) > 0 ) || 0
-    );
     return almostOutOfStockProducts;
   };
 
@@ -319,7 +220,15 @@ export default function Product() {
                 sx={{ mr: 2, mb: 2, mt: 2 }}
                 onClick={handleAdd}
               >
-                เพิ่มสินค้า
+                เพิ่มสินค้า(สี)
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                sx={{ mr: 2, mb: 2, mt: 2 }}
+                onClick={handleAdd}
+              >
+                เพิ่มสินค้า(วัสดุ)
               </Button>
               <Button
                 variant="contained"
@@ -336,6 +245,7 @@ export default function Product() {
                   value={value}
                   onChange={handleChange}
                   aria-label="basic tabs example"
+                  variant="scrollable"
                 >
                   <Tab
                     label={<Typography>ทั้งหมด</Typography>}

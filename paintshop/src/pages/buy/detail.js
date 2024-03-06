@@ -28,7 +28,7 @@ import getDoument from "@/firebase/getData";
 import styled from "@emotion/styled";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { cancelBuy } from "@/firebase/addBuy";
+import { cancelBuy, restoreBuy } from "@/firebase/addBuy";
 export default function Detail() {
   const theme = createTheme({
     palette: {
@@ -98,8 +98,6 @@ export default function Detail() {
     }
   }, [buyData, userData]);
 
-
-
   const fetchData = async () => {
     const collectionName = "buy";
     const { result, error } = await getDoument(collectionName, buy_id);
@@ -151,7 +149,7 @@ export default function Detail() {
   };
 
   const handleCancel = async () => {
-    const result = await cancelBuy("buy", buy_id);
+    const result = await cancelBuy("buy", buy_id, buyData);
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
@@ -159,13 +157,31 @@ export default function Detail() {
         </Alert>
       );
       setOpen(true);
-      setTimeout(() => {
-        goBack();
-      }, 500);
+      fetchData()
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
           ผิดพลาด! ไม่สามารถยกเลิกรายการได้
+        </Alert>
+      );
+      setOpen(true);
+    }
+  };
+
+  const handleRestore = async () => {
+    const result = await restoreBuy("buy", buy_id, buyData);
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          กู้คืนรายการสำเร็จ
+        </Alert>
+      );
+      setOpen(true);
+      fetchData()
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถกู้คืนรายการได้
         </Alert>
       );
       setOpen(true);
@@ -193,16 +209,8 @@ export default function Detail() {
           <ArrowBackOutlinedIcon />
           <Typography> ย้อนกลับ</Typography>
         </Button>
-        <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
-          <Button
-            variant="contained"
-            color="success"
-            sx={{ mr: 2, mb: 2, mt: 2 }}
-            onClick={() => handleEdit(buy_id)}
-          >
-            แก้ไขรายการ
-          </Button>
-          {buyData.status === "สำเร็จ" ? (
+        {buyData.status === "สำเร็จ" ? (
+          <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
             <Button
               variant="contained"
               color="error"
@@ -211,8 +219,28 @@ export default function Detail() {
             >
               ยกเลิกรายการ
             </Button>
-          ) : null}
-        </Box>
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ mr: 2, mb: 2, mt: 2 }}
+              onClick={() => handleEdit(buy_id)}
+            >
+              แก้ไขรายการ
+            </Button>
+          </Box>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ mr: 2, mb: 2, mt: 2 }}
+              onClick={handleRestore}
+            >
+              กู้คืนรายการ
+            </Button>
+          </Box>
+        )}
+
         <Box>
           <Grid container spacing={1.5} sx={{ mb: 5 }}>
             <Grid item xs={12} lg={6}>
@@ -348,11 +376,10 @@ export default function Detail() {
                       </TableHead>
                       <TableBody>
                         {rows.map((row) => (
-                           <Fragment key={row.No}>
+                          <Fragment key={row.No}>
                             <StyledTableRow>
                               <StyledTableCell align="center">
                                 <IconButton
-                               
                                   size="small"
                                   onClick={() => handleRowToggle(row.No)}
                                 >
@@ -363,7 +390,9 @@ export default function Detail() {
                                   )}
                                 </IconButton>
                               </StyledTableCell>
-                              <StyledTableCell align="center">{row.No}</StyledTableCell>
+                              <StyledTableCell align="center">
+                                {row.No}
+                              </StyledTableCell>
                               <StyledTableCell align="center">
                                 {row.product_name}
                               </StyledTableCell>

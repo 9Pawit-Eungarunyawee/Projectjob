@@ -159,6 +159,7 @@ export default function Add() {
 
   // useEffect(() => {
   //   console.log(products);
+  const {fetchProductData} = useContext(ProductContext)
   const handleForm = async (event) => {
     event.preventDefault();
     const buy = {
@@ -178,6 +179,7 @@ export default function Add() {
         </Alert>
       );
       setOpen(true);
+      fetchProductData()
       setTimeout(() => {
         goBack();
       }, 500);

@@ -96,7 +96,6 @@ export default function SearchDialog({
   };
 
   const handleSetProduct = (row) => {
-    console.log(row);
     setProducts((prevProducts) => {
       const updatedProducts = [...prevProducts];
       updatedProducts[index] = {

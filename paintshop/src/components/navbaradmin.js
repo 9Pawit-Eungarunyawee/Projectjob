@@ -27,7 +27,8 @@ import { getAuth, signOut } from "firebase/auth";
 import { useAuthContext } from "@/context/AuthContext";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-
+import ShoppingBasketOutlinedIcon from '@mui/icons-material/ShoppingBasketOutlined';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 export default function NavbarAdmin() {
   const [activeLink, setActiveLink] = useState("");
   const { role } = useAuthContext();
@@ -232,18 +233,36 @@ export default function NavbarAdmin() {
         </li>
         <li>
           <Link
-            href="/order"
+            href="/buy"
             style={{
               textDecoration: "none",
               display: "flex",
               justifyContent: "center",
             }}
-            onClick={(e) => setActiveLink("/order")}
+            onClick={(e) => setActiveLink("/buy")}
           >
-            <Box sx={activeLink === "/order" ? styles.BoxActive : styles.Box}>
+            <Box sx={activeLink === "/buy" ? styles.BoxActive : styles.Box}>
               <Typography variant="menu" noWrap>
-                <StarBorderIcon sx={{ pr: 2 }} />
-                จัดการคำสั่งซื้อ
+                <ShoppingBasketOutlinedIcon sx={{ pr: 2 }} />
+                รายการซื้อ
+              </Typography>
+            </Box>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/sell"
+            style={{
+              textDecoration: "none",
+              display: "flex",
+              justifyContent: "center",
+            }}
+            onClick={(e) => setActiveLink("/sell")}
+          >
+            <Box sx={activeLink === "/sell" ? styles.BoxActive : styles.Box}>
+              <Typography variant="menu" noWrap>
+                <ListAltIcon sx={{ pr: 2 }} />
+                รายการขาย
               </Typography>
             </Box>
           </Link>

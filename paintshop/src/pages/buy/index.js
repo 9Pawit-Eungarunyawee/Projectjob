@@ -136,6 +136,7 @@ export default function Buy() {
             <Tabs
               value={value}
               onChange={handleChange}
+              variant="scrollable"
               aria-label="basic tabs example"
             >
               <Tab label={<Typography>ทั้งหมด</Typography>} {...a11yProps(0)} />

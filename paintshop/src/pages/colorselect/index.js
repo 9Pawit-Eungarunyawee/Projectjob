@@ -148,6 +148,12 @@ export default function Colorselect() {
       boxShadow: "4px 0px 4px 0px rgba(0, 0, 0, 0.25)",
       zIndex: "1",
     },
+    tabsContainer: {
+      display: "flex",
+      justifyContent: "center",
+      width: "100%",
+      overflowX: "auto",
+    },
   };
 
   return (
@@ -234,48 +240,42 @@ export default function Colorselect() {
               >
                 เฉดสี
               </Typography>
-              <Tabs
-                value={value}
-                onChange={handleChange}
-                variant="scrollable"
-                scrollButtons="auto"
-                centered
-                aria-label="basic tabs example"
-                justifyContent="center"
-                sx={{
-                  p: 2,
-                  display: "flex",
-                  justifyContent:"center",
-                  "& .css-1aeflc-MuiTabs-flexContainer": {
-                    display:'flex',
-                    justifyContent:"center",
-                  },
-                  "& .css-1aquho2-MuiTabs-indicator": {
-                    display: "none",
-                  },
-                }}
-              >
-                {colorshadeData &&
-                  colorshadeData.map((item, index) => (
-                    <Tab
-                      key={index}
-                      sx={{
-                        ...styles.tab,
-                        backgroundColor: item.code,
-                        ...(value === index ? styles.activeTab : {}),
-                      }}
-                      onClick={() => {
-                        console.log(
-                          "Tab Clicked with Index and ID:",
-                          index,
-                          item.id
-                        );
-                        setValue(index);
-                        setSelectedColorId(item.id);
-                      }}
-                    />
-                  ))}
-              </Tabs>
+              <Box display="flex" justifyContent="center" width="100%">
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                  aria-label="basic tabs example"
+                  sx={{
+                    p: 2,
+                    "& .css-1aquho2-MuiTabs-indicator": {
+                      display: "none",
+                    },
+                  }}
+                >
+                  {colorshadeData &&
+                    colorshadeData.map((item, index) => (
+                      <Tab
+                        key={index}
+                        sx={{
+                          ...styles.tab,
+                          backgroundColor: item.code,
+                          ...(value === index ? styles.activeTab : {}),
+                        }}
+                        onClick={() => {
+                          console.log(
+                            "Tab Clicked with Index and ID:",
+                            index,
+                            item.id
+                          );
+                          setValue(index);
+                          setSelectedColorId(item.id);
+                        }}
+                      />
+                    ))}
+                </Tabs>
+              </Box>
               <Box sx={{ p: 3 }}>
                 <Grid container spacing={2}>
                   {documentData &&

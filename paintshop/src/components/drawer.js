@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   Avatar,
   Box,
+  Collapse,
   Drawer,
   IconButton,
   List,
@@ -24,12 +25,20 @@ import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AnnouncementOutlinedIcon from "@mui/icons-material/AnnouncementOutlined";
+import BrushIcon from "@mui/icons-material/Brush";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 const DrawerComp = () => {
   const [userData, setUserData] = React.useState(null);
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [activeLink, setActiveLink] = React.useState("");
   const { role, user } = useAuthContext();
+  const [open, setOpen] = React.useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
   const auth = getAuth();
   let additionalLinks = [];
   let settings = ["โปรไฟล์", "ออกจากระบบ"];
@@ -149,17 +158,17 @@ const DrawerComp = () => {
       >
         <List sx={{ borderBottom: "1px solid #D3D3D3", p: 2 }}>
           <ListItem>
-            <Link
-              href="/account/profile"
-              style={{
-                textDecoration: "none",
-                display: "flex",
-                justifyContent: "center",
-                width: "100%", // Set width to 100%
-              }}
-              onClick={(e) => setActiveLink("/account/profile")}
-            >
-              <Box display="flex" alignItems="center" width="100%">
+            <Box display="flex" alignItems="center" width="100%">
+              <Link
+                href="/account/profile"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%", // Set width to 100%
+                }}
+                onClick={(e) => setActiveLink("/account/profile")}
+              >
                 {userData &&
                   userData.map((item, index) => (
                     <Box
@@ -180,39 +189,80 @@ const DrawerComp = () => {
                       </Typography>
                     </Box>
                   ))}
-              </Box>
-            </Link>
+              </Link>
+            </Box>
           </ListItem>
         </List>
-        <List sx={{ borderBottom: "1px solid #D3D3D3", p: 2 }}>
-          <ListItem>
-            <Link
-              href="/account/address"
-              style={{
-                textDecoration: "none",
-                display: "flex",
-                justifyContent: "center",
-                width: "100%", // Set width to 100%
-              }}
-              onClick={(e) => setActiveLink("/account/address")}
-            >
-              <Box
-                sx={
-                  activeLink === "/account/address"
-                    ? styles.BoxActive
-                    : styles.Box
-                }
-                display="flex"
-                alignItems="center"
-                width="100%" // Set width to 100%
-              >
-                <PlaceOutlinedIcon sx={{ pr: 1, pl: 1, color: "black" }} />
-                <Typography variant="menu" noWrap sx={{ color: "black" }}>
-                  ที่อยู่
-                </Typography>
-              </Box>
-            </Link>
+        <List
+          component="div"
+          disablePadding
+          sx={{ borderBottom: "1px solid #D3D3D3", p: 2 }}
+        >
+          <ListItem onClick={handleClick}>
+            <PersonOutlineIcon sx={{ pr: 1, pl: 1, color: "black" }} />
+            <Typography variant="menu" noWrap sx={{ color: "black" }}>
+              ข้อมูลส่วนตัว
+            </Typography>
+            {open ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          <Collapse in={open} timeout="auto" unmountOnExit sx={{ pl: 3 }}>
+            <ListItem>
+              <Link
+                href="/account/profile"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%", // Set width to 100%
+                }}
+                onClick={(e) => setActiveLink("/account/profile")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/account/profile"
+                      ? styles.BoxActive
+                      : styles.Box
+                  }
+                  display="flex"
+                  alignItems="center"
+                  width="100%" // Set width to 100%
+                >
+                  <PersonOutlineIcon sx={{ pr: 1, pl: 1, color: "black" }} />
+                  <Typography variant="menu" noWrap sx={{ color: "black" }}>
+                    โปรไฟล์
+                  </Typography>
+                </Box>
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link
+                href="/account/address"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%", // Set width to 100%
+                }}
+                onClick={(e) => setActiveLink("/account/address")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/account/address"
+                      ? styles.BoxActive
+                      : styles.Box
+                  }
+                  display="flex"
+                  alignItems="center"
+                  width="100%" // Set width to 100%
+                >
+                  <PlaceOutlinedIcon sx={{ pr: 1, pl: 1, color: "black" }} />
+                  <Typography variant="menu" noWrap sx={{ color: "black" }}>
+                    ที่อยู่
+                  </Typography>
+                </Box>
+              </Link>
+            </ListItem>
+          </Collapse>
           <ListItem>
             <Link
               href="/account/orderhistory"
@@ -321,6 +371,30 @@ const DrawerComp = () => {
                 />
                 <Typography variant="menu" noWrap sx={{ color: "black" }}>
                   ผลิตภัณฑ์
+                </Typography>
+              </Box>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link
+              href="/designs"
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%", // Set width to 100%
+              }}
+              onClick={(e) => setActiveLink("/designs")}
+            >
+              <Box
+                sx={activeLink === "/designs" ? styles.BoxActive : styles.Box}
+                display="flex"
+                alignItems="center"
+                width="100%" // Set width to 100%
+              >
+                <BrushIcon sx={{ pr: 1, pl: 1, color: "black" }} />
+                <Typography variant="menu" noWrap sx={{ color: "black" }}>
+                  ออกแบบ
                 </Typography>
               </Box>
             </Link>

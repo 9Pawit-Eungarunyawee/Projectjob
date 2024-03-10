@@ -29,6 +29,7 @@
     "react-color": "^2.19.3",
     "react-date-range": "^1.4.0",
     "react-dom": "18.2.0",
+    "react-swipeable-views": "^0.14.0",
     "trim": "^1.0.1"
   },
   "devDependencies": {

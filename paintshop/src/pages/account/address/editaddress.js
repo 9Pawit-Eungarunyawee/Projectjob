@@ -16,7 +16,11 @@ import {
 import addAddress, { editAddress } from "@/firebase/addAddresses";
 import { useAuthContext } from "@/context/AuthContext";
 import { getUser } from "@/firebase/getData";
-export default function Addressedit({ addressData, onFormSubmitSuccess }) {
+export default function Addressedit({
+  addressData,
+  onFormSubmitSuccess,
+  addressIndex,
+}) {
   const theme = createTheme({
     palette: {
       primary: {
@@ -45,6 +49,8 @@ export default function Addressedit({ addressData, onFormSubmitSuccess }) {
   const [amphureName, setAmphureName] = React.useState(undefined);
   const [tambonName, setTambonName] = React.useState(undefined);
   const [addressDoc, setAddressDoc] = React.useState(addressData);
+  const [prevAddresses, setPrevAddresses] = React.useState([]);
+  console.log("testtttttttttttttt", provinces);
   const user = useAuthContext();
   const [selected, setSelected] = React.useState({
     province_id: undefined,
@@ -103,60 +109,62 @@ export default function Addressedit({ addressData, onFormSubmitSuccess }) {
       })
       .catch((error) => console.log("error", error));
   }, []);
-
+  React.useEffect(() => {
+    setPrevAddresses(addressData);
+  }, [addressData]);
+  // Inside handleForm function
   const handleForm = async (event) => {
     event.preventDefault();
-    console.log("Handling form submission");
     handleClose();
-
-    const userEdit = {
+    const updatedAddressData = {
       address: address,
-      province: provinceName,
       amphure: amphureName,
+      province: provinceName,
       tambon: tambonName,
       zipcode: zipCode,
     };
 
-    console.log("Submitting form with data:", userEdit);
+    try {
+      const userData = { ...addressData }; // Copy the addressData to prevent mutation
+      // Make sure userData.addresses is initialized as an array before trying to access/modify it
+      userData.addresses = userData.addresses || [];
 
-    const { result, error } = await editAddress("users", user.user.uid, {
-      addresses: [userEdit],
-    });
+      // Update the address at the specified index
+      userData.addresses[addressIndex] = updatedAddressData;
 
-    console.log("Result:", result);
-    console.log("Error:", error);
-    if (!error) {
-      setAlert(<Alert severity="success">แก้ไข้ข้อมูลสำเร็จ</Alert>);
-      onFormSubmitSuccess();
-      setOpenAlert(true);
-    } else {
+      // Call editAddress function with the updated data and addressIndex
+      const { result, error } = await editAddress(
+        "users",
+        user.user.uid,
+        addressIndex,
+        updatedAddressData // Pass the updated address data to editAddress function
+      );
+
+      // Handle success or error
+      if (!error) {
+        setAlert(<Alert severity="success">แก้ไขข้อมูลสำเร็จ</Alert>);
+        onFormSubmitSuccess();
+        setOpenAlert(true);
+      } else {
+        setAlert(
+          <Alert severity="error">ผิดพลาด! ไม่สามารถแก้ไขข้อมูลได้</Alert>
+        );
+        setOpenAlert(true);
+      }
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
       setAlert(
-        <Alert severity="error">ผิดพลาด! ไม่สามารถแก้ไข้ข้อมูลได้</Alert>
+        <Alert severity="error">ผิดพลาด! ไม่สามารถแก้ไขข้อมูลได้</Alert>
       );
       setOpenAlert(true);
     }
   };
 
-  const fetchData = async () => {
-    const collection = "users";
-    const uid = user.user.uid;
-    const { result, error } = await getUser(collection, uid);
-
-    if (error) {
-      console.error("Error fetching document:", error);
-    } else if (result.docs.length > 0) {
-      const userData = result.docs[0].data();
-      setAddress(userData.address);
-      setProvinces(userData.province);
-      setAmphures(userData.amphure);
-      setTambons(userData.tambon);
-      setZipCode(userData.zipCode);
-    }
-  };
-
   React.useEffect(() => {
-    fetchData();
-  }, []);
+    if (addressData) {
+      setAddress(addressData.address);
+    }
+  }, [addressData]);
 
   const handleClickOpen = (addressData) => {
     setOpen(true);
@@ -207,13 +215,13 @@ export default function Addressedit({ addressData, onFormSubmitSuccess }) {
                 <Grid xs={12} sm={6} item>
                   <Autocomplete
                     disablePortal
-                    options={provinces || []}
+                    options={provinces}
+                    value={provinceName}
                     getOptionLabel={(option) => option.name_th || option}
-                    value={String(provinceName)}
                     onChange={(e, newValue) => {
                       setSelected((prevState) => ({
                         ...prevState,
-                        province_id: newValue ? newValue.id : provinceName,
+                        province_id: newValue ? newValue.id : undefined,
                         amphure_id: undefined,
                         tambon_id: undefined,
                       }));
@@ -234,7 +242,8 @@ export default function Addressedit({ addressData, onFormSubmitSuccess }) {
                   <Autocomplete
                     disablePortal
                     options={amphures || []}
-                    getOptionLabel={(option) => option.name_th}
+                    value={amphureName}
+                    getOptionLabel={(option) => option.name_th || option}
                     onChange={(e, newValue) => {
                       setSelected((prevState) => ({
                         ...prevState,
@@ -253,7 +262,8 @@ export default function Addressedit({ addressData, onFormSubmitSuccess }) {
                   <Autocomplete
                     disablePortal
                     options={tambons || []}
-                    getOptionLabel={(option) => option.name_th}
+                    value={tambonName}
+                    getOptionLabel={(option) => option.name_th || option}
                     onChange={(e, newValue) => {
                       setSelected((prevState) => ({
                         ...prevState,

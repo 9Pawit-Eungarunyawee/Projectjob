@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import {
+  Box,
   Button,
   Paper,
   Table,
@@ -33,8 +34,8 @@ export default function TableClaim({ documentData, userData }) {
       border: 0,
     },
   }));
-  function createData(No, id, date, time, order_id, user_id, product_id) {
-    return { No, id, date, time, order_id, user_id, product_id };
+  function createData(No, id, date, time, order_id, user_id, status) {
+    return { No, id, date, time, order_id, user_id, status };
   }
   const rows = documentData.map((dataItem, index) => {
     const date = dataItem.createAt
@@ -56,10 +57,10 @@ export default function TableClaim({ documentData, userData }) {
       time,
       dataItem.order_id,
       name,
-      dataItem.product_id
+      dataItem.status
     );
   });
-  
+
   const router = useRouter();
   function handleCard(id) {
     router.push({
@@ -69,7 +70,7 @@ export default function TableClaim({ documentData, userData }) {
   }
 
   return (
-    <TableContainer component={Paper} sx={{ borderRadius: "25px", mt: 5 }}>
+    <TableContainer component={Paper} sx={{ borderRadius: "25px" }}>
       <Table sx={{ minWidth: 700 }}>
         <TableHead>
           <TableRow>
@@ -78,7 +79,7 @@ export default function TableClaim({ documentData, userData }) {
             <StyledTableCell align="center">เวลา</StyledTableCell>
             <StyledTableCell align="center">ชื่อลูกค้า</StyledTableCell>
             <StyledTableCell align="center">รายการคำสั่งซื้อ</StyledTableCell>
-           
+            <StyledTableCell align="center">สถานะ</StyledTableCell>
             <StyledTableCell align="center"></StyledTableCell>
           </TableRow>
         </TableHead>
@@ -92,6 +93,23 @@ export default function TableClaim({ documentData, userData }) {
               <StyledTableCell align="center">{row.time}</StyledTableCell>
               <StyledTableCell align="center">{row.user_id}</StyledTableCell>
               <StyledTableCell align="center">{row.order_id}</StyledTableCell>
+              <StyledTableCell align="center">
+                {" "}
+                <Box
+                  sx={{
+                    backgroundColor:
+                      row.status === "ยกเลิกการเคลม"
+                        ? "rgba(254, 97, 106, 0.50)"
+                        : row.status === "ยืนยันการเคลม"
+                        ? "rgba(169, 196, 112, 0.61)" // เปลี่ยนเป็นสีที่ต้องการ
+                        : "#FFA50080",
+                    p: 1,
+                    borderRadius: "10px",
+                  }}
+                >
+                  {row.status}
+                </Box>
+              </StyledTableCell>
               <StyledTableCell align="center">
                 <Button color="primary" onClick={() => handleCard(row.id)}>
                   ดูรายละเอียด

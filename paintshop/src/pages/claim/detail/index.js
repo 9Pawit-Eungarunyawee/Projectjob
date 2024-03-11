@@ -117,6 +117,7 @@ export default function Detail() {
       console.error("Error fetching document:", error);
     } else if (result) {
       const Data = result.data();
+      // console.log("sellDAta",Data)
       setSellData(Data);
       setShow(true);
     }

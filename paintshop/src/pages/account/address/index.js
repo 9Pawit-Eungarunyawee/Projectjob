@@ -24,6 +24,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { getUser } from "@/firebase/getData";
 import Addressdialog from "./dialog";
 import Addressedit from "./editaddress";
+import { deleteAddress } from "@/firebase/addAddresses";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -49,7 +50,24 @@ export default function Address() {
   const router = useRouter();
   const user = useAuthContext();
   const [userData, setUserData] = React.useState(null);
+  const handleDeleteAddress = async (userIndex, addressIndex) => {
+    try {
+      const cart_ids = [userData[userIndex].addresses[addressIndex].id]; // ระบุ ID ของที่อยู่ที่ต้องการลบ
+      const { result, error } = await deleteAddress(cart_ids); // เรียกใช้งาน deleteAddress เพื่อลบที่อยู่
 
+      if (error) {
+        console.error("เกิดข้อผิดพลาดในการลบที่อยู่:", error);
+        return;
+      }
+
+      // หากลบที่อยู่สำเร็จ ให้อัพเดตข้อมูลผู้ใช้ใหม่และแสดงข้อมูลใหม่ในตาราง
+      const updatedUserData = [...userData];
+      updatedUserData[userIndex].addresses.splice(addressIndex, 1);
+      setUserData(updatedUserData);
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการลบที่อยู่:", error);
+    }
+  };
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -197,13 +215,23 @@ export default function Address() {
                                     <TableCell>
                                       <Addressedit
                                         addressData={address}
+                                        addressIndex={addressIndex}
                                         onFormSubmitSuccess={
                                           handleFormSubmitSuccess
                                         }
                                       />
                                     </TableCell>
                                     <TableCell>
-                                      <Button variant="contained" color="error">
+                                      <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={() =>
+                                          handleDeleteAddress(
+                                            index,
+                                            addressIndex
+                                          )
+                                        }
+                                      >
                                         ลบ
                                       </Button>
                                     </TableCell>

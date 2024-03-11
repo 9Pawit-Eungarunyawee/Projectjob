@@ -125,19 +125,16 @@ export default function Addressedit({
     };
 
     try {
-      const userData = { ...addressData }; // Copy the addressData to prevent mutation
-      // Make sure userData.addresses is initialized as an array before trying to access/modify it
+      const userData = { ...addressData }; 
       userData.addresses = userData.addresses || [];
 
-      // Update the address at the specified index
       userData.addresses[addressIndex] = updatedAddressData;
 
-      // Call editAddress function with the updated data and addressIndex
       const { result, error } = await editAddress(
         "users",
         user.user.uid,
         addressIndex,
-        updatedAddressData // Pass the updated address data to editAddress function
+        updatedAddressData 
       );
 
       // Handle success or error

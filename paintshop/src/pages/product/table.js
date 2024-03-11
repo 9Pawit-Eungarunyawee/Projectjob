@@ -30,12 +30,19 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { OrderContext } from "@/context/OrderContext";
 export default function TableProduct({ data, onDelete }) {
   const router = useRouter();
-  const handleClick = (id) => {
-    router.push({
-      pathname: "/product/editproduct",
-      query: { product_id: JSON.stringify(id) },
-    });
-    // console.log("handleClick")
+  const handleClick = (id, isMaterial) => {
+    if (isMaterial) {
+      router.push({
+        pathname: "/product/editmaterial",
+        query: { product_id: JSON.stringify(id) },
+      });
+    } else {
+      router.push({
+        pathname: "/product/editproduct",
+        query: { product_id: JSON.stringify(id) },
+      });
+      // console.log("handleClick")
+    }
   };
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -80,7 +87,8 @@ export default function TableProduct({ data, onDelete }) {
     p_left,
     productSizes,
     status,
-    create
+    create,
+    isMaterial
   ) {
     return {
       No,
@@ -92,6 +100,7 @@ export default function TableProduct({ data, onDelete }) {
       productSizes,
       status,
       create,
+      isMaterial,
     };
   }
 
@@ -105,7 +114,8 @@ export default function TableProduct({ data, onDelete }) {
       null,
       dataItem.productSizes,
       dataItem.status === true ? "พร้อมขาย" : "ไม่พร้อมขาย",
-      dataItem.create
+      dataItem.create,
+      dataItem.isMaterial
     );
   });
   const [page, setPage] = React.useState(0);
@@ -204,7 +214,10 @@ export default function TableProduct({ data, onDelete }) {
   const getProductTotalSize = (id) => {
     const orderTotalSize = orderData.reduce((acc, order) => {
       const orderProductsWithSameId = order.products.filter(
-        (product) => product.product_id === id 
+        (product) =>
+          product.product_id === id &&
+          order.status !== "ยกเลิก" &&
+          order.status !== "รอยืนยัน"
       );
 
       const totalAmount = orderProductsWithSameId.reduce((total, product) => {
@@ -213,14 +226,18 @@ export default function TableProduct({ data, onDelete }) {
       return acc + totalAmount;
     }, 0);
 
-    console.log(" orderTotalSize",orderTotalSize)
-    return  orderTotalSize;
+    console.log("orderTotalSize", orderTotalSize);
+    return orderTotalSize;
   };
 
-  const getProductTotalSameSize = (id,sizeName) => {
+  const getProductTotalSameSize = (id, sizeName) => {
     const orderTotalSize = orderData.reduce((acc, order) => {
       const orderProductsWithSameId = order.products.filter(
-        (product) => product.product_id === id && product.size === sizeName
+        (product) =>
+          product.product_id === id &&
+          product.size === sizeName &&
+          order.status !== "ยกเลิก" &&
+          order.status !== "รอยืนยัน"
       );
 
       const totalAmount = orderProductsWithSameId.reduce((total, product) => {
@@ -229,8 +246,8 @@ export default function TableProduct({ data, onDelete }) {
       return acc + totalAmount;
     }, 0);
 
-    console.log(" orderTotalSize",orderTotalSize)
-    return  orderTotalSize;
+    console.log(" orderTotalSize", orderTotalSize);
+    return orderTotalSize;
   };
 
   const [openRows, setOpenRows] = React.useState([]);
@@ -304,10 +321,15 @@ export default function TableProduct({ data, onDelete }) {
                   </StyledTableCell>
 
                   <StyledTableCell align="center">{row.p_name}</StyledTableCell>
-                  <StyledTableCell align="center">{getProductTotalSize(row.id)}</StyledTableCell>
+                  <StyledTableCell align="center">
+                    {getProductTotalSize(row.id)}
+                  </StyledTableCell>
                   <StyledTableCell align="center">
                     {/* {getProductTotalSize(row.id)} */}
-                    { row.productSizes.reduce((total, size) => total + size.amount, 0)}
+                    {row.productSizes.reduce(
+                      (total, size) => total + size.amount,
+                      0
+                    )}
                   </StyledTableCell>
 
                   <StyledTableCell align="center">
@@ -327,7 +349,7 @@ export default function TableProduct({ data, onDelete }) {
                   <StyledTableCell align="center">
                     <IconButton
                       color="primary"
-                      onClick={() => handleClick(row.id)}
+                      onClick={() => handleClick(row.id, row.isMaterial)}
                     >
                       <EditIcon />
                     </IconButton>
@@ -373,7 +395,9 @@ export default function TableProduct({ data, onDelete }) {
                                 <TableCell align="center">
                                   {size.size}
                                 </TableCell>
-                                <TableCell align="center">{getProductTotalSameSize(row.id, size.size)}</TableCell>
+                                <TableCell align="center">
+                                  {getProductTotalSameSize(row.id, size.size)}
+                                </TableCell>
                                 <TableCell align="center">
                                   {/* {getProductTotalSameSize(row.id, size.size)} */}
                                   {size.amount}

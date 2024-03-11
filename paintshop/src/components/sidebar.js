@@ -110,6 +110,7 @@ export default function Sidebar() {
           <Image
             src={Logo}
             alt="logo"
+            priority
             style={{
               objectFit: "cover",
               width: "10vw",

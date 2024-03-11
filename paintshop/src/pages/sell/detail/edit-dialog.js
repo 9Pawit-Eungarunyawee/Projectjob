@@ -12,9 +12,9 @@ import {
   ThemeProvider,
   createTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function EditDialog({ open, onClose, sell_id, fetchData }) {
+export default function EditDialog({ open, onClose, sell_id, fetchData,sellData }) {
   const theme = createTheme({
     palette: {
       primary: {
@@ -41,6 +41,12 @@ export default function EditDialog({ open, onClose, sell_id, fetchData }) {
   const [status, setStatus] = useState("");
   const [tracker, setTracker] = useState("");
 
+  useEffect(()=>{
+    if(sellData){
+      setStatus(sellData.status)
+      setTracker(sellData.tracker)
+    }
+  },[sellData])
   const handleForm = async (event) => {
     event.preventDefault();
     const data = {

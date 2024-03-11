@@ -131,6 +131,9 @@ export default function AddCatalog() {
         </Alert>
       );
       setOpen(true);
+      setTimeout(() => {
+        goBack();
+      }, 500);
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>

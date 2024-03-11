@@ -303,33 +303,20 @@ export default function Add() {
                     index={index}
                     setProducts={setProducts}
                   />
-                  <TextField
-                    variant="outlined"
-                    label="ชื่อสินค้า"
-                    id="product-name"
-                    name="product_name"
-                    disabled
-                    value={product.product_name}
-                    onChange={(e) =>
-                      handleInputChange(e, index, "product_name")
-                    }
+                  <Button
+                    onClick={handleOpenDialog}
                     fullWidth
-                    size="small"
-                    sx={{ mt: 1, mb: 1 }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={handleOpenDialog}>
-                            <SearchIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                     
-                    }}
-                  />
+                    variant="outlined"
+                  >
+                    <SearchIcon />
+                    <Typography>ค้นหาสินค้า</Typography>
+                  </Button>
+                  <Typography sx={{ mt: 1 }}>
+                    ชื่อสินค้า:{" "}
+                    <span style={{ fontSize: "1.2rem" }}>
+                      {product.product_name}
+                    </span>
+                  </Typography>
                   <Typography sx={{ mt: 1 }}>รูปแบบสินค้า:</Typography>
                   {product.product_size.map((product_size, id) => (
                     <Box

@@ -19,7 +19,6 @@ export default function ProductProvider({ children }) {
       console.error("Error fetching document:", error);
     } else if (result) {
       const Data = result.docs
-        .filter((doc) => !doc.data().delete)
         .map((doc) => ({
           id: doc.id,
           ...doc.data(),

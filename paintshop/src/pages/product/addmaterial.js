@@ -21,6 +21,7 @@ import { useContext, useEffect, useState } from "react";
 import { CatalogContext } from "@/context/CatalogContext";
 import { ProductContext } from "@/context/ProductContext";
 import Layout from "@/components/layout";
+import addMaterial from "@/firebase/addMeterial";
 export default function AddMaterial() {
   const { user } = useAuthContext();
   const { fetchProductData } = useContext(ProductContext);
@@ -116,7 +117,7 @@ export default function AddMaterial() {
       productSizes: productSizes,
       user_id: user.uid,
     };
-    const result = await addData("products", product);
+    const result = await addMaterial("products", product);
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
@@ -153,7 +154,7 @@ export default function AddMaterial() {
           {alert}
         </Snackbar>
         <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 4 }}>
-          เพิ่มสินค้า
+          เพิ่มสินค้า(วัสดุ)
         </Typography>
         <Button
           sx={{
@@ -183,23 +184,6 @@ export default function AddMaterial() {
           <Grid item xs={12} sm={7}>
             <form onSubmit={handleForm} className="form">
               <FormControl fullWidth>
-                <Typography>แคตตาล็อก:</Typography>
-                <TextField
-                  value={catalogId}
-                  onChange={(e) => setCatalogId(e.target.value)}
-                  size="small"
-                  select
-                  label="เลือกแคตตาล็อก"
-                  required
-                >
-                  <MenuItem value="">กรุณาเลือกแคตตาล็อก</MenuItem>
-                  {catalogData &&
-                    catalogData.map((catalog) => (
-                      <MenuItem key={catalog.id} value={catalog.id}>
-                        {catalog.name}
-                      </MenuItem>
-                    ))}
-                </TextField>
                 <Typography sx={{ mt: 1 }}>ข้อมูลสินค้า:</Typography>
                 <TextField
                   variant="outlined"
@@ -211,64 +195,6 @@ export default function AddMaterial() {
                   sx={{ mt: 1, mb: 1 }}
                   onChange={(e) => setName(e.target.value)}
                 />
-
-                <TextField
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  size="small"
-                  select
-                  label="พื้นที่ใช้งาน"
-                  sx={{ mt: 1, mb: 1 }}
-                  required
-                >
-                  <MenuItem value={"สีทาภายนอก"}>สีทาภายนอก</MenuItem>
-                  <MenuItem value={"สีทาภายใน"}>สีทาภายใน</MenuItem>
-                  <MenuItem value={"สีน้ำมัน"}>สีน้ำมัน</MenuItem>
-                  <MenuItem value={"สีย้อมไม้"}>สีย้อมไม้</MenuItem>
-                </TextField>
-                <TextField
-                  value={flim}
-                  onChange={(e) => setFlim(e.target.value)}
-                  size="small"
-                  select
-                  label="ฟิล์ม"
-                  sx={{ mt: 1, mb: 1 }}
-                  required
-                >
-                  <MenuItem value={"ฟิล์มสีชนิดเงา"}>ฟิล์มสีชนิดเงา</MenuItem>
-                  <MenuItem value={"ฟิล์มสีชนิดกึ่งเงา"}>
-                    ฟิล์มสีชนิดกึ่งเงา
-                  </MenuItem>
-                  <MenuItem value={"ฟิล์มสีชนิดเนียน"}>
-                    ฟิล์มสีชนิดเนียน{" "}
-                  </MenuItem>
-                  <MenuItem value={"ฟิล์มสีชนิดด้าน"}>ฟิล์มสีชนิดด้าน</MenuItem>
-                </TextField>
-                <TextField
-                  value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
-                  size="small"
-                  select
-                  label="เกรด"
-                  sx={{ mt: 1, mb: 1 }}
-                  required
-                >
-                  <MenuItem value={"เกรดอัลตร้าพรีเมี่ยม อายุการใช้งาน 15 ปี"}>
-                    เกรดอัลตร้าพรีเมี่ยม อายุการใช้งาน 15 ปี
-                  </MenuItem>
-                  <MenuItem value={"เกรดพรีเมี่ยม อายุการใช้งาน 10 ปี"}>
-                    เกรดพรีเมี่ยม อายุการใช้งาน 10 ปี
-                  </MenuItem>
-                  <MenuItem value={"เกรดมาตรฐานบน 5-7 ปี"}>
-                    เกรดมาตรฐานบน 5-7 ปี
-                  </MenuItem>
-                  <MenuItem value={"เกรดมาตรฐาน 3-5 ปี"}>
-                    เกรดมาตรฐาน 3-5 ปี
-                  </MenuItem>
-                  <MenuItem value={"เกรดประหยัด 1-3 ปี"}>
-                    เกรดประหยัด 1-3 ปี
-                  </MenuItem>
-                </TextField>
 
                 <TextField
                   value={detail}
@@ -301,18 +227,11 @@ export default function AddMaterial() {
                       value={productSizes.size}
                       onChange={(e) => handleInputChange(e, index, "size")}
                       size="small"
-                      select
                       fullWidth
                       label="ขนาด"
                       sx={{ mt: 1, mb: 1 }}
                       required
-                    >
-                      <MenuItem value={""}>กรุณาเลือกขนาดบรรจุ</MenuItem>
-                      <MenuItem value={"1/4 แกลลอน"}>1/4 แกลลอน</MenuItem>
-                      <MenuItem value={"1 แกลลอน"}>1 แกลลอน</MenuItem>
-                      <MenuItem value={"2.5 แกลลอน"}>2.5 แกลลอน</MenuItem>
-                      <MenuItem value={"5 แกลลอน"}>5 แกลลอน</MenuItem>
-                    </TextField>
+                    />
 
                     {/* <TextField
                       value={productSizes.amount}

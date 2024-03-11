@@ -83,7 +83,9 @@ export default function Product() {
   function handleAdd() {
     router.push("/product/addproduct");
   }
-
+ const handleAddMaterial = () =>{
+  router.push("/product/addmaterial");
+ }
   const debouncedSearchUser = debounce(async (term) => {
     try {
       const collectionName = "products";
@@ -226,7 +228,7 @@ export default function Product() {
                 variant="contained"
                 color="success"
                 sx={{ mr: 2, mb: 2, mt: 2 }}
-                onClick={handleAdd}
+                onClick={handleAddMaterial}
               >
                 เพิ่มสินค้า(วัสดุ)
               </Button>
@@ -271,32 +273,32 @@ export default function Product() {
               </Box>
               <CustomTabPanel value={value} index={0}>
                 <TableProduct
-                  data={{ data: productData }}
+                  data={{ data: productData.filter((item)=> !item.delete) }}
                   onDelete={handleDelete}
                 />
               </CustomTabPanel>
               <CustomTabPanel value={value} index={1}>
                 <TableProduct
-                  data={{ data: productData.filter((item) => item.status) }}
+                  data={{ data: productData.filter((item) => item.status && !item.delete) }}
                   onDelete={handleDelete}
                 />
               </CustomTabPanel>
               <CustomTabPanel value={value} index={2}>
                 <TableProduct
-                  data={{ data: productData.filter((item) => !item.status) }}
+                  data={{ data: productData.filter((item) => !item.status && !item.delete) }}
                   onDelete={handleDelete}
                 />
               </CustomTabPanel>
 
               <CustomTabPanel value={value} index={3}>
                 <TableProduct
-                  data={{ data: productAlmostOutOfStock }}
+                  data={{ data: productAlmostOutOfStock.filter((item)=>!item.delete) }}
                   onDelete={handleDelete}
                 />
               </CustomTabPanel>
               <CustomTabPanel value={value} index={4}>
                 <TableProduct
-                  data={{ data: productOutOfStock }}
+                  data={{ data: productOutOfStock.filter((item)=>!item.delete) }}
                   onDelete={handleDelete}
                 />
               </CustomTabPanel>

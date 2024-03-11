@@ -1,5 +1,5 @@
 import firebase_app from "./config";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, setDoc, doc } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
 
@@ -10,7 +10,7 @@ export default async function addClaim(collectionName, data) {
   // สร้างอ้างอิงไปยังเอกสารในคอลเลคชัน "claims"
   const currentDate = new Date();
   const img = data.img ? data.img : "";
-//   const vid = data.vid ? data.vid : "";
+  //   const vid = data.vid ? data.vid : "";
   try {
     // เตรียมข้อมูลที่ต้องการเพิ่ม
     const claimData = {
@@ -36,3 +36,41 @@ export default async function addClaim(collectionName, data) {
 
   return { result, error };
 }
+
+const confirmCliam = async (id) => {
+  let result = null;
+  let error = null;
+  try {
+    const data = {
+      status: "ยืนยันการเคลม",
+    };
+    result = await setDoc(doc(db, "claims", id), data, {
+      merge: true,
+    });
+    console.log("ยืนยันการเคลมสำเร็จ", result);
+  } catch(e) {
+    error = e;
+    console.log("เกิดข้อผิดพลาดในการยืนยันการเคลม",error)
+  }
+  return{result,error}
+};
+export {confirmCliam}
+
+const cancelCliam = async (id) => {
+  let result = null;
+  let error = null;
+  try {
+    const data = {
+      status: "ยกเลิกการเคลม",
+    };
+    result = await setDoc(doc(db, "claims", id), data, {
+      merge: true,
+    });
+    console.log("ยกเลิกการเคลมสำเร็จ", result);
+  } catch(e) {
+    error = e;
+    console.log("เกิดข้อผิดพลาดในการยกเลิกการเคลม",error)
+  }
+  return{result,error}
+};
+export {cancelCliam}

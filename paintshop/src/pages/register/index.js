@@ -18,11 +18,9 @@ import React, { useEffect, useState } from "react";
 import signUp from "@/firebase/auth/signup";
 import { useRouter } from "next/router";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 export default function AddEmployee() {
-  const [profileUrl, setProfileUrl] = useState(
-    "default-profile.jpg"
-  );
+  const [profileUrl, setProfileUrl] = useState("default-profile.jpg");
   const [name, setName] = useState(null);
   const [tel, setTel] = useState(null);
   const [address, setAddress] = useState(null);
@@ -149,243 +147,249 @@ export default function AddEmployee() {
       },
     },
   });
+  const goBack = () => {
+    window.history.back();
+  };
   return (
     <ThemeProvider theme={theme}>
       <React.Fragment>
         <CssBaseline />
-        <Container maxWidth="sx" style={{ padding: "0px" }}>
-          <Box>
-            {/* <Button>ย้อนกลับ</Button> */}
 
-            <form
-              onSubmit={handleForm}
-              className="form"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100vh",
+        <form onSubmit={handleForm} className="form">
+          <Box sx={{ m: 5 }}>
+            <Grid
+              container
+              spacing={0}
+              sx={{
+                backgroundColor: "#fff",
+                p: 2,
+                borderRadius: "10px",
+                boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
               }}
             >
-              <Box sx={{ width: "100%" }}>
-                <Grid
-                  container
-                  spacing={2}
+              <Grid item xs={12}>
+                <Button
                   sx={{
-                    backgroundColor: "#fff",
-                    p: 1,
-                    borderRadius: "10px",
+                    color: "#018294",
+                    bgcolor: "white",
+                    fontWeight: "bold",
+                    borderRadius: "50px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    mb:3
                   }}
+                  onClick={goBack}
                 >
-                  <Grid item xs={12} sm={12}>
-                    <Box sx={{ textAlign: "center" }}>
-                      <Box>
-                        <Typography sx={{ fontSize: "2vw", fontWeight: "600" }}>
-                          สร้างบัญชี
-                        </Typography>
-                        {profileUrl && (
-                          <Image
-                            src={profileUrl}
-                            alt="Uploaded Image"
-                            priority
-                            height="150"
-                            width="150"
-                            style={{
-                              borderRadius: "100px",
-                              border: "1px solid rgba(0, 0, 0, 0.50)",
-                            }}
-                          />
-                        )}
-                      </Box>
-                      <label htmlFor="upload-image">
-                        <Button variant="contained" component="span">
-                          เพิ่มรูปโปรไฟล์
-                        </Button>
-                        <input
-                          id="upload-image"
-                          hidden
-                          accept="image/*"
-                          type="file"
-                          onChange={handleFileUpload}
-                        />
-                      </label>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      label="ชื่อ"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                    <TextField
-                      variant="outlined"
-                      label="อีเมล"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <TextField
-                      color={passwordsMatch ? "" : "error"}
-                      variant="outlined"
-                      type={showPassword ? "text" : "password"}
-                      label="รหัสผ่าน"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{
-                        mt: 1,
-                        mb: 1,
-                      }}
-                      error={passwordsMatch? false:true}
-                      helperText={passwordsMatch ? "" : "รหัสผ่านไม่ตรงกัน"}
-                      onChange={(e) => setPassword(e.target.value)}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={handleTogglePasswordVisibility}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    <TextField
-                      variant="outlined"
-                      
-                      type={showConPassword ? "text" : "password"}
-                      label="ยืนยันรหัสผ่าน"
-                      fullWidth
-                      error={passwordsMatch? false:true}
-                      required
-                      size="small"
-                      sx={{
-                        mt: 1,
-                        mb: 1,
-                      }}
-                      helperText={passwordsMatch ? "" : "รหัสผ่านไม่ตรงกัน"}
-                      onChange={(e) => setConpassword(e.target.value)}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={handleToggleConPasswordVisibility}
-                              edge="end"
-                            >
-                              {showConPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    <TextField
-                      variant="outlined"
-                      label="เบอร์ติดต่อ"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setTel(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      variant="outlined"
-                      label="บ้านเลขที่"
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                      onChange={(e) => setAddress(e.target.value)}
-                    />
-                    <Autocomplete
-                      disablePortal
-                      options={provinces}
-                      getOptionLabel={(option) => option.name_th}
-                      onChange={(e, newValue) => {
-                        setSelected((prevState) => ({
-                          ...prevState,
-                          province_id: newValue ? newValue.id : undefined,
-                          amphure_id: undefined,
-                          tambon_id: undefined,
-                        }));
-                      }}
-                      fullWidth
-                      required
-                      size="small"
-                      sx={{ mt: 1, mb: 1 }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="จังหวัด" />
-                      )}
-                    />
-                    <Autocomplete
-                      disablePortal
-                      options={amphures || []}
-                      getOptionLabel={(option) => option.name_th}
-                      onChange={(e, newValue) => {
-                        setSelected((prevState) => ({
-                          ...prevState,
-                          amphure_id: newValue ? newValue.id : undefined,
-                          tambon_id: undefined,
-                        }));
-                      }}
-                      fullWidth
-                      size="small"
-                      sx={{ mt: 2, mb: 1 }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="อำเภอ" />
-                      )}
-                    />
-                    <Autocomplete
-                      disablePortal
-                      options={tambons || []}
-                      getOptionLabel={(option) => option.name_th}
-                      onChange={(e, newValue) => {
-                        setSelected((prevState) => ({
-                          ...prevState,
-                          tambon_id: newValue ? newValue.id : undefined,
-                        }));
-                      }}
-                      fullWidth
-                      size="small"
-                      sx={{ mt: 2, mb: 1 }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="ตำบล" />
-                      )}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    sx={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <Button variant="contained" sx={{ mb: 2 }} type="submit">
+                  <ArrowBackOutlinedIcon />
+                  <Typography>ย้อนกลับ</Typography>
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Box sx={{ textAlign: "center" }}>
+                  <Box>
+                    <Typography sx={{ fontSize: "1.5rem", fontWeight: "600" }}>
                       สร้างบัญชี
+                    </Typography>
+                    {profileUrl && (
+                      <Image
+                        src={profileUrl}
+                        alt="Uploaded Image"
+                        priority
+                        height="150"
+                        width="150"
+                        style={{
+                          borderRadius: "100px",
+                          border: "1px solid rgba(0, 0, 0, 0.50)",
+                        }}
+                      />
+                    )}
+                  </Box>
+                  <label htmlFor="upload-image">
+                    <Button variant="contained" component="span">
+                      เพิ่มรูปโปรไฟล์
                     </Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </form>
+                    <input
+                      id="upload-image"
+                      hidden
+                      accept="image/*"
+                      type="file"
+                      onChange={handleFileUpload}
+                    />
+                  </label>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Box sx={{ p: 1 }}>
+                  <Typography>ข้อมูล:</Typography>
+                  <TextField
+                    variant="outlined"
+                    label="ชื่อ"
+                    fullWidth
+                    required
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <TextField
+                    variant="outlined"
+                    label="อีเมล"
+                    fullWidth
+                    required
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <TextField
+                    color={passwordsMatch ? "" : "error"}
+                    variant="outlined"
+                    type={showPassword ? "text" : "password"}
+                    label="รหัสผ่าน"
+                    fullWidth
+                    required
+                    size="small"
+                    sx={{
+                      mt: 1,
+                      mb: 1,
+                    }}
+                    error={passwordsMatch ? false : true}
+                    helperText={passwordsMatch ? "" : "รหัสผ่านไม่ตรงกัน"}
+                    onChange={(e) => setPassword(e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleTogglePasswordVisibility}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    variant="outlined"
+                    type={showConPassword ? "text" : "password"}
+                    label="ยืนยันรหัสผ่าน"
+                    fullWidth
+                    error={passwordsMatch ? false : true}
+                    required
+                    size="small"
+                    sx={{
+                      mt: 1,
+                      mb: 1,
+                    }}
+                    helperText={passwordsMatch ? "" : "รหัสผ่านไม่ตรงกัน"}
+                    onChange={(e) => setConpassword(e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleToggleConPasswordVisibility}
+                            edge="end"
+                          >
+                            {showConPassword ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    variant="outlined"
+                    label="เบอร์ติดต่อ"
+                    fullWidth
+                    required
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    onChange={(e) => setTel(e.target.value)}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Box sx={{ p: 1 }}>
+                  <Typography>ที่อยู่:</Typography>
+                  <TextField
+                    variant="outlined"
+                    label="บ้านเลขที่"
+                    fullWidth
+                    required
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                  <Autocomplete
+                    disablePortal
+                    options={provinces}
+                    getOptionLabel={(option) => option.name_th}
+                    onChange={(e, newValue) => {
+                      setSelected((prevState) => ({
+                        ...prevState,
+                        province_id: newValue ? newValue.id : undefined,
+                        amphure_id: undefined,
+                        tambon_id: undefined,
+                      }));
+                    }}
+                    fullWidth
+                    required
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="จังหวัด" />
+                    )}
+                  />
+                  <Autocomplete
+                    disablePortal
+                    options={amphures || []}
+                    getOptionLabel={(option) => option.name_th}
+                    onChange={(e, newValue) => {
+                      setSelected((prevState) => ({
+                        ...prevState,
+                        amphure_id: newValue ? newValue.id : undefined,
+                        tambon_id: undefined,
+                      }));
+                    }}
+                    fullWidth
+                    size="small"
+                    sx={{ mt: 2, mb: 1 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="อำเภอ" />
+                    )}
+                  />
+                  <Autocomplete
+                    disablePortal
+                    options={tambons || []}
+                    getOptionLabel={(option) => option.name_th}
+                    onChange={(e, newValue) => {
+                      setSelected((prevState) => ({
+                        ...prevState,
+                        tambon_id: newValue ? newValue.id : undefined,
+                      }));
+                    }}
+                    fullWidth
+                    size="small"
+                    sx={{ mt: 2, mb: 1 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="ตำบล" />
+                    )}
+                  />
+                </Box>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                sx={{ display: "flex", justifyContent: "center" }}
+              >
+                <Button variant="contained" sx={{ mb: 2 }} type="submit">
+                  สร้างบัญชี
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
-        </Container>
+        </form>
       </React.Fragment>
     </ThemeProvider>
   );

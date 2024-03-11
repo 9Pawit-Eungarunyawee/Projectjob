@@ -177,7 +177,6 @@ export default function Order() {
               <CustomTabPanel value={value} index={2}>
                 <TableSell documentData={orderData.filter((item) => item.status === "จัดเตรียมสินค้า")} userData={userData} />
               </CustomTabPanel>
-
               <CustomTabPanel value={value} index={3}>
                 <TableSell documentData={orderData.filter((item) => item.status === "อยู่ระหว่างจัดส่ง")} userData={userData} />
               </CustomTabPanel>

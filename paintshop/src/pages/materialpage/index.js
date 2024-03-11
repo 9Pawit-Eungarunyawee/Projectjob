@@ -25,12 +25,11 @@ function handleClick(event) {
   console.info("You clicked a breadcrumb.");
 }
 
-export default function Productpage() {
+export default function Materialpage() {
   const [documentData, setDocumentData] = React.useState(null);
   const [lotData, setLotData] = React.useState(null);
   const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
-  const catalogId = JSON.parse(router.query.catalogData);
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
@@ -39,9 +38,8 @@ export default function Productpage() {
   };
   function handleCard(productId) {
     router.push({
-      pathname: "/colorselect/",
+      pathname: "/materialpage/materialdetail/",
       query: {
-        catalogData: JSON.stringify(catalogId),
         productId: JSON.stringify(productId),
       },
     });
@@ -69,7 +67,7 @@ export default function Productpage() {
       const results = await searchData(collectionName, field, term);
       const filteredResults = results.filter(
         (doc) =>
-          doc.catalog_id?.id === catalogId &&
+          doc.isMaterial === true &&
           doc.status === true &&
           doc.delete === null
       );
@@ -126,7 +124,7 @@ export default function Productpage() {
                 >
                   แคตตาล็อก
                 </Link>
-                <Typography color="text.primary">ผลิตภัณฑ์</Typography>
+                <Typography color="text.primary">วัสดุภัณฑ์</Typography>
               </Breadcrumbs>
             </div>
             <Link
@@ -201,7 +199,7 @@ export default function Productpage() {
                                   textAlign: "left",
                                 }}
                               >
-                                {item.name} {item.area}
+                                {item.name} 
                               </Typography>
                               <Box
                                 sx={{

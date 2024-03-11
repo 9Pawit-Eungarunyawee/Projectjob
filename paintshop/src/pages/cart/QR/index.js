@@ -19,7 +19,7 @@ const generate = require("promptpay-qr");
 export default function QR() {
   const router = useRouter();
   const user = useAuthContext();
-  const sumtotal = JSON.parse(router.query.total);
+  const sumtotal = JSON.parse(router.query.totalAllPrice);
   const productDetails = JSON.parse(router.query.productDetails);
   const addressDetails = JSON.parse(router.query.addressDetails);
   const cartID = JSON.parse(router.query.cartId);

@@ -54,8 +54,11 @@ export default function Cart() {
   const shippingCost = 50;
   const router = useRouter();
   const [documentData, setDocumentData] = React.useState(null);
+  const [isMaterial, setIsMaterial] = React.useState(false);
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
+  const [productData2, setProductData2] = React.useState(null);
+  const [materialData, setMaterialData] = React.useState(null);
   const [colorData, setColorData] = React.useState(null);
   const [producttotal, setProducttotal] = React.useState(0);
   const [total, setTotal] = React.useState(0);
@@ -80,7 +83,7 @@ export default function Cart() {
     },
   });
   const [groupedProductData, setGroupedProductData] = React.useState(null);
-
+  const [groupedMaterialData, setGroupedMaterialData] = React.useState(null);
   //ดึงข้อมูล
   const [searchTerm, setSearchTerm] = React.useState("");
   React.useEffect(() => {
@@ -106,8 +109,10 @@ export default function Cart() {
       const collectionName = "cart";
       const field = "user_id";
       const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter((doc) => doc.user_id == uid);
-      const productIds = filteredResults.map((doc) => doc.product_id.id);
+      const filteredResults = results.filter(
+        (doc) => doc.user_id == uid && doc.isMaterial === false
+      );
+      const productIds = filteredResults.map((doc) => doc.product_id?.id);
       const colorIds = filteredResults.map((doc) => doc.color_id.id);
       console.log("Product IDs:", productIds);
       console.log("Color IDs:", colorIds);
@@ -135,10 +140,41 @@ export default function Cart() {
     }
   }, 500);
 
-  // กำหนดเวลา debounce ที่คุณต้องการ
+  const debouncedSearchMaterial = debounce(async (term) => {
+    const uid = user.user.uid;
+    try {
+      const collectionName = "cart";
+      const field = "user_id";
+      const results = await searchUser(collectionName, field, term);
+      const filteredResults = results.filter(
+        (doc) => doc.user_id === uid && doc.isMaterial === true
+      );
+      const productIds = filteredResults.map((doc) => doc.product_id?.id);
+      const productDetails = await getProductDetails(productIds);
+      setProductData2(productDetails);
+      setMaterialData(filteredResults);
+      const groupedMaterials = {};
+      filteredResults.forEach((doc) => {
+        const key = `${doc.product_id.id}_${doc.price}`;
+        if (!groupedMaterials[key]) {
+          groupedMaterials[key] = {
+            ...doc,
+          };
+        } else {
+          groupedMaterials[key].amount += 1;
+        }
+      });
+
+      setGroupedMaterialData(Object.values(groupedMaterials));
+    } catch (error) {
+      console.error("Error searching data:", error);
+    }
+  }, 500);
+  console.log("test:", materialData);
   const handleSearch = (term) => {
     setSearchTerm(term);
     debouncedSearchUser(term);
+    debouncedSearchMaterial(term);
   };
   //ดึงสี
 
@@ -146,27 +182,49 @@ export default function Cart() {
   const [amount, setAmount] = React.useState(0);
 
   React.useEffect(() => {
-    if (cartData) {
+    if (cartData && cartData.every((item) => item.amount !== undefined)) {
       const totalAmount = cartData.reduce((acc, item) => acc + item.amount, 0);
       setAmount(totalAmount);
     }
   }, [cartData]);
 
+  const [totalMaterialPrice, setTotalMaterialPrice] = React.useState(0);
+  const [totalProductPrice, setTotalProductPrice] = React.useState(0);
+  const [materialTotal, setMaterialTotal] = React.useState(0);
+
   React.useEffect(() => {
     if (groupedProductData && groupedProductData.length > 0) {
       let totalQuantity = 0;
-      let total = 0;
       let producttotal = 0;
       groupedProductData.forEach((item) => {
         totalQuantity += item.amount;
         producttotal += item.amount * item.price;
       });
-      total += producttotal + shippingCost;
+      const total = producttotal + shippingCost;
       setTotalQuantity(totalQuantity);
       setProducttotal(producttotal);
+      setTotalProductPrice(producttotal);
       setTotal(total);
     }
   }, [groupedProductData]);
+
+  React.useEffect(() => {
+    if (groupedMaterialData && groupedMaterialData.length > 0) {
+      let totalQuantity = 0;
+      let materialtotal = 0;
+      groupedMaterialData.forEach((item) => {
+        totalQuantity += item.amount;
+        materialtotal += item.amount * item.price;
+      });
+      const total = materialtotal + shippingCost;
+      setTotalQuantity(totalQuantity);
+      setMaterialTotal(materialtotal);
+      setTotalMaterialPrice(materialtotal);
+      setTotal(total);
+    }
+  }, [groupedMaterialData]);
+  const productPrice = totalMaterialPrice + totalProductPrice;
+  const totalAllPrice = totalMaterialPrice + totalProductPrice + shippingCost;
   const handleDelete = async (id) => {
     const result = await deleteData("cart", id);
 
@@ -249,7 +307,10 @@ export default function Cart() {
           >
             <Box sx={{ p: 3, width: "70vw" }}>
               <Grid container spacing={2}>
-                {documentData && documentData.length > 0 ? (
+                {documentData &&
+                documentData.length > 0 ||
+                materialData &&
+                materialData.length > 0 ? (
                   <>
                     <Grid item xs={12} md={9}>
                       <Typography
@@ -263,6 +324,7 @@ export default function Cart() {
                       >
                         รถเข็นของฉัน
                       </Typography>
+
                       <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                           <TableHead>
@@ -276,56 +338,99 @@ export default function Cart() {
                               <TableCell></TableCell>
                             </TableRow>
                           </TableHead>
-                          {groupedProductData &&
-                            groupedProductData.map((item, index) => {
-                              const product = productData.find(
-                                (p) => p.id === item.product_id.id
-                              );
-                              return (
-                                <TableRow
-                                  key={index}
-                                  sx={{
-                                    "&:last-child td, &:last-child th": {
-                                      border: 0,
-                                    },
-                                  }}
-                                >
-                                  <TableCell component="th" scope="row">
-                                    {product && (
-                                      <img
-                                        src={product.img}
-                                        alt={product.name}
-                                        width={60}
-                                        height={60}
-                                      />
-                                    )}
-                                  </TableCell>
-                                  <TableCell>{product.name}</TableCell>
-                                  <TableCell>
-                                    <Box
-                                      sx={{
-                                        width: 50,
-                                        height: 50,
-                                        bgcolor: colorData.find(
-                                          (color) =>
-                                            color.id === item.color_id.id
-                                        ).code,
-                                      }}
-                                    ></Box>
-                                  </TableCell>
-                                  <TableCell>{item.size}</TableCell>
-                                  <TableCell>฿{format(item.price)}</TableCell>
-                                  <TableCell>{item.amount}</TableCell>
-                                  <TableCell>
-                                    <IconButton
-                                      onClick={() => handleDelete(item.id)}
-                                    >
-                                      <DeleteOutlineIcon />
-                                    </IconButton>
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })}
+                          <TableBody>
+                            {groupedProductData &&
+                              groupedProductData.map((item, index) => {
+                                const product = productData.find(
+                                  (p) => p.id === item.product_id.id
+                                );
+                                return (
+                                  <TableRow
+                                    key={index}
+                                    sx={{
+                                      "&:last-child td, &:last-child th": {
+                                        border: 0,
+                                      },
+                                    }}
+                                  >
+                                    <TableCell component="th" scope="row">
+                                      {product && (
+                                        <img
+                                          src={product.img}
+                                          alt={product.name}
+                                          width={60}
+                                          height={60}
+                                        />
+                                      )}
+                                    </TableCell>
+                                    <TableCell>
+                                      {product && product.name}
+                                    </TableCell>
+                                    <TableCell>
+                                      <Box
+                                        sx={{
+                                          width: 50,
+                                          height: 50,
+                                          bgcolor: colorData.find(
+                                            (color) =>
+                                              color.id === item.color_id.id
+                                          ).code,
+                                        }}
+                                      ></Box>
+                                    </TableCell>
+                                    <TableCell>{item.size}</TableCell>
+                                    <TableCell>฿{format(item.price)}</TableCell>
+                                    <TableCell>{item.amount}</TableCell>
+                                    <TableCell>
+                                      <IconButton
+                                        onClick={() => handleDelete(item.id)}
+                                      >
+                                        <DeleteOutlineIcon />
+                                      </IconButton>
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            {groupedMaterialData &&
+                              groupedMaterialData.map((item, index) => {
+                                const product = productData2.find(
+                                  (p) => p.id === item.product_id.id
+                                );
+                                return (
+                                  <TableRow
+                                    key={index}
+                                    sx={{
+                                      "&:last-child td, &:last-child th": {
+                                        border: 0,
+                                      },
+                                    }}
+                                  >
+                                    <TableCell>
+                                      {product && (
+                                        <img
+                                          src={product.img}
+                                          alt={product.name}
+                                          width={60}
+                                          height={60}
+                                        />
+                                      )}
+                                    </TableCell>
+                                    <TableCell>{product.name}</TableCell>
+                                    <TableCell></TableCell>
+                                    <TableCell>{item.size}</TableCell>
+                                    <TableCell>฿{format(item.price)}</TableCell>
+                                    <TableCell>{item.amount}</TableCell>
+                                    <TableCell>
+                                      <IconButton
+                                        onClick={() => handleDelete(item.id)}
+                                      >
+                                        <DeleteOutlineIcon />
+                                      </IconButton>
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                          </TableBody>
                         </Table>
                       </TableContainer>
                     </Grid>
@@ -357,7 +462,7 @@ export default function Cart() {
                                 ยอดรวมสินค้า ({totalQuantity} ชิ้น)
                               </Typography>
                               <Typography sx={{ fontWeight: "bold" }}>
-                                ฿{format(producttotal)}
+                                ฿{format(productPrice)}
                               </Typography>
                             </Box>
                             <Box
@@ -391,7 +496,7 @@ export default function Cart() {
                                 component="div"
                                 sx={{ fontWeight: "bold" }}
                               >
-                                ฿{format(total)}
+                                ฿{format(totalAllPrice)}
                               </Typography>
                             </Box>
                             <Button

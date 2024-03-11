@@ -36,7 +36,7 @@ import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
 import updateOrder from "@/firebase/updateOrder";
 
-export default function DetailOrder() {
+export default function Refunddetail() {
   const shippingCost = 50;
   const [total, setTotal] = React.useState(0);
   const { user, isAdmin } = useAuthContext();

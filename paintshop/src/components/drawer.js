@@ -25,6 +25,7 @@ import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AnnouncementOutlinedIcon from "@mui/icons-material/AnnouncementOutlined";
+import HandymanIcon from '@mui/icons-material/Handyman';
 import BrushIcon from "@mui/icons-material/Brush";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -371,6 +372,30 @@ const DrawerComp = () => {
                 />
                 <Typography variant="menu" noWrap sx={{ color: "black" }}>
                   ผลิตภัณฑ์
+                </Typography>
+              </Box>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link
+              href="/materialpage"
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%", // Set width to 100%
+              }}
+              onClick={(e) => setActiveLink("/materialpage")}
+            >
+              <Box
+                sx={activeLink === "/materialpage" ? styles.BoxActive : styles.Box}
+                display="flex"
+                alignItems="center"
+                width="100%" // Set width to 100%
+              >
+                <HandymanIcon sx={{ pr: 1, pl: 1, color: "black" }} />
+                <Typography variant="menu" noWrap sx={{ color: "black" }}>
+                  วัสดุภัณฑ์
                 </Typography>
               </Box>
             </Link>

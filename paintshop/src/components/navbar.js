@@ -229,7 +229,27 @@ export default function Navbar() {
                   <Button color="inherit">ผลิตภัณฑ์</Button>
                 </Box>
               </Link>
-
+              <Link
+                style={{ color: "black" }}
+                href="/materialpage"
+                passHref
+                onClick={(e) => SetActiveLink("/materialpage")}
+              >
+                <Box
+                  sx={
+                    activeLink === "/materialpage" ? styles.activeLink : styles.Box
+                  }
+                >
+                  <Button
+                    style={
+                      router.pathname === "/materialpage" ? styles.activeLink : {}
+                    }
+                    color="inherit"
+                  >
+                    วัสดุภัณฑ์
+                  </Button>
+                </Box>
+              </Link>
               <Link
                 style={{ color: "black" }}
                 href="/designs"

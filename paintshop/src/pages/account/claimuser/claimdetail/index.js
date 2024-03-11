@@ -1,16 +1,67 @@
 import * as React from "react";
 import Homelayout from "@/components/homelayout";
 import Accordionlayout from "@/components/accordionlayout";
-import { Typography, Container, Grid, Breadcrumbs, Box } from "@mui/material";
+import {
+  Typography,
+  Container,
+  Grid,
+  Breadcrumbs,
+  Box,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import Refunddetail from "../refund/detail";
+const styles = {
+  Active: {
+    "&.Mui-selected": {
+      fontWeight: "bold",
+      color: "#018294",
+    },
+  },
+};
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
+// ฟังก์ชั่นควบคุม Tab
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
 
-export default function Claim() {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+export default function Claimdetail() {
   const router = useRouter();
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <>
       <Homelayout>
@@ -54,7 +105,9 @@ export default function Claim() {
                 <Grid item sm={3} xs={12}>
                   <Accordionlayout />
                 </Grid>
-                <Grid item sm={9} xs={12}></Grid>
+                <Grid item sm={9} xs={12}>
+                  <Refunddetail />
+                </Grid>
               </Grid>
             </Box>
           </Container>

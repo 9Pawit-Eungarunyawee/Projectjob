@@ -13,9 +13,10 @@ import {
   ThemeProvider,
   Alert,
 } from "@mui/material";
-import addAddress from "@/firebase/addAddresses";
+import addAddress, { editAddress } from "@/firebase/addAddresses";
 import { useAuthContext } from "@/context/AuthContext";
-export default function Addressdialog({ onFormSubmitSuccess }) {
+import { getUser } from "@/firebase/getData";
+export default function Addressedit({ addressData, onFormSubmitSuccess }) {
   const theme = createTheme({
     palette: {
       primary: {
@@ -43,7 +44,7 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
   const [provinceName, setProvinceName] = React.useState(undefined);
   const [amphureName, setAmphureName] = React.useState(undefined);
   const [tambonName, setTambonName] = React.useState(undefined);
-  const [zipNum, setZipNum] = React.useState(undefined);
+  const [addressDoc, setAddressDoc] = React.useState(addressData);
   const user = useAuthContext();
   const [selected, setSelected] = React.useState({
     province_id: undefined,
@@ -108,37 +109,68 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
     console.log("Handling form submission");
     handleClose();
 
-    const addAddresses = {
-      address,
-      provinceName,
-      amphureName,
-      tambonName,
-      zipCode,
+    const userEdit = {
+      address: address,
+      province: provinceName,
+      amphure: amphureName,
+      tambon: tambonName,
+      zipcode: zipCode,
     };
 
-    console.log("Submitting form with data:", addAddresses);
+    console.log("Submitting form with data:", userEdit);
 
-    const { result, error } = await addAddress(
-      "users",
-      user.user.uid,
-      addAddresses
-    );
+    const { result, error } = await editAddress("users", user.user.uid, {
+      addresses: [userEdit],
+    });
+
+    console.log("Result:", result);
+    console.log("Error:", error);
     if (!error) {
-      setAlert(<Alert severity="success">บันทึกข้อมูลสำเร็จ</Alert>);
+      setAlert(<Alert severity="success">แก้ไข้ข้อมูลสำเร็จ</Alert>);
       onFormSubmitSuccess();
       setOpenAlert(true);
     } else {
       setAlert(
-        <Alert severity="error">ผิดพลาด! ไม่สามารถบันทึกข้อมูลได้</Alert>
+        <Alert severity="error">ผิดพลาด! ไม่สามารถแก้ไข้ข้อมูลได้</Alert>
       );
       setOpenAlert(true);
     }
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const fetchData = async () => {
+    const collection = "users";
+    const uid = user.user.uid;
+    const { result, error } = await getUser(collection, uid);
+
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result.docs.length > 0) {
+      const userData = result.docs[0].data();
+      setAddress(userData.address);
+      setProvinces(userData.province);
+      setAmphures(userData.amphure);
+      setTambons(userData.tambon);
+      setZipCode(userData.zipCode);
+    }
   };
 
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleClickOpen = (addressData) => {
+    setOpen(true);
+    setAddressDoc(addressData);
+    if (addressDoc) {
+      setAddress(addressDoc.address);
+      setProvinceName(addressDoc.province);
+      setAmphureName(addressDoc.amphure);
+      setTambonName(addressDoc.tambon);
+      setZipCode(addressDoc.zipcode);
+    }
+    console.log("ทดสอบที่อยู่", addressDoc.zipcode);
+  };
+  console.log("ทดสอบอื่นๆ", zipCode);
   const handleClose = () => {
     setOpen(false);
   };
@@ -148,11 +180,10 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
       <React.Fragment>
         <Button
           variant="contained"
-          color="success"
-          onClick={handleClickOpen}
-          sx={{ color: "white" }}
+          color="edit"
+          onClick={() => handleClickOpen(addressData)}
         >
-          เพิ่มที่อยู่
+          แก้ไข
         </Button>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle sx={{ fontWeight: "bold" }}>ที่อยู่จัดส่ง</DialogTitle>
@@ -167,6 +198,7 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
                     multiline
                     required
                     rows={4}
+                    value={address}
                     size="small"
                     sx={{ mt: 1, mb: 1 }}
                     onChange={(e) => setAddress(e.target.value)}
@@ -175,15 +207,19 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
                 <Grid xs={12} sm={6} item>
                   <Autocomplete
                     disablePortal
-                    options={provinces}
-                    getOptionLabel={(option) => option.name_th}
+                    options={provinces || []}
+                    getOptionLabel={(option) => option.name_th || option}
+                    value={String(provinceName)}
                     onChange={(e, newValue) => {
                       setSelected((prevState) => ({
                         ...prevState,
-                        province_id: newValue ? newValue.id : undefined,
+                        province_id: newValue ? newValue.id : provinceName,
                         amphure_id: undefined,
                         tambon_id: undefined,
                       }));
+                      setProvinceName(
+                        newValue ? newValue.name_th : provinceName
+                      );
                     }}
                     fullWidth
                     required
@@ -235,7 +271,7 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
                   <TextField
                     variant="outlined"
                     label="รหัสไปรษณีย์"
-                    value={zipCode || ""}
+                    value={String(zipCode || "")}
                     fullWidth
                     required
                     size="small"

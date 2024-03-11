@@ -194,12 +194,12 @@ export default function Accordionlayout() {
                 style={{
                   textDecoration: "none",
                   color:
-                    router.pathname === "/account/claim"
+                    router.pathname === "/account/claimuser"
                       ? "#018294"
                       : "inherit",
                   fontWeight: "bold",
                 }}
-                href="/account/claim"
+                href="/account/claimuser"
               >
                 การเคลมสินค้า
               </Link>

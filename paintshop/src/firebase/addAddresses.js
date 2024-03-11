@@ -4,6 +4,8 @@ import {
   doc,
   updateDoc,
   arrayUnion,
+  setDoc,
+  getDoc
 } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
@@ -32,6 +34,35 @@ export default async function addAddress(collectionName, uid, data) {
   } catch (e) {
     error = e;
     console.error("เกิดข้อผิดพลาดในการเพิ่มข้อมูล:", error);
+  }
+
+  return { result, error };
+}
+
+export async function editAddress(collection, id, data) {
+  let result = null;
+  let error = null;
+
+  try {
+    // ดึงข้อมูลปัจจุบัน
+    const docRef = doc(db, collection, id);
+    const docSnap = await getDoc(docRef);
+    const currentData = docSnap.data();
+
+    // อัพเดตเฉพาะออบเจกต์ที่เป็น array
+    const newData = {
+      ...currentData,
+      ...data,
+      addresses: data.addresses || currentData.addresses, // ถ้าไม่ได้ส่ง addresses มาใหม่จะใช้ข้อมูลเดิม
+    };
+
+    // อัพเดตข้อมูลใน Firestore
+    result = await setDoc(docRef, newData);
+
+    console.log("แก้ไขสำเร็จ", result);
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
   }
 
   return { result, error };

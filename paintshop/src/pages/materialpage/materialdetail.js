@@ -24,22 +24,23 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
 import { getCollection } from "../../firebase/getData";
-import addCart from "@/firebase/addCart";
+import { debounce } from "lodash";
+import { addCartMaterial } from "@/firebase/addCart";
 import { Numbers } from "@mui/icons-material";
+import searchData from "@/firebase/searchData";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
 
-export default function Productsdetail() {
+export default function Materialdetail() {
   const [documentData, setDocumentData] = React.useState(null);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const [colorData, setColorData] = React.useState(null);
   const [priceData, setPriceData] = React.useState("");
   const [sizeData, setSizeData] = React.useState("");
   const router = useRouter();
-  const catalogId = JSON.parse(router.query.catalogData);
   const productId = JSON.parse(router.query.productId);
-  const colorId = JSON.parse(router.query.colorId);
   const [number, setNumber] = React.useState(1);
   const [selectedPrice, setSelectedPrice] = React.useState(null);
   const [alert, setAlert] = React.useState(null);
@@ -71,13 +72,12 @@ export default function Productsdetail() {
   const updatecart = async (product_id) => {
     const cart = {
       product_id: product_id, // ใช้อ้างอิง
-      color_id: colorId,
       user_id: user.user.uid,
       price: selectedPrice,
       amount: number,
       size: sizeData,
     };
-    const result = await addCart("cart", cart);
+    const result = await addCartMaterial("cart", cart);
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
@@ -127,91 +127,30 @@ export default function Productsdetail() {
     setNumber(count);
   };
   React.useEffect(() => {
-    fetchAllData();
-    fetchColorData();
-  }, [productId, colorId]);
+    handleSearch("");
+  }, []);
+  //ดึงของ
+  const debouncedSearchProduct = debounce(async (term) => {
+    try {
+      const collectionName = "products";
+      const field = "name";
+      const results = await searchData(collectionName, field, term);
+      const filteredResults = results.filter(
+        (doc) =>
+          doc.id === productId &&
+          doc.isMaterial === true &&
+          doc.status === true &&
+          doc.delete === null
+      );
 
-  //ดึงสีจากลิ้งค์
-  const fetchColorData = async () => {
-    const collection = "colors";
-
-    if (colorId) {
-      console.log("Fetching data for colorId:", colorId);
-
-      try {
-        const { result: querySnapshot, error } = await getCollection(
-          collection,
-          {
-            where: [{ field: "color_id", value: colorId }],
-          }
-        );
-        if (error) {
-          console.error("Error fetching collection:", error);
-        } else {
-          const data = [];
-          querySnapshot.forEach((doc) => {
-            console.log("Color ID:", doc.id);
-            const catalogIdFromProduct = doc.data().catalog_id.id;
-
-            if (catalogIdFromProduct === catalogId) {
-              console.log("Matching color found:", doc.data());
-              if (doc.id === colorId) {
-                data.push({ id: doc.id, ...doc.data() });
-              }
-            }
-          });
-          setColorData(data);
-          console.log("test:", data);
-        }
-      } catch (error) {
-        console.error("Error fetching collection:", error);
-      }
+      setDocumentData(filteredResults);
+    } catch (error) {
+      console.error("Error searching data:", error);
     }
-  };
-
-  //ตรวจสอบ product  ว่าตรงกับ catalog ไหม
-  const fetchAllData = async () => {
-    const collection = "products";
-
-    if (catalogId && productId && colorId) {
-      console.log("Fetching data for catalogId:", catalogId);
-      console.log("Fetching data for productId:", productId);
-      console.log("Fetching data for colorId:", colorId);
-
-      try {
-        const { result: querySnapshot, error } = await getCollection(
-          collection,
-          {
-            where: [
-              { field: "catalog_id", value: catalogId },
-              { field: "id", value: productId },
-              { field: "color_id", value: colorId },
-            ],
-          }
-        );
-
-        if (error) {
-          console.error("Error fetching collection:", error);
-        } else {
-          const data = [];
-          querySnapshot.forEach((doc) => {
-            console.log("Document ID:", doc.id);
-            const catalogIdFromProduct = doc.data().catalog_id?.id;
-            if (catalogIdFromProduct === catalogId) {
-              console.log("Matching product found:", doc.data());
-              setSizeData(doc.data().productSizes[0].size);
-              if (doc.id === productId) {
-                data.push({ id: doc.id, ...doc.data() });
-              }
-            }
-          });
-          setDocumentData(data);
-          console.log("test1111", documentData);
-        }
-      } catch (error) {
-        console.error("Error fetching collection:", error);
-      }
-    }
+  }, 500);
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    debouncedSearchProduct(term);
   };
   const theme = createTheme({
     components: {
@@ -284,17 +223,7 @@ export default function Productsdetail() {
                   }}
                   href={`/productpage?catalogData=${router.query.catalogData}`}
                 >
-                  ผลิตภัณฑ์
-                </Link>
-                <Link
-                  style={{ textDecoration: "none", color: "inherit" }}
-                  sx={{
-                    color: "inherit",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                  href={`/colorselect?catalogData=${router.query.catalogData}&productId=${router.query.productId}`}
-                >
-                  เลือกสี
+                  วัสดุภัณฑ์
                 </Link>
                 {documentData &&
                   documentData.map((item) => (
@@ -385,48 +314,6 @@ export default function Productsdetail() {
                         {item.detail}
                       </Typography>
                     </Box>
-                    <Typography
-                      variant="h4"
-                      sx={{
-                        mt: 2,
-                        color: "#018294",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      ภาพตัวอย่าง
-                    </Typography>
-                    <Box
-                      sx={{
-                        width: "112px",
-                        height: "11px",
-                        bgcolor: "#FE616A",
-                        mt: 2,
-                        mb: 2,
-                      }}
-                    ></Box>
-                    {colorData &&
-                      colorData.map((colors, index) => (
-                        <Box
-                          key={index}
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            mb: 2,
-                          }}
-                        >
-                          <Box>
-                            <Image
-                              src={roomexample}
-                              alt="ภาพตัวอย่าง"
-                              priority
-                              width={400}
-                              height={250}
-                              style={{ backgroundColor: colors.code }}
-                            ></Image>
-                          </Box>
-                        </Box>
-                      ))}
-
                     <Typography
                       sx={{
                         display: "flex",
@@ -570,50 +457,7 @@ export default function Productsdetail() {
                           }}
                         >
                           <Typography sx={{ fontWeight: "bold" }}>
-                            พื้นที่ใช้งาน
-                          </Typography>
-                          <Typography>{item.area}</Typography>
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            borderBottom: "1px solid #BBB",
-                            pt: 2,
-                            pb: 2,
-                          }}
-                        >
-                          <Typography sx={{ fontWeight: "bold" }}>
-                            เกรด
-                          </Typography>
-                          <Typography>{item.grade}</Typography>
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            borderBottom: "1px solid #BBB",
-                            pt: 2,
-                            pb: 2,
-                          }}
-                        >
-                          <Typography sx={{ fontWeight: "bold" }}>
-                            ฟิล์มสี
-                          </Typography>
-                          <Typography>{item.flim}</Typography>
-                        </Box>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            borderBottom: "1px solid #BBB",
-                            pt: 2,
-                            pb: 2,
-                          }}
-                        >
-                          <Typography sx={{ fontWeight: "bold" }}>
-                            ขนาดแกลลอน
+                            ขนาด
                           </Typography>
 
                           <Typography>

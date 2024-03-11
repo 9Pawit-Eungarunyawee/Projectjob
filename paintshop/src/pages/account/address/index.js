@@ -23,6 +23,7 @@ import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
 import { getUser } from "@/firebase/getData";
 import Addressdialog from "./dialog";
+import Addressedit from "./editaddress";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -194,9 +195,12 @@ export default function Address() {
                                       {address.province} {address.zipcode}
                                     </TableCell>
                                     <TableCell>
-                                      <Button variant="contained" color="edit">
-                                        แก้ไข
-                                      </Button>
+                                      <Addressedit
+                                        addressData={address}
+                                        onFormSubmitSuccess={
+                                          handleFormSubmitSuccess
+                                        }
+                                      />
                                     </TableCell>
                                     <TableCell>
                                       <Button variant="contained" color="error">

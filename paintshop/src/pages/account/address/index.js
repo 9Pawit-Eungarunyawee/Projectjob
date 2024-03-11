@@ -50,24 +50,7 @@ export default function Address() {
   const router = useRouter();
   const user = useAuthContext();
   const [userData, setUserData] = React.useState(null);
-  const handleDeleteAddress = async (userIndex, addressIndex) => {
-    try {
-      const cart_ids = [userData[userIndex].addresses[addressIndex].id]; // ระบุ ID ของที่อยู่ที่ต้องการลบ
-      const { result, error } = await deleteAddress(cart_ids); // เรียกใช้งาน deleteAddress เพื่อลบที่อยู่
 
-      if (error) {
-        console.error("เกิดข้อผิดพลาดในการลบที่อยู่:", error);
-        return;
-      }
-
-      // หากลบที่อยู่สำเร็จ ให้อัพเดตข้อมูลผู้ใช้ใหม่และแสดงข้อมูลใหม่ในตาราง
-      const updatedUserData = [...userData];
-      updatedUserData[userIndex].addresses.splice(addressIndex, 1);
-      setUserData(updatedUserData);
-    } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการลบที่อยู่:", error);
-    }
-  };
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -91,6 +74,18 @@ export default function Address() {
       console.log("ทดสอบรหัสผู้ใช้", uid);
       console.log("ทดสอบuser", user);
       setUserData(user);
+    }
+  };
+  const handleDeleteAddress = async (addressIndex) => {
+    const uid = user.user.uid;
+
+    const { result, error } = await deleteAddress(uid, addressIndex);
+
+    if (error) {
+      console.error("Error deleting address:", error);
+    } else {
+      console.log("Address deleted successfully");
+      fetchAllData();
     }
   };
   const handleFormSubmitSuccess = () => {
@@ -226,10 +221,7 @@ export default function Address() {
                                         variant="contained"
                                         color="error"
                                         onClick={() =>
-                                          handleDeleteAddress(
-                                            index,
-                                            addressIndex
-                                          )
+                                          handleDeleteAddress(addressIndex)
                                         }
                                       >
                                         ลบ

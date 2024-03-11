@@ -6,6 +6,7 @@ import {
   arrayUnion,
   setDoc,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
@@ -69,25 +70,41 @@ export async function editAddress(collection, id, addressIndex, data) {
 }
 
 
-const deleteAddress = async (cart_ids) => {
+const deleteAddress = async (id, addressIndex) => {
   let result = null;
   let error = null;
 
   try {
-    // Loop through each cart_id in the array and delete the document
-    await Promise.all(
-      cart_ids.map(async (cart_id) => {
-        const cartDocRef = doc(db, "user", cart_id);
-        await deleteDoc(cartDocRef);
-      })
-    );
+    // อ้างอิงไปยังเอกสารที่ต้องการลบ
+    const docRef = doc(db, "users", id);
+    const docSnap = await getDoc(docRef);
 
-    console.log("ลบข้อมูลสำเร็จ");
-    result = true;
+    if (docSnap.exists()) {
+      // ดึงข้อมูลเอกสาร
+      const userData = docSnap.data();
+      const addresses = userData.addresses || [];
+
+      // ตรวจสอบว่า addressIndex มีข้อมูลหรือไม่
+      if (addressIndex >= 0 && addressIndex < addresses.length) {
+        // ลบที่อยู่ที่ต้องการโดยการลบออกจากอาร์เรย์ addresses
+        addresses.splice(addressIndex, 1);
+
+        // อัปเดตข้อมูลที่อยู่ในเอกสาร
+        await updateDoc(docRef, { addresses });
+
+        console.log("ลบข้อมูลสำเร็จ");
+        result = "Success";
+      } else {
+        // หาก addressIndex ไม่ถูกต้อง
+        throw new Error("Index out of range");
+      }
+    } else {
+      // หากไม่พบเอกสาร
+      throw new Error("Document not found");
+    }
   } catch (e) {
     error = e;
     console.error("เกิดข้อผิดพลาดในการลบข้อมูล:", error);
-    result = false;
   }
 
   return { result, error };

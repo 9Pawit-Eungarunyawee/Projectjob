@@ -15,8 +15,7 @@ const db = getFirestore(firebase_app);
 export default async function addOrder(collectionName, data) {
   let result = null;
   let error = null;
-  console.log("wwwwww", data);
-  // สร้างอ้างอิงไปยังเอกสารในคอลเลคชัน "cart"
+
   const currentDate = new Date();
   const img = data.img ? data.img : "";
   try {
@@ -68,6 +67,27 @@ const deleteCartItem = async (cart_ids) => {
 };
 
 export { deleteCartItem };
+
+const deleteOrder = async (id) => {
+  let result = null;
+  let error = null;
+  // อ้างอิงไปยังเอกสารที่ต้องการลบ
+  const docRef = doc(db, "orders", id);
+
+  try {
+    // ลบเอกสาร
+    await deleteDoc(docRef);
+
+    console.log("ลบข้อมูลสำเร็จ");
+    result = "Success";
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการลบข้อมูล:", error);
+  }
+
+  return { result, error };
+};
+export { deleteOrder };
 
 const editOrder = async (id, data) => {
   let result = null;

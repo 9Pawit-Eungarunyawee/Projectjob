@@ -13,7 +13,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import Refunddetail from "../refund/detail";
+import Refunddetail from "./refunddetail";
 const styles = {
   Active: {
     "&.Mui-selected": {

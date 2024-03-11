@@ -30,6 +30,8 @@ import Image from "next/image";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import addClaim from "@/firebase/addClaim";
+import addOrder, { cancelOrder, deleteOrder } from "@/firebase/addOrder";
+import updateOrder from "@/firebase/updateOrder";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -105,11 +107,10 @@ export default function Refunddetail() {
   //     reader.readAsDataURL(file);
   //     // console.log(imageUrl);
   //   };
-  const handleForm = async (event, products_id) => {
+  const handleForm = async (event) => {
     event.preventDefault();
     const currentDate = new Date();
     const claim = {
-      products_id: products_id,
       user_id: user.user.uid,
       reason: reason,
       reason_detail: reasonDetail,
@@ -119,22 +120,23 @@ export default function Refunddetail() {
       img: imageSet, // ใช้ imageSet แทน imageUrl
       status: "รอตรวจสอบ",
     };
-    const { result, error } = await addClaim("claims", claim);
-    if (result) {
-      setAlert(
-        <Alert severity="success" onClose={handleClose}>
-          เพิ่มข้อมูลสำเร็จ
-        </Alert>
-      );
-      setOpen(true);
-    } else {
-      setAlert(
-        <Alert severity="error" onClose={handleClose}>
-          ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้
-        </Alert>
-      );
-      setOpen(true);
-      fetchProductData();
+    const Updatestatus = await cancelOrder(OrderId);
+      const { result, error } = await addClaim("claims", claim);
+      if (result) {
+        setAlert(
+          <Alert severity="success" onClose={handleClose}>
+            เพิ่มข้อมูลสำเร็จ
+          </Alert>
+        );
+        setOpen(true);
+      } else {
+        setAlert(
+          <Alert severity="error" onClose={handleClose}>
+            ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้
+          </Alert>
+        );
+        setOpen(true);
+        fetchProductData();
     }
   };
 
@@ -307,17 +309,7 @@ export default function Refunddetail() {
                 </CardActionArea>
               ))}
             <CardContent>
-              <form
-                onSubmit={(event) =>
-                  handleForm(
-                    event,
-                    orderData[index].products.map(
-                      (data) => findProduct(data.product_id).productId
-                    )
-                  )
-                }
-                className="form"
-              >
+              <form onSubmit={handleForm} className="form">
                 <Grid>
                   {/* {" "}
                       <Grid>

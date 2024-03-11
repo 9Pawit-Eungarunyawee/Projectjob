@@ -162,7 +162,7 @@ export default function AddProduct() {
           {alert}
         </Snackbar>
         <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 4 }}>
-          เพิ่มสินค้า
+          เพิ่มสินค้า(สี)
         </Typography>
         <Button
           sx={{
@@ -203,7 +203,7 @@ export default function AddProduct() {
                 >
                   <MenuItem value="">กรุณาเลือกแคตตาล็อก</MenuItem>
                   {catalogData &&
-                    catalogData.map((catalog) => (
+                    catalogData.filter(((catalog)=>!catalog.delete)).map((catalog) => (
                       <MenuItem key={catalog.id} value={catalog.id}>
                         {catalog.name}
                       </MenuItem>

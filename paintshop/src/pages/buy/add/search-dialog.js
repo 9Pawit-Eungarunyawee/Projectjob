@@ -48,7 +48,7 @@ export default function SearchDialog({
   function createData(No, id, img, p_name, p_sell, p_left, productSizes) {
     return { No, id, img, p_name, p_sell, p_left, productSizes };
   }
-  const rows = productData.map((dataItem, index) =>
+  const rows = productData.filter((item)=> !item.delete).map((dataItem, index) =>
     createData(
       index + 1,
       dataItem.id,
@@ -132,8 +132,6 @@ export default function SearchDialog({
                   <StyledTableCell align="center">No.</StyledTableCell>
                   <StyledTableCell align="center">รูปภาพ</StyledTableCell>
                   <StyledTableCell align="center">ชื่อสินค้า</StyledTableCell>
-                  <StyledTableCell align="center">ขาย</StyledTableCell>
-                  <StyledTableCell align="center">เหลือ</StyledTableCell>
                   <StyledTableCell align="center">ราคาซื้อ</StyledTableCell>
                   <StyledTableCell align="center"></StyledTableCell>
                 </TableRow>
@@ -163,12 +161,6 @@ export default function SearchDialog({
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.p_name}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.p_sell}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.p_left}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.productSizes[0].price}

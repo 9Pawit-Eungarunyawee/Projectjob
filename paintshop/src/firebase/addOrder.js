@@ -90,7 +90,7 @@ export { editOrder };
 const confirmOrder = async (id) => {
   let result = null;
   let error = null;
-
+  console.log("confirmOrder");
   try {
     const { result: orderResult, error: orderError } = await getDoument(
       "orders",
@@ -104,11 +104,6 @@ const confirmOrder = async (id) => {
     // ลูปเพื่ออัปเดตข้อมูลของสินค้า (product) ที่เกี่ยวข้องกับการซื้อ
     for (let i = 0; i < orderData.products.length; i++) {
       try {
-        // ค้นหาข้อมูลของสินค้า (product) ที่ต้องการแก้ไข
-        console.log(
-          "orderData.products[i].product_id",
-          orderData.products[i].product_id
-        );
         const { result: productResult, error: productError } = await getDoument(
           "products",
           orderData.products[i].product_id
@@ -118,21 +113,13 @@ const confirmOrder = async (id) => {
           continue;
         }
         const productData = productResult.data();
-        // console.log(productData)
-        // คำนวณค่า amount ใหม่โดยการลบค่า amount จาก buy และบวกค่า amount จาก buy ใหม่
+
         const updatedProductSizes = productData.productSizes.map((size) => {
-          const matchingSize = orderData.products.find(
-            (productSize) => productSize.size === size.size
-          );
-          // console.log("parseInt(matchingSize.amount)",matchingSize)
-          // console.log("parseInt(size.amount)",size)
-          if (matchingSize && matchingSize.amount !== undefined) {
-            // คำนวณค่า newSizeAmount โดยการเพิ่มจำนวนสินค้าจาก data และลบออกจากจำนวนสินค้าที่มีอยู่เดิม
-            const newSizeAmount =
-              parseInt(size.amount) - parseInt(matchingSize.amount);
+          if (size.size === orderData.products[i].size) {
             return {
               ...size,
-              amount: newSizeAmount,
+              amount:
+                parseInt(size.amount) - parseInt(orderData.products[i].amount),
             };
           } else {
             return size;
@@ -178,7 +165,8 @@ export { confirmOrder };
 const cancelOrder = async (id) => {
   let result = null;
   let error = null;
-  const docRef = doc(db, "orders", id);
+
+  console.log("confirmOrder");
   try {
     const { result: orderResult, error: orderError } = await getDoument(
       "orders",
@@ -209,18 +197,11 @@ const cancelOrder = async (id) => {
         // console.log(productData)
         // คำนวณค่า amount ใหม่โดยการลบค่า amount จาก buy และบวกค่า amount จาก buy ใหม่
         const updatedProductSizes = productData.productSizes.map((size) => {
-          const matchingSize = orderData.products.find(
-            (productSize) => productSize.size === size.size
-          );
-          // console.log("parseInt(matchingSize.amount)",matchingSize)
-          // console.log("parseInt(size.amount)",size)
-          if (matchingSize && matchingSize.amount !== undefined) {
-            // คำนวณค่า newSizeAmount โดยการเพิ่มจำนวนสินค้าจาก data และลบออกจากจำนวนสินค้าที่มีอยู่เดิม
-            const newSizeAmount =
-              parseInt(size.amount) + parseInt(matchingSize.amount);
+          if (size.size === orderData.products[i].size) {
             return {
               ...size,
-              amount: newSizeAmount,
+              amount:
+                parseInt(size.amount) + parseInt(orderData.products[i].amount),
             };
           } else {
             return size;

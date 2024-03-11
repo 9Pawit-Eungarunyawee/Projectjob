@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { OrderContext } from "@/context/OrderContext";
+import { BuyContext } from "@/context/BuyContext";
 ChartJS.register(ArcElement, Tooltip, Legend);
 export const options = {
   plugins: {
@@ -9,17 +11,23 @@ export const options = {
     },
   },
 }
-export const data = {
-  labels: ["รายรับ", "รายจ่าย"],
-  datasets: [
-    {
-      label: "เปอร์เซ็น",
-      data: [67, 33],
-      backgroundColor: ["#018294", "#FE616A"],
-    },
-  ],
-};
 
 export default function Doughnutchart() {
+  const {orderData} = useContext(OrderContext);
+  const {buyData} = useContext(BuyContext);
+  
+  
+
+  const data = {
+    labels: ["รายรับ", "รายจ่าย"],
+    datasets: [
+      {
+        label: "บาท",
+        data: [67, 33],
+        backgroundColor: ["#018294", "#FE616A"],
+      },
+    ],
+  };
+  
   return <Doughnut data={data} />;
 }

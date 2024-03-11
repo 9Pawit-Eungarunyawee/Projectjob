@@ -10,6 +10,7 @@ import {
   TableRow,
   tableCellClasses,
 } from "@mui/material";
+import { useRouter } from "next/router";
 
 export default function TableClaim({ documentData, userData }) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -58,6 +59,14 @@ export default function TableClaim({ documentData, userData }) {
       dataItem.product_id
     );
   });
+  
+  const router = useRouter();
+  function handleCard(id) {
+    router.push({
+      pathname: "claim/detail",
+      query: { id: JSON.stringify(id) },
+    });
+  }
 
   return (
     <TableContainer component={Paper} sx={{ borderRadius: "25px", mt: 5 }}>
@@ -69,7 +78,7 @@ export default function TableClaim({ documentData, userData }) {
             <StyledTableCell align="center">เวลา</StyledTableCell>
             <StyledTableCell align="center">ชื่อลูกค้า</StyledTableCell>
             <StyledTableCell align="center">รายการคำสั่งซื้อ</StyledTableCell>
-            <StyledTableCell align="center">ชื่อสินค้า</StyledTableCell>
+           
             <StyledTableCell align="center"></StyledTableCell>
           </TableRow>
         </TableHead>
@@ -83,9 +92,8 @@ export default function TableClaim({ documentData, userData }) {
               <StyledTableCell align="center">{row.time}</StyledTableCell>
               <StyledTableCell align="center">{row.user_id}</StyledTableCell>
               <StyledTableCell align="center">{row.order_id}</StyledTableCell>
-              <StyledTableCell align="center">{row.product_id}</StyledTableCell>
               <StyledTableCell align="center">
-                <Button color="primary" >
+                <Button color="primary" onClick={() => handleCard(row.id)}>
                   ดูรายละเอียด
                 </Button>
               </StyledTableCell>

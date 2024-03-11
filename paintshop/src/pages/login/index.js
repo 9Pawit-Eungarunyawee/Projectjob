@@ -20,6 +20,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [error,setError] = React.useState("")
   const router = useRouter();
 
   const handleForm = async (event) => {
@@ -28,8 +29,8 @@ export default function Login() {
     const { result, error } = await signIn(email, password);
 
     if (error) {
-      return window.alert("รหัสผ่านไม่ถูกต้อง");
-    }
+      return setError("รหัสผ่านไม่ถูกต้อง");
+  }
     // else successful
     console.log(result);
     return router.push("/homepage");
@@ -117,28 +118,42 @@ export default function Login() {
                       </Box>
                       <Box>
                         <TextField
+                        
                           id="password"
                           label="รหัสผ่าน"
                           variant="outlined"
-                          type={showPassword ? 'text' : 'password'}
+                          error={!!error} // ตรวจสอบว่ามีข้อผิดพลาดหรือไม่
+                          helperText={error && "รหัสผ่านไม่ถูกต้อง"} // แสดงข้อความผิดพลาดเมื่อมีข้อผิดพลาด
+                          type={showPassword ? "text" : "password"}
                           onChange={(e) => setPassword(e.target.value)}
                           required
                           fullWidth
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
-                                <IconButton onClick={handleTogglePasswordVisibility} edge="end">
-                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                <IconButton
+                                  onClick={handleTogglePasswordVisibility}
+                                  edge="end"
+                                >
+                                  {showPassword ? (
+                                    <VisibilityOff />
+                                  ) : (
+                                    <Visibility />
+                                  )}
                                 </IconButton>
                               </InputAdornment>
                             ),
                           }}
                         />
                       </Box>
-                      <Box sx={{display:"flex"}}>
-                        <Typography sx={{ mb: 4 }}>ลืมรหัสผ่าน?</Typography>
+                      <Box sx={{ display: "flex" }}>
+                        <Link href={"/forget"}>
+                          <Typography sx={{ mb: 4 }}>ลืมรหัสผ่าน?</Typography>
+                        </Link>
                         <Link href={"/register"}>
-                          <Typography sx={{ mb: 4,ml:2 }}>สมัครสมาชิก</Typography>
+                          <Typography sx={{ mb: 4, ml: 2 }}>
+                            สมัครสมาชิก
+                          </Typography>
                         </Link>
                       </Box>
 

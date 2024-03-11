@@ -1,10 +1,13 @@
 import Layout from "@/components/layout";
-import { ThemeProvider } from "@emotion/react";
+import styled from "@emotion/styled";
 import {
   Alert,
   Box,
   Button,
   Grid,
+  ImageList,
+  ImageListItem,
+  ListSubheader,
   Paper,
   Snackbar,
   Table,
@@ -13,24 +16,22 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  ThemeProvider,
   Tooltip,
   Typography,
   createTheme,
   tableCellClasses,
 } from "@mui/material";
-import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import { Fragment, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import getDoument from "@/firebase/getData";
-import Image from "next/image";
-import styled from "@emotion/styled";
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import { ProductContext } from "@/context/ProductContext";
 import { UserContext } from "@/context/UserContext";
 import { ColorContext } from "@/context/ColorContext";
-import EditDialog from "./edit-dialog";
-import { purple } from "@mui/material/colors";
-import { cancelOrder, confirmOrder } from "@/firebase/addOrder";
-import { OrderContext } from "@/context/OrderContext";
+import { ClaimContext } from "@/context/ClaimContext";
+import getDoument from "@/firebase/getData";
+import { Fragment, useContext, useEffect, useState } from "react";
+import Image from "next/image";
+import { cancelCliam, confirmCliam } from "@/firebase/addClaim";
 export default function Detail() {
   const goBack = () => {
     window.history.back();
@@ -60,7 +61,6 @@ export default function Detail() {
       },
     },
   });
-
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#018294",
@@ -82,8 +82,9 @@ export default function Detail() {
   }));
 
   const router = useRouter();
-  const sell_id = JSON.parse(router.query.id);
+  const claim_id = JSON.parse(router.query.id);
   const [show, setShow] = useState(false);
+  const [claimData, setClaimData] = useState([]);
   const [sellData, setSellData] = useState([]);
   const [product, setProduct] = useState(null);
   const [user, setUser] = useState(null);
@@ -91,24 +92,36 @@ export default function Detail() {
     fetchData();
   }, []);
 
-  const {fetchOrderData} = useContext(OrderContext)
   const { productData } = useContext(ProductContext);
   const { userData } = useContext(UserContext);
   const { colorData } = useContext(ColorContext);
+  const { fetchClaimData } = useContext(ClaimContext);
   const fetchData = async () => {
+    const collectionName = "claims";
+    const { result, error } = await getDoument(collectionName, claim_id);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const Data = result.data();
+      // console.log(Data);
+      setClaimData(Data);
+      fetchSellData(Data.order_id);
+      setProduct(productData);
+      setUser(userData);
+    }
+  };
+  const fetchSellData = async (sell_id) => {
     const collectionName = "orders";
     const { result, error } = await getDoument(collectionName, sell_id);
     if (error) {
       console.error("Error fetching document:", error);
     } else if (result) {
       const Data = result.data();
-      console.log(Data);
       setSellData(Data);
-      setProduct(productData);
-      setUser(userData);
       setShow(true);
     }
   };
+
   function createData(No, amount, color_id, price, product_id, size) {
     return { No, amount, color_id, price, product_id, size };
   }
@@ -126,47 +139,20 @@ export default function Detail() {
           );
         })
       : [];
-  const [open, setOpen] = useState(false);
   const [alert, setAlert] = useState(null);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
   const [snackbaropen, setSnackbarOpen] = useState(false);
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-
     setSnackbarOpen(false);
   };
 
-  const handleConfirm = async () => {
-    const result = await confirmOrder(sell_id);
-    if (result) {
-      setAlert(
-        <Alert severity="success" onClose={handleClose}>
-          ยืนยันข้อมูลสำเร็จ
-        </Alert>
-      );
-      setSnackbarOpen(true);
-      fetchOrderData()
-      fetchData();
-    } else {
-      setAlert(
-        <Alert severity="error" onClose={handleClose}>
-          ผิดพลาด! ไม่สามารถยืนยันข้อมูลได้
-        </Alert>
-      );
-      setSnackbarOpen(true);
-    }
+  const handleClose = () => {
+    setOpen(false);
   };
-
   const handleCancel = async () => {
-    const result = await cancelOrder(sell_id);
+    const result = await cancelCliam(claim_id);
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
@@ -174,12 +160,32 @@ export default function Detail() {
         </Alert>
       );
       fetchData();
-      fetchOrderData()
+      fetchClaimData();
       setSnackbarOpen(true);
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
           ผิดพลาด! ไม่สามารถยกเลิกรายการข้อมูลได้
+        </Alert>
+      );
+      setSnackbarOpen(true);
+    }
+  };
+  const handleConfirm = async () => {
+    const result = await confirmCliam(claim_id);
+    if (result) {
+      setAlert(
+        <Alert severity="success" onClose={handleClose}>
+          ยืนยันรายการสำเร็จ
+        </Alert>
+      );
+      fetchData();
+      fetchClaimData();
+      setSnackbarOpen(true);
+    } else {
+      setAlert(
+        <Alert severity="error" onClose={handleClose}>
+          ผิดพลาด! ไม่สามารถยืนยันรายการข้อมูลได้
         </Alert>
       );
       setSnackbarOpen(true);
@@ -195,15 +201,8 @@ export default function Detail() {
         >
           {alert}
         </Snackbar>
-        <EditDialog
-          open={open}
-          onClose={handleClose}
-          sell_id={sell_id}
-          fetchData={fetchData}
-          sellData={sellData}
-        />
-        <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5}}>
-          รายละเอียดรายการขาย
+        <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5 }}>
+          รายละเอียดรายการเคลม
         </Typography>
         <Button
           sx={{
@@ -218,18 +217,17 @@ export default function Detail() {
           <ArrowBackOutlinedIcon />
           <Typography>ย้อนกลับ</Typography>
         </Button>
-
         {show ? (
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={12}>
               <Box
                 sx={{
                   backgroundColor:
-                    sellData.status === "ยกเลิก"
-                      ? "rgba(254, 97, 106, 0.50)"
-                      : sellData.status === "จัดส่งสำเร็จ"
+                    claimData.status === "รอตรวจสอบ"
+                      ? "#FFA50080"
+                      : claimData.status === "ยืนยันการเคลม"
                       ? "rgba(169, 196, 112, 0.61)"
-                      : "#FFA50080",
+                      : "rgba(254, 97, 106, 0.50)",
                   display: { sm: "flex" },
                   justifyContent: { md: "space-between" },
                   borderBottom: "1px solid #ccc",
@@ -247,78 +245,59 @@ export default function Detail() {
                   <Typography
                     sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
                   >
-                    {sellData.status}
+                    {claimData.status}
                   </Typography>
                 </Box>
-                {sellData.status !== "จัดส่งสำเร็จ" ? (
-                  <Box sx={{ pl: 2 }}>
-                    {sellData.status === "รอยืนยัน" ||
-                    sellData.status === "ยกเลิก" ? (
+                <Box sx={{ ml: 2 }}>
+                  {claimData.status === "ยกเลิกการเคลม" ? (
+                    <Button
+                      variant="contained"
+                      sx={{ mr: 2, mb: 2, mt: 2 }}
+                      onClick={handleConfirm}
+                    >
+                      ยืนยัน
+                    </Button>
+                  ) : (
+                    ""
+                  )}
+                  {claimData.status === "ยืนยันการเคลม" ? (
+                    <Button
+                      variant="contained"
+                      sx={{ mr: 2, mb: 2, mt: 2 }}
+                      onClick={handleCancel}
+                    >
+                      ยกเลิก
+                    </Button>
+                  ) : (
+                    ""
+                  )}
+                  {claimData.status === "รอตรวจสอบ" ? (
+                    <Box>
                       <Button
                         variant="contained"
                         sx={{ mr: 2, mb: 2, mt: 2 }}
                         onClick={handleConfirm}
                       >
-                        {sellData.status === "รอยืนยัน"
-                          ? "ยืนยัน"
-                          : "ยืนยันใหม่"}
+                        ยืนยัน
                       </Button>
-                    ) : (
-                      <Box>
-                        <Button
-                          variant="contained"
-                          sx={{ mr: 2, mb: 2, mt: 2 }}
-                          onClick={handleClickOpen}
-                        >
-                          แก้ไข
-                        </Button>
-                        <Button
-                          variant="contained"
-                          sx={{ mr: 2, mb: 2, mt: 2 }}
-                          onClick={handleCancel}
-                        >
-                          ยกเลิก
-                        </Button>
-                      </Box>
-                    )}
-                  </Box>
-                ) : (
-                  ""
-                )}
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box
-                sx={{
-                  bgcolor:
-                    sellData.status === "ส่งมอบสินค้า"
-                      ? "#A9C470"
-                      : "#FFA50080",
-                  display: { sm: "flex" },
-                  justifyContent: { md: "space-between" },
-                  borderBottom: "1px solid #ccc",
-                  borderRadius: "10px",
-                  boxShadow:
-                    "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
-                }}
-              >
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography
-                    sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
-                  >
-                    รหัสติดตามสินค้า
-                  </Typography>
-                  <Typography
-                    sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
-                  >
-                    {sellData.tracker}
-                  </Typography>
+                      <Button
+                        variant="contained"
+                        sx={{ mr: 2, mb: 2, mt: 2 }}
+                        onClick={handleCancel}
+                      >
+                        ยกเลิก
+                      </Button>
+                    </Box>
+                  ) : (
+                    ""
+                  )}
                 </Box>
               </Box>
             </Grid>
             <Grid item xs={12} lg={6}>
               <Box
                 sx={{
+                  minHeight: "40vh",
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
@@ -336,7 +315,7 @@ export default function Detail() {
                     <Typography variant="text">ชื่อรายการ:</Typography>
                   </Box>
                   <Box>
-                    <Typography variant="data">{sell_id}</Typography>
+                    <Typography variant="data">{claim_id}</Typography>
                   </Box>
                 </Box>
                 <Box sx={{ display: { sm: "flex" }, m: 2 }}>
@@ -345,8 +324,8 @@ export default function Detail() {
                   </Box>
                   <Box>
                     <Typography variant="data">
-                      {sellData.createAt
-                        ? sellData.createAt
+                      {claimData.createAt
+                        ? claimData.createAt
                             .toDate()
                             .toLocaleString("th-TH", { dateStyle: "long" })
                         : ""}
@@ -360,84 +339,18 @@ export default function Detail() {
                   <Box>
                     <Typography variant="data">
                       {userData &&
-                        userData.find((u) => u.id === sellData.user_id) &&
-                        userData.find((u) => u.id === sellData.user_id).name}
-                    </Typography>
-                  </Box>
-                </Box>
-                {/* <Box
-                  sx={{
-                    display: "flex",
-                    m: 2,
-                    pt: 1,
-                    pb: 1,
-                    bgcolor:
-                      sellData.status === "ยืนยัน" ? "#A9C470" : "#FFB34E",
-                  }}
-                >
-                  <Box sx={{ width: "35%" }}>
-                    <Typography variant="text">สถานะรายการ:</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="data">{sellData.status}</Typography>
-                  </Box>
-                </Box> */}
-              </Box>
-
-              <Box
-                sx={{
-                  mt: 2,
-                  bgcolor: "#fff",
-                  borderBottom: "1px solid #ccc",
-                  borderRadius: "10px",
-                  boxShadow:
-                    "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
-                }}
-              >
-                <Typography
-                  sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
-                >
-                  ที่อยู่
-                </Typography>
-                <Box sx={{ display: { sm: "flex" }, m: 2 }}>
-                  <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
-                    <Typography variant="text">บ้านเลขที่:</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="data">
-                      {sellData.address[0].address}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: { sm: "flex" }, m: 2 }}>
-                  <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
-                    <Typography variant="text">ตำบล:</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="data">
-                      {sellData.address[0].tambon}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: { sm: "flex" }, m: 2 }}>
-                  <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
-                    <Typography variant="text">จังหวัด:</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="data">
-                      {sellData.address[0].province}
+                        userData.find((u) => u.id === claimData.user_id) &&
+                        userData.find((u) => u.id === claimData.user_id).name}
                     </Typography>
                   </Box>
                 </Box>
                 <Box sx={{ display: { sm: "flex" }, m: 2 }}>
                   <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
-                    <Typography variant="text">รหัสไปรษณีย์:</Typography>
+                    <Typography variant="text">เลขที่บัญชี:</Typography>
                   </Box>
                   <Box>
                     <Typography variant="data">
-                      {sellData.address[0].zipcode}
+                      {claimData.bank_detail}
                     </Typography>
                   </Box>
                 </Box>
@@ -446,10 +359,14 @@ export default function Detail() {
             <Grid item xs={12} lg={6}>
               <Box
                 sx={{
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                  overflowY: "scroll",
+                  height: "40vh",
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
-                  height: "100%",
                   boxShadow:
                     "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
                 }}
@@ -457,31 +374,31 @@ export default function Detail() {
                 <Typography
                   sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
                 >
-                  หลักฐานการชำระเงิน
+                  เหตุผล
                 </Typography>
-                <Box
-                  sx={{
-                    m: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    src={sellData.img}
-                    alt="Product Image"
-                    priority
-                    objectFit="cover"
-                    height={400}
-                    width={300}
-                  />
+                <Box sx={{ display: { sm: "flex" }, m: 2 }}>
+                  <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
+                    <Typography variant="text">หัวข้อ:</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="data">{claimData.reason}</Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: { sm: "flex" }, m: 2 }}>
+                  <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
+                    <Typography variant="text">รายละเอียด:</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="data">
+                      {claimData.reason_detail}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             </Grid>
             <Grid item xs={12}>
               <Box
                 sx={{
-                  mb: 5,
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
@@ -492,7 +409,45 @@ export default function Detail() {
                 <Typography
                   sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
                 >
-                  สินค้า
+                  รูปส่วนที่เสียหาย
+                </Typography>
+                <ImageList
+                  // variant="masonry"
+                  cols={3}
+                  gap={8}
+                  sx={{ m: 2 }}
+                >
+                  {claimData.img.map((item, index) => (
+                    <ImageListItem key={index}>
+                      <Image
+                        layout="responsive"
+                        srcSet={`${item}`}
+                        src={`${item}`}
+                        alt="img"
+                        loading="lazy"
+                        width={82} // ใช้ครึ่งของค่า w และ h ที่กำหนดใน srcSet
+                        height={82} // ใช้ครึ่งของค่า w และ h ที่กำหนดใน srcSet
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  mb:5,
+                  bgcolor: "#fff",
+                  borderBottom: "1px solid #ccc",
+                  borderRadius: "10px",
+                  boxShadow:
+                    "rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset",
+                }}
+              >
+                <Typography
+                  sx={{ fontSize: "1.5rem", fontWeight: "600", p: 2 }}
+                >
+                  รายการขาย
                 </Typography>
                 <Box sx={{ m: 2 }}>
                   <TableContainer
@@ -615,7 +570,9 @@ export default function Detail() {
                                     </Tooltip>
                                   )}
                               </StyledTableCell>
-                              <StyledTableCell align="center">{row.size}</StyledTableCell>
+                              <StyledTableCell align="center">
+                                {row.size}
+                              </StyledTableCell>
                               <StyledTableCell align="center">
                                 {row.amount}
                               </StyledTableCell>
@@ -652,7 +609,7 @@ export default function Detail() {
                     <Box
                       sx={{
                         display: { sm: "flex" },
-                        m: 2,
+              
                         justifyContent: {
                           xs: "space-between",
                           md: "flex-start",

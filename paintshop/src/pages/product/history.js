@@ -8,11 +8,13 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Image from "next/image";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getCollection } from "@/firebase/getData";
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import { deleteData, restoreData } from "@/firebase/addData";
+import { ProductContext } from "@/context/ProductContext";
+import { useContext } from "react";
 
 export default function History() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -51,8 +53,9 @@ export default function History() {
     },
   });
   const [documentData, setDocumentData] = useState([]);
+  const { productData, fetchProductData } = useContext(ProductContext);
   useEffect(() => {
-    fetchData();
+    fetchProductData();
   }, []);
   const fetchData = async () => {
     const collectionName = "products";
@@ -74,12 +77,8 @@ export default function History() {
     }
   };
 
-  function createData(No, id, img, p_name, deleteAt, deleteBy) {
-    return { No, id, img, p_name, deleteAt, deleteBy };
-  }
   const handleRestoreData = async (id) => {
     const result = await restoreData("products", id);
-    fetchData();
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
@@ -99,7 +98,6 @@ export default function History() {
 
   const handleDelete = async (id) => {
     const result = await deleteData("products", id);
-    fetchData();
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
@@ -124,22 +122,25 @@ export default function History() {
     }
     setOpen(false);
   };
-
-  const rows = documentData.map((dataItem, index) => {
-    const timestamp = dataItem.deleteAt
-      ? dataItem.deleteAt
-          .toDate()
-          .toLocaleString("th-TH", { dateStyle: "full", timeStyle: "medium" })
-      : "";
-    return createData(
-      index + 1,
-      dataItem.id,
-      dataItem.img,
-      dataItem.name,
-      timestamp,
-      dataItem.deleteBy
-    );
-  });
+  function createData(No, id, img, p_name, pdelete) {
+    return { No, id, img, p_name, pdelete };
+  }
+  const rows = productData
+    .filter((p) => p.delete)
+    .map((dataItem, index) => {
+      const timestamp = dataItem.deleteAt
+        ? dataItem.deleteAt
+            .toDate()
+            .toLocaleString("th-TH", { dateStyle: "full", timeStyle: "medium" })
+        : "";
+      return createData(
+        index + 1,
+        dataItem.id,
+        dataItem.img,
+        dataItem.name,
+        dataItem.delete
+      );
+    });
 
   return (
     <Layout>
@@ -159,7 +160,7 @@ export default function History() {
                 fontWeight: "bold",
                 borderRadius: "50px",
                 boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                mb:2
+                mb: 2,
               }}
               onClick={goBack}
             >
@@ -172,9 +173,9 @@ export default function History() {
                   <TableRow>
                     <StyledTableCell align="center">No.</StyledTableCell>
                     <StyledTableCell align="center">รูปภาพ</StyledTableCell>
-                    <StyledTableCell>ชื่อสินค้า</StyledTableCell>
-                    <StyledTableCell>วันที่ลบ</StyledTableCell>
-                    <StyledTableCell>ผู้ลบ</StyledTableCell>
+                    <StyledTableCell align="center">ชื่อสินค้า</StyledTableCell>
+                    <StyledTableCell align="center">วันที่ลบ</StyledTableCell>
+                    <StyledTableCell align="center">ผู้ลบ</StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
                   </TableRow>
@@ -200,9 +201,18 @@ export default function History() {
                           />
                         }
                       </StyledTableCell>
-                      <StyledTableCell>{row.p_name}</StyledTableCell>
-                      <StyledTableCell>{row.deleteAt}</StyledTableCell>
-                      <StyledTableCell>{row.deleteBy}</StyledTableCell>
+                      <StyledTableCell align="center">{row.p_name}</StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.pdelete.deleteAt
+                          ? row.pdelete.deleteAt
+                              .toDate()
+                              .toLocaleString("th-TH", {
+                                dateStyle: "full",
+                                timeStyle: "medium",
+                              })
+                          : ""}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">{row.pdelete.deleteBy}</StyledTableCell>
                       <StyledTableCell align="center">
                         <Button
                           color="primary"

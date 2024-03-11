@@ -18,6 +18,7 @@ import TuneIcon from "@mui/icons-material/Tune";
 import { debounce } from "lodash";
 import searchData from "@/firebase/searchData";
 import { ThemeProvider } from "@emotion/react";
+import { UserContext } from "@/context/UserContext";
 export default function Employee() {
   const { role } = useAuthContext();
   const [documentData, setDocumentData] = React.useState([]);
@@ -36,7 +37,7 @@ export default function Employee() {
         main: "#FE616A",
       },
     },
-  })
+  });
   function handleAdd() {
     router.push("/employee/addemployee");
   }
@@ -44,11 +45,7 @@ export default function Employee() {
     router.push("/employee/former-employee");
   }
 
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch("");
-  }, []);
-
+  const { userData } = React.useContext(UserContext);
   const debouncedSearchUser = debounce(async (term) => {
     try {
       const collectionName = "users";
@@ -60,13 +57,17 @@ export default function Employee() {
     } catch (error) {
       console.error("Error searching data:", error);
     }
-  }, 500); // กำหนดเวลา debounce ที่คุณต้องการ
+  }, 300); // กำหนดเวลา debounce ที่คุณต้องการ
 
   const handleSearch = (term) => {
     setSearchTerm(term);
     debouncedSearchUser(term);
   };
-
+  React.useEffect(() => {
+    if(userData != undefined){
+      setDocumentData(userData.filter((doc) => doc.role == "employee"))
+    }
+  }, [userData]);
   //เงินเดือนรวม
   let total = 0;
   if (documentData) {
@@ -90,7 +91,7 @@ export default function Employee() {
               container
               columnSpacing={2}
               rowSpacing={0}
-              sx={{ height: "100%", width: "100%", pt: 1 }}
+              sx={{ pt: 1 }}
             >
               <Grid item xs={12} sx={{ mt: 5 }}>
                 <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
@@ -123,7 +124,6 @@ export default function Employee() {
                 </Button>
                 <Button
                   variant="contained"
-                  
                   sx={{ mr: 2, mb: 2, mt: 2 }}
                   onClick={goFomerEmp}
                 >
@@ -145,54 +145,54 @@ export default function Employee() {
                     borderRadius: "20px",
                   }}
                 >
-                  <Typography sx={{ fontSize: "1.4vw", fontWeight: "600" }}>
+                  <Typography sx={{ fontSize: "1.4rem", fontWeight: "600" }}>
                     ยอดค่าจ้าง
                   </Typography>
                   <Box sx={{ display: "flex", justifyContent: "center" }}>
                     <Box
                       sx={{
-                        backgroundColor: "#80C1CA",
+                        backgroundColor: "#018294",
                         m: 1,
                         p: 2,
                         borderRadius: "5px",
                       }}
                     >
-                      <Typography sx={{ color: "#FFFFFF", fontSize: "1vw" }}>
+                      <Typography sx={{ color: "#FFFFFF", fontSize: "1rem" }}>
                         จำนวนลูกจ้าง
                       </Typography>
                       <Typography sx={{ color: "#FFFFFF" }}>
                         <span
                           style={{
-                            fontSize: "2vw",
+                            fontSize: "2rem",
                             fontWeight: 500,
                             color: "#FE616A",
                           }}
                         >
-                          {documentData.length}
+                          {documentData.length}{" "}
                         </span>
                         คน
                       </Typography>
                     </Box>
                     <Box
                       sx={{
-                        backgroundColor: "#80C1CA",
+                        backgroundColor: "#018294",
                         m: 1,
                         p: 2,
                         borderRadius: "5px",
                       }}
                     >
-                      <Typography sx={{ color: "#FFFFFF", fontSize: "1vw" }}>
+                      <Typography sx={{ color: "#FFFFFF", fontSize: "1rem" }}>
                         จำนวนเงินที่ต้องจ่าย
                       </Typography>
                       <Typography sx={{ color: "#FFFFFF" }}>
                         <span
                           style={{
-                            fontSize: "2vw",
+                            fontSize: "2rem",
                             fontWeight: 500,
                             color: "#FE616A",
                           }}
                         >
-                          {formattedInt}
+                          {formattedInt}{" "}
                         </span>
                         บาท
                       </Typography>

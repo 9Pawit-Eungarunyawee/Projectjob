@@ -21,9 +21,9 @@ import {
 import { ProductContext } from "@/context/ProductContext";
 import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
-export default function Allclaim() {
+export default function Allow() {
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [orderData, setOrderData] = React.useState([]);
+  const [orderData, setOrderData] = React.useState("");
   const [claimData, setClaimData] = React.useState([]);
   const [color, setColor] = React.useState(null);
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function Allclaim() {
       const collectionName = "claims";
       const field = "status";
       const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter((doc) => doc.user_id === uid);
+      const filteredResults = results.filter((doc) => doc.user_id === uid && doc.status === "ยืนยันการเคลม");
       setClaimData(filteredResults);
     } catch (error) {
       console.error("Error searching data:", error);
@@ -171,11 +171,9 @@ export default function Allclaim() {
                 </Box>
               </Box>
             </CardContent>
-            {orderData
-              .filter((order) => order.id === item.order_id)
-              .map((data, x) => (
+            {orderData &&
+              orderData.map((data, x) => (
                 <Box key={x}>
-                  {console.log("tesrtasdasdas",data)}
                   <CardContent sx={{ bgcolor: "#EEEDEB" }}>
                     <Box
                       sx={{ display: "flex", justifyContent: "space-between" }}

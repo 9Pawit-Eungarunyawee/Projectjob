@@ -115,9 +115,8 @@ function ColorlibStepIcon(props) {
   const icons = {
     1: <ArticleOutlinedIcon />,
     2: <PaymentOutlinedIcon />,
-    3: <ArchiveOutlinedIcon />,
-    4: <LocalShippingOutlinedIcon />,
-    5: <Check />,
+    3: <LocalShippingOutlinedIcon />,
+    4: <Check />,
   };
 
   return (
@@ -149,16 +148,15 @@ ColorlibStepIcon.propTypes = {
 };
 
 const steps = [
-  "ได้รับคำสั่งซื้อ",
-  "ยืนยันการชำระเงิน",
-  "จัดเตรียมสินค้า",
+  "รอตรวจสอบ",
+  "อนุมัติการเคลม",
   "อยู่ระหว่างจัดส่ง",
   "จัดส่งสำเร็จ",
 ];
 
 export default function Claimsteppers() {
   const router = useRouter();
-  const OrderId = JSON.parse(router.query.Order);
+  const ClaimID = JSON.parse(router.query.Claim);
   const [orderData, setOrderData] = React.useState([]); // เพิ่ม state เก็บข้อมูล order
   const [searchTerm, setSearchTerm] = React.useState("");
   React.useEffect(() => {
@@ -169,10 +167,10 @@ export default function Claimsteppers() {
   React.useEffect(() => {}, [orderData]);
   const debouncedSearchOrder = debounce(async (term) => {
     try {
-      const collectionName = "orders";
+      const collectionName = "claims";
       const field = "status";
       const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter((doc) => doc.id === OrderId);
+      const filteredResults = results.filter((doc) => doc.id === ClaimID);
       setOrderData(filteredResults);
     } catch (error) {
       console.error("Error searching data:", error);
@@ -188,20 +186,17 @@ export default function Claimsteppers() {
     const status = orderData.length > 0 ? orderData[0].status : null;
     let active;
     switch (status) {
-      case "รอยืนยัน":
+      case "รอตรวจสอบ":
         active = 0;
         break;
-      case "ยืนยัน":
+      case "ยืนยันการเคลม":
         active = 1;
         break;
-      case "จัดเตรียมสินค้า":
+      case "อยู่ระหว่างจัดส่ง":
         active = 2;
         break;
-      case "อยู่ระหว่างจัดส่ง":
-        active = 3;
-        break;
       case "จัดส่งสำเร็จ":
-        active = 4;
+        active = 3;
         break;
       default:
         active = 0;

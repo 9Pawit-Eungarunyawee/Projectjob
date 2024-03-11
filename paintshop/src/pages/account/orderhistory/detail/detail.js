@@ -247,9 +247,9 @@ export default function DetailOrder() {
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={5} sx={{ textAlign: "center" }}>
-                  {item.status !== "จัดส่งสำเร็จ" && (
+                  {item.status === "อยู่ระหว่างจัดส่ง" && (
                     <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item xs={12} sm={12}>
                         <Button
                           variant="contained"
                           fullWidth
@@ -263,22 +263,6 @@ export default function DetailOrder() {
                           onClick={() => handleReceiveProduct(item.id, index)}
                         >
                           ได้รับสินค้าแล้ว
-                        </Button>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          sx={{
-                            bgcolor: "#BBE2EC",
-                            fontWeight: "bold",
-                            color: "#018294",
-                            "&:hover": {
-                              bgcolor: "#BBE2EC",
-                            },
-                          }}
-                        >
-                          ไม่ได้รับสินค้า
                         </Button>
                       </Grid>
                     </Grid>

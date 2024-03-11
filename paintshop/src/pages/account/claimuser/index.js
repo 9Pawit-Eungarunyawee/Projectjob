@@ -14,6 +14,8 @@ import Link from "next/link";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import Allclaim from "./allclaim";
+import Allow from "./allow";
+import Disallow from "./disallow";
 const styles = {
   Active: {
     "&.Mui-selected": {
@@ -139,8 +141,14 @@ export default function Claimuser() {
                   <CustomTabPanel value={value} index={0}>
                     <Allclaim />
                   </CustomTabPanel>
-                  <CustomTabPanel value={value} index={1}></CustomTabPanel>
-                  <CustomTabPanel value={value} index={1}></CustomTabPanel>
+                  <CustomTabPanel value={value} index={1}>
+                    {" "}
+                    <Allow />
+                  </CustomTabPanel>
+                  <CustomTabPanel value={value} index={2}>
+                    {" "}
+                    <Disallow />
+                  </CustomTabPanel>
                 </Grid>
               </Grid>
             </Box>

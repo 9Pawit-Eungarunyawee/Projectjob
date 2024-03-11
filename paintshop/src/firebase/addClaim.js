@@ -1,5 +1,11 @@
 import firebase_app from "./config";
-import { getFirestore, collection, addDoc, setDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+  doc,
+} from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
 
@@ -14,7 +20,6 @@ export default async function addClaim(collectionName, data) {
   try {
     // เตรียมข้อมูลที่ต้องการเพิ่ม
     const claimData = {
-      products_id: data.products_id,
       user_id: data.user_id,
       reason: data.reason,
       reason_detail: data.reason_detail,
@@ -24,6 +29,7 @@ export default async function addClaim(collectionName, data) {
       img: img,
       //   vid: vid,
       status: data.status,
+      tracker:null,
     };
     console.log(claimData);
     result = await addDoc(collection(db, collectionName), claimData);
@@ -36,7 +42,23 @@ export default async function addClaim(collectionName, data) {
 
   return { result, error };
 }
+const editClaim = async (id, data) => {
+  let result = null;
+  let error = null;
+  try {
+    result = await setDoc(doc(db, "claims", id), data, {
+      merge: true,
+    });
+    console.log("แก้ไขข้อมูลสำเร็จ");
+  } catch (e) {
+    error = e;
+    console.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล:", error);
+  }
 
+  return { result, error };
+};
+
+export { editClaim };
 const confirmCliam = async (id) => {
   let result = null;
   let error = null;
@@ -48,13 +70,13 @@ const confirmCliam = async (id) => {
       merge: true,
     });
     console.log("ยืนยันการเคลมสำเร็จ", result);
-  } catch(e) {
+  } catch (e) {
     error = e;
-    console.log("เกิดข้อผิดพลาดในการยืนยันการเคลม",error)
+    console.log("เกิดข้อผิดพลาดในการยืนยันการเคลม", error);
   }
-  return{result,error}
+  return { result, error };
 };
-export {confirmCliam}
+export { confirmCliam };
 
 const cancelCliam = async (id) => {
   let result = null;
@@ -67,10 +89,10 @@ const cancelCliam = async (id) => {
       merge: true,
     });
     console.log("ยกเลิกการเคลมสำเร็จ", result);
-  } catch(e) {
+  } catch (e) {
     error = e;
-    console.log("เกิดข้อผิดพลาดในการยกเลิกการเคลม",error)
+    console.log("เกิดข้อผิดพลาดในการยกเลิกการเคลม", error);
   }
-  return{result,error}
+  return { result, error };
 };
-export {cancelCliam}
+export { cancelCliam };

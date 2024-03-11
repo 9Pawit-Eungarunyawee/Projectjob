@@ -271,9 +271,8 @@ export default function Navbar() {
                   </Button>
                 </Box>
               </Link>
-              <IconButton color="black" sx={{ marginLeft: "auto" }}>
-                <SearchIcon />
-              </IconButton>
+              <Box color="black" sx={{ marginLeft: "auto" }}>
+              </Box>
               <Link href={"/cart"}>
                 <IconButton color="black">
                   <Badge badgeContent={cartItemCount} color="error">

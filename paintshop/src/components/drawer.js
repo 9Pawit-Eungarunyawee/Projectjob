@@ -296,18 +296,18 @@ const DrawerComp = () => {
           </ListItem>
           <ListItem>
             <Link
-              href="/account/claim"
+              href="/account/claimuser"
               style={{
                 textDecoration: "none",
                 display: "flex",
                 justifyContent: "center",
                 width: "100%", // Set width to 100%
               }}
-              onClick={(e) => setActiveLink("/account/claim")}
+              onClick={(e) => setActiveLink("/account/claimuser")}
             >
               <Box
                 sx={
-                  activeLink === "/account/claim"
+                  activeLink === "/account/claimuser"
                     ? styles.BoxActive
                     : styles.Box
                 }

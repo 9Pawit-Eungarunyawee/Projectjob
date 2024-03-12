@@ -62,7 +62,8 @@ export default function Cart() {
   const [colorData, setColorData] = React.useState(null);
   const [producttotal, setProducttotal] = React.useState(0);
   const [total, setTotal] = React.useState(0);
-  const [totalQuantity, setTotalQuantity] = React.useState(0);
+  const [totalQuantity1, setTotalQuantity1] = React.useState(0);
+  const [totalQuantity2, setTotalQuantity2] = React.useState(0);
   const user = useAuthContext();
   const [alert, setAlert] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -201,7 +202,7 @@ export default function Cart() {
         producttotal += item.amount * item.price;
       });
       const total = producttotal + shippingCost;
-      setTotalQuantity(totalQuantity);
+      setTotalQuantity1(totalQuantity);
       setProducttotal(producttotal);
       setTotalProductPrice(producttotal);
       setTotal(total);
@@ -217,7 +218,7 @@ export default function Cart() {
         materialtotal += item.amount * item.price;
       });
       const total = materialtotal + shippingCost;
-      setTotalQuantity(totalQuantity);
+      setTotalQuantity2(totalQuantity);
       setMaterialTotal(materialtotal);
       setTotalMaterialPrice(materialtotal);
       setTotal(total);
@@ -225,6 +226,7 @@ export default function Cart() {
   }, [groupedMaterialData]);
   const productPrice = totalMaterialPrice + totalProductPrice;
   const totalAllPrice = totalMaterialPrice + totalProductPrice + shippingCost;
+  const totalAllquan = totalQuantity1 + totalQuantity2 ;
   const handleDelete = async (id) => {
     const result = await deleteData("cart", id);
 
@@ -236,6 +238,7 @@ export default function Cart() {
       );
       setOpen(true);
       debouncedSearchUser(searchTerm);
+      debouncedSearchMaterial(searchTerm);
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
@@ -459,7 +462,7 @@ export default function Cart() {
                             >
                               <Typography>
                                 {" "}
-                                ยอดรวมสินค้า ({totalQuantity} ชิ้น)
+                                ยอดรวมสินค้า ({totalAllquan} ชิ้น)
                               </Typography>
                               <Typography sx={{ fontWeight: "bold" }}>
                                 ฿{format(productPrice)}

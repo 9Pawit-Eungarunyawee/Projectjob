@@ -114,7 +114,8 @@ export default function AddEmployee() {
   const handleForm = async (event) => {
     event.preventDefault();
     if (password == conpassword) {
-      await signUp(
+      setPasswordsMatch(true);
+      const { result, error } = await signUp(
         email,
         password,
         address,
@@ -126,8 +127,11 @@ export default function AddEmployee() {
         tambonName,
         zipCode
       );
-      setPasswordsMatch(true);
-      return router.push("/homepage");
+      if (error) {
+        window.alert("ไม่สามารถสร้างบัญชีได้");
+      } else {
+        return router.push("/homepage");
+      }
     } else {
       setPasswordsMatch(false);
     }
@@ -175,7 +179,7 @@ export default function AddEmployee() {
                     fontWeight: "bold",
                     borderRadius: "50px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    mb:3
+                    mb: 3,
                   }}
                   onClick={goBack}
                 >

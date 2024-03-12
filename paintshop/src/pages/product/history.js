@@ -177,7 +177,6 @@ export default function History() {
                     <StyledTableCell align="center">วันที่ลบ</StyledTableCell>
                     <StyledTableCell align="center">ผู้ลบ</StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
-                    <StyledTableCell align="center"></StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -221,14 +220,14 @@ export default function History() {
                           กู้คืน
                         </Button>
                       </StyledTableCell>
-                      <StyledTableCell align="center">
+                      {/* <StyledTableCell align="center">
                         <Button
                           color="primary"
                           onClick={() => handleDelete(row.id)}
                         >
                           ลบถาวร
                         </Button>
-                      </StyledTableCell>
+                      </StyledTableCell> */}
                     </StyledTableRow>
                   ))}
                 </TableBody>

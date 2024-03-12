@@ -470,7 +470,7 @@ export default function DetailOrder() {
                   </Grid>
                 </Grid>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={11}>
+                  <Grid item xs={12} sm={10}>
                     <Box sx={{ display: "flex" }}>
                       <Typography sx={{ fontWeight: "bold" }}>
                         ยอดสุทธิ
@@ -478,9 +478,9 @@ export default function DetailOrder() {
                       <Typography>(รวมภาษีมูลค่าเพิ่ม)</Typography>
                     </Box>
                   </Grid>
-                  <Grid item xs={12} sm={1}>
+                  <Grid item xs={12} sm={2}>
                     <Typography
-                      variant="h6"
+                      variant="h4"
                       sx={{ fontWeight: "bold", color: "#018294" }}
                     >
                       ฿{format(item.total_price)}

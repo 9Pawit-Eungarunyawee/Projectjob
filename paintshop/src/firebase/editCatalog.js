@@ -6,7 +6,6 @@ export default async function editCatalog(colllection, id, data) {
   let result = null;
   let error = null;
 
-
   try {
     result = await setDoc(doc(db, colllection, id), data, {
       merge: true,

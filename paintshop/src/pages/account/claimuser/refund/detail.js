@@ -129,6 +129,7 @@ export default function Refunddetail() {
           </Alert>
         );
         setOpen(true);
+        router.push("/account/claimuser")
       } else {
         setAlert(
           <Alert severity="error" onClose={handleClose}>

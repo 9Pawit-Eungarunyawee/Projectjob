@@ -33,31 +33,13 @@ export default function Catalog() {
     });
   }
   const [searchTerm, setSearchTerm] = React.useState("");
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch("");
-  }, []);
+
 
   const { catalogData, setCatalogData, fetchcatalogData } =
     React.useContext(CatalogContext);
   React.useEffect(() => {
     fetchcatalogData();
   }, [catalogData]);
-  const debouncedSearchUser = debounce(async (term) => {
-    try {
-      const collectionName = "catalog";
-      const field = "name";
-      const results = await searchUser(collectionName, field, term);
-      setCatalogData(results);
-    } catch (error) {
-      console.error("Error searching data:", error);
-    }
-  }, 500); // กำหนดเวลา debounce ที่คุณต้องการ
-
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-    debouncedSearchUser(term);
-  };
   const goBack = () => {
     window.history.back();
   };

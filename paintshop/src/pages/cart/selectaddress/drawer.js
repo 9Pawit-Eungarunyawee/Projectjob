@@ -43,13 +43,19 @@ function SwipeableEdgeDrawer(props) {
   const [documentData, setDocumentData] = React.useState(null);
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
+  const [productData2, setProductData2] = React.useState(null);
   const [colorData, setColorData] = React.useState(null);
   const [total, setTotal] = React.useState(0);
   const [producttotal, setProducttotal] = React.useState(0);
-  const [totalQuantity, setTotalQuantity] = React.useState(0);
+  const [totalQuantity1, setTotalQuantity1] = React.useState(0);
+  const [totalQuantity2, setTotalQuantity2] = React.useState(0);
+  const [totalMaterialPrice, setTotalMaterialPrice] = React.useState(0);
+  const [totalProductPrice, setTotalProductPrice] = React.useState(0);
+  const [materialData, setMaterialData] = React.useState(null);
+  const [materialTotal, setMaterialTotal] = React.useState(0);
   const user = useAuthContext();
   const handleConfirmOrder = () => {
-    const productIDs = groupedProductData.map((item) => item.product_id.id);
+    const productIDs = groupedProductData.map((item) => item.product_id?.id);
     const cartID = documentData.map((item) => item.id);
     router.push({
       pathname: "/cart/QR",
@@ -64,7 +70,7 @@ function SwipeableEdgeDrawer(props) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
   const [groupedProductData, setGroupedProductData] = React.useState(null);
-
+  const [groupedMaterialData, setGroupedMaterialData] = React.useState(null);
   //ดึงข้อมูล
   const [searchTerm, setSearchTerm] = React.useState("");
   React.useEffect(() => {
@@ -75,7 +81,36 @@ function SwipeableEdgeDrawer(props) {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
     // console.log(documentData);
   }, [documentData]);
+  const debouncedSearchMaterial = debounce(async (term) => {
+    const uid = user.user.uid;
+    try {
+      const collectionName = "cart";
+      const field = "user_id";
+      const results = await searchUser(collectionName, field, term);
+      const filteredResults = results.filter(
+        (doc) => doc.user_id === uid && doc.isMaterial === true
+      );
+      const productIds = filteredResults.map((doc) => doc.product_id?.id);
+      const productDetails = await getProductDetails(productIds);
+      setProductData2(productDetails);
+      setMaterialData(filteredResults);
+      const groupedMaterials = {};
+      filteredResults.forEach((doc) => {
+        const key = `${doc.product_id.id}_${doc.price}`;
+        if (!groupedMaterials[key]) {
+          groupedMaterials[key] = {
+            ...doc,
+          };
+        } else {
+          groupedMaterials[key].amount += 1;
+        }
+      });
 
+      setGroupedMaterialData(Object.values(groupedMaterials));
+    } catch (error) {
+      console.error("Error searching data:", error);
+    }
+  }, 500);
   const debouncedSearchUser = debounce(async (term) => {
     const uid = user.user.uid;
     console.log("Fetched data:", {
@@ -89,8 +124,8 @@ function SwipeableEdgeDrawer(props) {
       const field = "user_id";
       const results = await searchUser(collectionName, field, term);
       const filteredResults = results.filter((doc) => doc.user_id == uid);
-      const productIds = filteredResults.map((doc) => doc.product_id.id);
-      const colorIds = filteredResults.map((doc) => doc.color_id.id);
+      const productIds = filteredResults.map((doc) => doc.product_id?.id);
+      const colorIds = filteredResults.map((doc) => doc.color_id?.id);
       console.log("Product IDs:", productIds);
       console.log("Color IDs:", colorIds);
       const productDetails = await getProductDetails(productIds);
@@ -122,6 +157,7 @@ function SwipeableEdgeDrawer(props) {
   const handleSearch = (term) => {
     setSearchTerm(term);
     debouncedSearchUser(term);
+    debouncedSearchMaterial(term);
   };
   //ดึงสี
 
@@ -138,18 +174,37 @@ function SwipeableEdgeDrawer(props) {
   React.useEffect(() => {
     if (groupedProductData && groupedProductData.length > 0) {
       let totalQuantity = 0;
-      let total = 0;
       let producttotal = 0;
       groupedProductData.forEach((item) => {
         totalQuantity += item.amount;
         producttotal += item.amount * item.price;
       });
-      total += producttotal + shippingCost;
-      setTotalQuantity(totalQuantity);
+      const total = producttotal + shippingCost;
+      setTotalQuantity1(totalQuantity);
       setProducttotal(producttotal);
+      setTotalProductPrice(producttotal);
       setTotal(total);
     }
   }, [groupedProductData]);
+
+  React.useEffect(() => {
+    if (groupedMaterialData && groupedMaterialData.length > 0) {
+      let totalQuantity = 0;
+      let materialtotal = 0;
+      groupedMaterialData.forEach((item) => {
+        totalQuantity += item.amount;
+        materialtotal += item.amount * item.price;
+      });
+      const total = materialtotal + shippingCost;
+      setTotalQuantity2(totalQuantity);
+      setMaterialTotal(materialtotal);
+      setTotalMaterialPrice(materialtotal);
+      setTotal(total);
+    }
+  }, [groupedMaterialData]);
+  const productPrice = totalMaterialPrice + totalProductPrice;
+  const totalAllPrice = totalMaterialPrice + totalProductPrice + shippingCost;
+  const totalAllquan = totalQuantity1 + totalQuantity2;
   const { window } = props;
   const [open, setOpen] = React.useState(true);
 
@@ -216,9 +271,9 @@ function SwipeableEdgeDrawer(props) {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography> ยอดรวมสินค้า ({totalQuantity} ชิ้น)</Typography>
+                <Typography> ยอดรวมสินค้า ({totalAllquan} ชิ้น)</Typography>
                 <Typography sx={{ fontWeight: "bold" }}>
-                  ฿{format(producttotal)}
+                  ฿{format(productPrice)}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -235,7 +290,7 @@ function SwipeableEdgeDrawer(props) {
             >
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  ฿{format(total)}
+                  ฿{format(totalAllPrice)}
                 </Typography>
                 <Typography> ยอดสุทธิ </Typography>
               </Box>

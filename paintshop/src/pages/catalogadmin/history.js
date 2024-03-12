@@ -140,7 +140,7 @@ export default function History() {
         <Box>
           <Box sx={{ height: "100%", width: "100%", mt: 5 }}>
             <Typography sx={{ fontSize: "2rem", fontWeight: "600" }}>
-              ประวัติการลบแคตาล็อก
+              ประวัติการลบแคตตาล็อก
             </Typography>
             <Button
               sx={{

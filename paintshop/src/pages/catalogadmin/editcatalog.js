@@ -139,6 +139,7 @@ export default function EditCatalog() {
     event.preventDefault();
     const catalog = {
       name: name,
+      detail:detail,
       img: imageUrl,
     };
 
@@ -146,14 +147,14 @@ export default function EditCatalog() {
     if (result) {
       setAlert(
         <Alert severity="success" onClose={handleClose}>
-          เพิ่มข้อมูลสำเร็จ
+          แก้ไขข้อมูลสำเร็จ
         </Alert>
       );
       setOpen(true);
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
-          ผิดพลาด! ไม่สามารถเพิ่มข้อมูลได้
+          ผิดพลาด! ไม่สามารถแก้ไขข้อมูลได้
         </Alert>
       );
       setOpen(true);

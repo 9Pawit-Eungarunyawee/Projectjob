@@ -207,27 +207,6 @@ export default function Profile() {
                             <Typography>{item.email}</Typography>
                           </Grid>
                         </Grid>
-
-                        <Grid
-                          container
-                          spacing={2}
-                          sx={{
-                            mb: 2,
-                            borderBottom: "1px solid #EAEAEA",
-                            pb: 2,
-                          }}
-                        >
-                          <Grid item sm={4} xs={9}>
-                            <Typography
-                              sx={{ fontWeight: "bold", color: "grey" }}
-                            >
-                              รหัสผ่าน
-                            </Typography>
-                          </Grid>
-                          <Grid item sm={5} xs={9}>
-                            <Typography>-</Typography>
-                          </Grid>
-                        </Grid>
                       </Grid>
                     ))}
                 </Grid>

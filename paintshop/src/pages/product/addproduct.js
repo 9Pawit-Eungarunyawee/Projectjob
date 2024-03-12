@@ -29,7 +29,7 @@ export default function AddProduct() {
   const [imageUrl, setImageUrl] = useState("");
 
   const [productSizes, setProductSizes] = useState([
-    { size: "", amount: "", price: "", cost: "" },
+    { size: "", amount: "" , price: "", cost: "" },
   ]);
 
   const [area, setArea] = useState("");

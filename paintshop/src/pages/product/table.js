@@ -400,7 +400,7 @@ export default function TableProduct({ data, onDelete }) {
                                 </TableCell>
                                 <TableCell align="center">
                                   {/* {getProductTotalSameSize(row.id, size.size)} */}
-                                  {size.amount}
+                                  {size.amount!=="" ? size.amount : 0}
                                 </TableCell>
                                 <TableCell align="center">
                                   {size.price}

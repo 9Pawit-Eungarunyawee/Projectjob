@@ -175,7 +175,7 @@ export default function Product() {
 
   const getProductOutOfStock = (productData) => {
     const outOfStockProducts = productData.filter((product) => {
-      return product.productSizes.some((size) => size.amount === 0);
+      return product.productSizes.some((size) => size.amount === 0 || size.amount === "");
     });
   
     return outOfStockProducts;

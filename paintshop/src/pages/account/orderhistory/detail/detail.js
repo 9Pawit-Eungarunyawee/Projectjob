@@ -335,14 +335,9 @@ export default function DetailOrder() {
                                 {doc.province} รหัสไปรษณีย์
                                 {doc.zipcode}
                               </Typography>
-                              {userData &&
-                                userData.map((item, index) => (
-                                  <Box key={index}>
-                                    <Typography sx={{ fontWeight: "bold" }}>
-                                      เบอร์โทร : {item.tel}
-                                    </Typography>
-                                  </Box>
-                                ))}
+                              <Typography sx={{ fontWeight: "bold" }}>
+                                เบอร์โทร : {doc.tel}
+                              </Typography>
                             </Box>
                           </Box>
                         </Grid>

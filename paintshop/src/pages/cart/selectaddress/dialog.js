@@ -98,7 +98,6 @@ export default function Addressdialog() {
         id: doc.id,
         name: doc.data().name,
         email: doc.data().email,
-        tel: doc.data().tel,
       }));
 
       setUserData(user);
@@ -115,6 +114,7 @@ export default function Addressdialog() {
       amphureName,
       tambonName,
       zipCode,
+      tel,
     };
 
     console.log("Submitting form with data:", addAddresses);

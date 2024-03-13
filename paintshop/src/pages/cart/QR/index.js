@@ -22,6 +22,7 @@ export default function QR() {
   const sumtotal = JSON.parse(router.query.totalAllPrice);
   const productDetails = JSON.parse(router.query.productDetails);
   const addressDetails = JSON.parse(router.query.addressDetails);
+  const totalShippingCost = JSON.parse(router.query.totalShippingCost);
   const cartID = JSON.parse(router.query.cartId);
   const [price, setPrice] = React.useState(sumtotal);
   const [phoneNumber, setphoneNumber] = React.useState("0960868037");
@@ -91,16 +92,17 @@ export default function QR() {
       },
     },
   });
-  const updateorder = async (products ,address) => {
+  const updateorder = async (products, address) => {
     const currentDate = new Date();
     const order = {
       products: products,
       user_id: user.user.uid,
       total_price: price,
-      address:address,
-      tracker:null,
+      address: address,
+      tracker: null,
       createAt: currentDate,
       img: imageUrl,
+      shippingCost: totalShippingCost,
       status: "รอยืนยัน",
     };
 
@@ -128,7 +130,6 @@ export default function QR() {
           </Alert>
         );
         setOpen(true);
-        
       }
     } else {
       // Error deleting cart item
@@ -229,7 +230,7 @@ export default function QR() {
                   <Button
                     variant="contained"
                     fullWidth
-                    onClick={() => updateorder(productDetails,addressDetails)}
+                    onClick={() => updateorder(productDetails, addressDetails)}
                   >
                     ยืนยัน
                   </Button>

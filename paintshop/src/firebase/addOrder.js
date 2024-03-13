@@ -24,6 +24,7 @@ export default async function addOrder(collectionName, data) {
       products: data.products,
       user_id: data.user_id,
       total_price: data.total_price,
+      shippingCost: data.shippingCost,
       address: data.address,
       tracker: null,
       createAt: currentDate,

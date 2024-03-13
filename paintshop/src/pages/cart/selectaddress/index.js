@@ -100,6 +100,7 @@ export default function Selectaddress() {
       tambon: item.addresses[selectedAddressIndex].tambon,
       province: item.addresses[selectedAddressIndex].province,
       zipcode: item.addresses[selectedAddressIndex].zipcode,
+      tel: item.addresses[selectedAddressIndex].tel,
     }));
 
     router.push({
@@ -109,6 +110,7 @@ export default function Selectaddress() {
         productDetails: JSON.stringify(productDetails),
         cartId: JSON.stringify(cartID),
         addressDetails: JSON.stringify(addressDetails),
+        totalShippingCost:JSON.stringify(totalShippingCost),
       },
     });
   };
@@ -285,6 +287,9 @@ export default function Selectaddress() {
                                       {data.name}
                                     </Typography>
                                   )}
+                                  <Typography sx={{ fontWeight: "bold" }}>
+                                    {data.addresses[selectedAddressIndex].tel}{" "}
+                                  </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={9}>
                                   <Typography>

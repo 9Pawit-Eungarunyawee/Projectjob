@@ -18,6 +18,9 @@ import All from "./all";
 import Prepare from "./prepare";
 import Shipping from "./shipping";
 import Success from "./success";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Mobileorder from "./mobile";
 const styles = {
   Active: {
     "&.Mui-selected": {
@@ -66,110 +69,116 @@ export default function Orderhistory() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <>
       <Homelayout>
+        <Container
+          maxWidth="false"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            bgcolor: "#FAF8F1",
+          }}
+        >
+          <Box sx={{ width: "70vw", pt: 2, pb: 2 }}>
+            <div role="presentation" onClick={handleClick}>
+              <Breadcrumbs aria-label="Beger">
+                <Link
+                  style={{ textDecoration: "none", color: "inherit" }}
+                  sx={{
+                    color: "inherit",
+                    "&:hover": { textDecoration: "underline" },
+                  }}
+                  href="/homepage"
+                >
+                  หน้าแรก
+                </Link>
+                <Typography color="text.primary">บัญชีของฉัน</Typography>
+              </Breadcrumbs>
+            </div>
+          </Box>
+        </Container>
         <Box sx={{ width: "100%" }}>
-          <Container
-            maxWidth="false"
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              bgcolor: "#FAF8F1",
-            }}
-          >
-            <Box sx={{ width: "70vw", pt: 2, pb: 2 }}>
-              <div role="presentation" onClick={handleClick}>
-                <Breadcrumbs aria-label="Beger">
-                  <Link
-                    style={{ textDecoration: "none", color: "inherit" }}
-                    sx={{
-                      color: "inherit",
-                      "&:hover": { textDecoration: "underline" },
-                    }}
-                    href="/homepage"
-                  >
-                    หน้าแรก
-                  </Link>
-                  <Typography color="text.primary">บัญชีของฉัน</Typography>
-                </Breadcrumbs>
-              </div>
-            </Box>
-          </Container>
-          <Container
-            maxWidth={false}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              bgcolor: "white",
-            }}
-          >
-            <Box sx={{ p: 3, width: "70vw" }}>
-              <Grid container spacing={2}>
-                <Grid item sm={3} xs={12}>
-                  <Accordionlayout />
+          {isMobile ? (
+            <Mobileorder />
+          ) : (
+            <Container
+              maxWidth={false}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                bgcolor: "white",
+              }}
+            >
+              <Box sx={{ p: 3, width: "70vw" }}>
+                <Grid container spacing={2}>
+                  <Grid item sm={3} xs={12}>
+                    <Accordionlayout />
+                  </Grid>
+                  <Grid item sm={9} xs={12}>
+                    {" "}
+                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                      <Tabs
+                        value={value}
+                        variant="scrollable"
+                        scrollButtons="auto"
+                        onChange={handleChange}
+                        aria-label="basic tabs example"
+                        sx={{
+                          "& .MuiTabs-indicator": {
+                            backgroundColor: "#018294",
+                          },
+                        }}
+                      >
+                        <Tab
+                          label="ทั้งหมด"
+                          {...a11yProps(0)}
+                          sx={{ ...styles.Active }}
+                        />
+                        <Tab
+                          label="รอยืนยัน"
+                          {...a11yProps(1)}
+                          sx={{ ...styles.Active }}
+                        />
+                        <Tab
+                          label="จัดเตรียมสินค้า"
+                          {...a11yProps(2)}
+                          sx={{ ...styles.Active }}
+                        />
+                        <Tab
+                          label="อยู่ระหว่างจัดส่ง"
+                          {...a11yProps(3)}
+                          sx={{ ...styles.Active }}
+                        />
+                        <Tab
+                          label="จัดส่งสำเร็จ"
+                          {...a11yProps(4)}
+                          sx={{ ...styles.Active }}
+                        />
+                      </Tabs>
+                    </Box>
+                    <CustomTabPanel value={value} index={0}>
+                      <All />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={1}>
+                      <Wait />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={2}>
+                      <Prepare />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={3}>
+                      <Shipping />
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={4}>
+                      <Success />
+                    </CustomTabPanel>
+                  </Grid>
                 </Grid>
-                <Grid item sm={9} xs={12}>
-                  {" "}
-                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                    <Tabs
-                      value={value}
-                      variant="scrollable"
-                      scrollButtons="auto"
-                      onChange={handleChange}
-                      aria-label="basic tabs example"
-                      sx={{
-                        "& .MuiTabs-indicator": {
-                          backgroundColor: "#018294",
-                        },
-                      }}
-                    >
-                      <Tab
-                        label="ทั้งหมด"
-                        {...a11yProps(0)}
-                        sx={{ ...styles.Active }}
-                      />
-                      <Tab
-                        label="รอยืนยัน"
-                        {...a11yProps(1)}
-                        sx={{ ...styles.Active }}
-                      />
-                      <Tab
-                        label="จัดเตรียมสินค้า"
-                        {...a11yProps(2)}
-                        sx={{ ...styles.Active }}
-                      />
-                      <Tab
-                        label="อยู่ระหว่างจัดส่ง"
-                        {...a11yProps(3)}
-                        sx={{ ...styles.Active }}
-                      />
-                      <Tab
-                        label="จัดส่งสำเร็จ"
-                        {...a11yProps(4)}
-                        sx={{ ...styles.Active }}
-                      />
-                    </Tabs>
-                  </Box>
-                  <CustomTabPanel value={value} index={0}>
-                    <All />
-                  </CustomTabPanel>
-                  <CustomTabPanel value={value} index={1}>
-                    <Wait />
-                  </CustomTabPanel>
-                  <CustomTabPanel value={value} index={2}>
-                    <Prepare />
-                  </CustomTabPanel>
-                  <CustomTabPanel value={value} index={3}>
-                    <Shipping />
-                  </CustomTabPanel>
-                  <CustomTabPanel value={value} index={4}>
-                    <Success />
-                  </CustomTabPanel>
-                </Grid>
-              </Grid>
-            </Box>
-          </Container>
+              </Box>
+            </Container>
+          )}
         </Box>
       </Homelayout>
     </>

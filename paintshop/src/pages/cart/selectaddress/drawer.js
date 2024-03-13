@@ -78,6 +78,7 @@ function SwipeableEdgeDrawer(props) {
       tambon: item.addresses[selectedAddressIndex].tambon,
       province: item.addresses[selectedAddressIndex].province,
       zipcode: item.addresses[selectedAddressIndex].zipcode,
+      tel: item.addresses[selectedAddressIndex].tel,
     }));
 
     router.push({

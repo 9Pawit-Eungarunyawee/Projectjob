@@ -207,7 +207,7 @@ export default function Claimsteppers() {
   const [activeStep, setActiveStep] = React.useState(0);
 
   return (
-    <Stack sx={{ width: "100%" }} spacing={4}>
+    <Stack  spacing={4}>
       <Stepper
         alternativeLabel
         activeStep={activeStep}

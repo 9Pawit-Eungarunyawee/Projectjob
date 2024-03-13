@@ -1,12 +1,19 @@
-
-  @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;1,100;1,200&display=swap');
-  @import 'react-date-range/dist/theme/default.css';
+@import "@fontsource/prompt/100.css";
+@import "@fontsource/prompt/200.css";
+@import "@fontsource/prompt/300.css";
+@import "@fontsource/prompt/400.css";
+@import "@fontsource/prompt/500.css";
+@import "@fontsource/prompt/600.css";
+@import "@fontsource/prompt/700.css";
+@import "@fontsource/prompt/800.css";
+@import "@fontsource/prompt/900.css";
+@import "react-date-range/dist/theme/default.css";
 body {
   padding: 0;
   margin: 0;
-   
-  font-family: 'Prompt', sans-serif !important;
-  background-color: #FAF8F1;
+
+  font-family: "Prompt", sans-serif;
+  background-color: #faf8f1;
 }
 
 .MuiContainer-root {
@@ -14,10 +21,10 @@ body {
   margin: 0;
 }
 
-.MuiTypography-root{
-  font-family: 'Prompt', sans-serif !important;
+.MuiTypography-root {
+  font-family: "Prompt", sans-serif;
 }
 
-.MuiTab-root{
-  font-family: 'Prompt', sans-serif !important;
+.MuiTab-root {
+  font-family: "Prompt", sans-serif;
 }

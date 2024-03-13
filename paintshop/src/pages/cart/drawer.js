@@ -38,6 +38,7 @@ const Puller = styled("div")(({ theme }) => ({
 }));
 
 function SwipeableEdgeDrawer(props) {
+  const { productPrice, totalAllPrice, totalShippingCost } = props;
   const shippingCost = 50;
   const router = useRouter();
   const [documentData, setDocumentData] = React.useState(null);
@@ -56,93 +57,7 @@ function SwipeableEdgeDrawer(props) {
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
-  const [groupedProductData, setGroupedProductData] = React.useState(null);
 
-  //ดึงข้อมูล
-  const [searchTerm, setSearchTerm] = React.useState("");
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch("");
-  }, []);
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    // console.log(documentData);
-  }, [documentData]);
-
-  const debouncedSearchUser = debounce(async (term) => {
-    const uid = user.user.uid;
-    console.log("Fetched data:", {
-      documentData,
-      productData,
-      colorData,
-      groupedProductData,
-    });
-    try {
-      const collectionName = "cart";
-      const field = "user_id";
-      const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter((doc) => doc.user_id == uid);
-      const productIds = filteredResults.map((doc) => doc.product_id.id);
-      const colorIds = filteredResults.map((doc) => doc.color_id.id);
-      console.log("Product IDs:", productIds);
-      console.log("Color IDs:", colorIds);
-      const productDetails = await getProductDetails(productIds);
-      const colorDetails = await getColorDetails(colorIds);
-      setColorData(colorDetails);
-      setProductData(productDetails);
-      setDocumentData(filteredResults);
-
-      const groupedProducts = {};
-      filteredResults.forEach((doc) => {
-        const key = `${doc.color_id.id}_${doc.product_id.id}_${doc.price}`;
-        if (!groupedProducts[key]) {
-          groupedProducts[key] = {
-            ...doc,
-            amount: 1,
-          };
-        } else {
-          groupedProducts[key].amount += 1;
-        }
-      });
-
-      setGroupedProductData(Object.values(groupedProducts));
-    } catch (error) {
-      console.error("Error searching data:", error);
-    }
-  }, 500);
-
-  // กำหนดเวลา debounce ที่คุณต้องการ
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-    debouncedSearchUser(term);
-  };
-  //ดึงสี
-
-  // บวก ลบ
-  const [amount, setAmount] = React.useState(0);
-
-  React.useEffect(() => {
-    if (cartData) {
-      const totalAmount = cartData.reduce((acc, item) => acc + item.amount, 0);
-      setAmount(totalAmount);
-    }
-  }, [cartData]);
-
-  React.useEffect(() => {
-    if (groupedProductData && groupedProductData.length > 0) {
-      let totalQuantity = 0;
-      let total = 0;
-      let producttotal = 0;
-      groupedProductData.forEach((item) => {
-        totalQuantity += item.amount;
-        producttotal += item.amount * item.price;
-      });
-      total += producttotal + shippingCost;
-      setTotalQuantity(totalQuantity);
-      setProducttotal(producttotal);
-      setTotal(total);
-    }
-  }, [groupedProductData]);
   const { window } = props;
   const [open, setOpen] = React.useState(true);
 
@@ -209,14 +124,16 @@ function SwipeableEdgeDrawer(props) {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography> ยอดรวมสินค้า ({totalQuantity} ชิ้น)</Typography>
+                <Typography> ยอดรวมสินค้า </Typography>
                 <Typography sx={{ fontWeight: "bold" }}>
-                  ฿{format(producttotal)}
+                  ฿{format(productPrice)}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography> ค่าจัดส่ง </Typography>
-                <Typography sx={{fontWeight:"bold"}}>฿{shippingCost}</Typography>
+                <Typography sx={{ fontWeight: "bold" }}>
+                  ฿{totalShippingCost}
+                </Typography>
               </Box>
             </Grid>
             <Grid
@@ -226,7 +143,7 @@ function SwipeableEdgeDrawer(props) {
             >
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  ฿{format(total)}
+                  ฿{format(totalAllPrice)}
                 </Typography>
                 <Typography> ยอดสุทธิ </Typography>
               </Box>

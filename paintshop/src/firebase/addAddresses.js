@@ -18,6 +18,7 @@ export default async function addAddress(collectionName, uid, data) {
   try {
     // Prepare data to be added
     const newAddressData = {
+      tel:data.tel,
       address: data.address,
       province: data.provinceName,
       amphure: data.amphureName,

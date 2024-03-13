@@ -298,13 +298,14 @@ export default function Refunddetail() {
                       </Typography>
                       {claimData[index].img &&
                         claimData[index].img.map((data, a) => (
-                          <Image
-                            key={a}
-                            src={data}
-                            width={150}
-                            height={100}
-                            alt={`Image ${a}`}
-                          />
+                            <Image
+                              key={a}
+                              src={data}
+                              width={100}
+                              height={100}
+                              alt={`Image ${a}`}
+                              objectFit="cover"
+                            />
                         ))}
                     </Grid>
                     <Grid item xs={12} sm={4}>
@@ -350,11 +351,10 @@ export default function Refunddetail() {
               .filter((order) => order.id === item.order_id) // กรองข้อมูล orderData เพื่อแสดงเฉพาะที่เกี่ยวข้องกับเคลม ID นั้นๆ
               .map((data1, x) => (
                 <Card key={x}>
-                  
                   {orderData[x].products &&
                     orderData[x].products.map((data, i) => (
                       <CardActionArea key={i}>
-                        {console.log("tesrtasdasdas123123",data)}
+                        {console.log("tesrtasdasdas123123", data)}
                         <Grid container spacing={2}>
                           <Grid
                             item

@@ -48,6 +48,7 @@ export default function Addressedit({
   const [provinceName, setProvinceName] = React.useState(undefined);
   const [amphureName, setAmphureName] = React.useState(undefined);
   const [tambonName, setTambonName] = React.useState(undefined);
+  const [tel, setTel] = React.useState(undefined);
   const [addressDoc, setAddressDoc] = React.useState(addressData);
   const [prevAddresses, setPrevAddresses] = React.useState([]);
   console.log("testtttttttttttttt", provinces);
@@ -117,6 +118,7 @@ export default function Addressedit({
     event.preventDefault();
     handleClose();
     const updatedAddressData = {
+      tel: tel,
       address: address,
       amphure: amphureName,
       province: provinceName,
@@ -125,7 +127,7 @@ export default function Addressedit({
     };
 
     try {
-      const userData = { ...addressData }; 
+      const userData = { ...addressData };
       userData.addresses = userData.addresses || [];
 
       userData.addresses[addressIndex] = updatedAddressData;
@@ -134,7 +136,7 @@ export default function Addressedit({
         "users",
         user.user.uid,
         addressIndex,
-        updatedAddressData 
+        updatedAddressData
       );
 
       // Handle success or error
@@ -167,19 +169,23 @@ export default function Addressedit({
     setOpen(true);
     setAddressDoc(addressData);
     if (addressDoc) {
+      setTel(addressDoc.tel);
       setAddress(addressDoc.address);
       setProvinceName(addressDoc.province);
       setAmphureName(addressDoc.amphure);
       setTambonName(addressDoc.tambon);
       setZipCode(addressDoc.zipcode);
     }
-    console.log("ทดสอบที่อยู่", addressDoc.zipcode);
+    console.log("ทดสอบที่อยู่", addressDoc);
   };
   console.log("ทดสอบอื่นๆ", zipCode);
   const handleClose = () => {
     setOpen(false);
   };
-
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setTel(value);
+  };
   return (
     <ThemeProvider theme={theme}>
       <React.Fragment>
@@ -195,6 +201,27 @@ export default function Addressedit({
           <form onSubmit={handleForm} className="form">
             <DialogContent>
               <Grid container spacing={2}>
+                <Grid xs={12} item>
+                  <TextField
+                    variant="outlined"
+                    label="เบอร์โทรศัพท์"
+                    fullWidth
+                    required
+                    value={tel}
+                    size="small"
+                    sx={{ mt: 1, mb: 1 }}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                      if (/^\d*$/.test(input) || input === "") {
+                        // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                        if (input === "" || parseInt(input) >= 0) {
+                          handleInputChange(e);
+                        }
+                      }
+                    }}
+                  />
+                </Grid>
                 <Grid xs={12} item>
                   <TextField
                     variant="outlined"
@@ -276,6 +303,7 @@ export default function Addressedit({
                 </Grid>
                 <Grid xs={12} sm={6} item>
                   <TextField
+                    disabled
                     variant="outlined"
                     label="รหัสไปรษณีย์"
                     value={String(zipCode || "")}

@@ -43,7 +43,7 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
   const [provinceName, setProvinceName] = React.useState(undefined);
   const [amphureName, setAmphureName] = React.useState(undefined);
   const [tambonName, setTambonName] = React.useState(undefined);
-  const [zipNum, setZipNum] = React.useState(undefined);
+  const [tel, setTel] = React.useState(undefined);
   const user = useAuthContext();
   const [selected, setSelected] = React.useState({
     province_id: undefined,
@@ -107,8 +107,9 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
     event.preventDefault();
     console.log("Handling form submission");
     handleClose();
-
+    
     const addAddresses = {
+      tel,
       address,
       provinceName,
       amphureName,
@@ -142,7 +143,10 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
   const handleClose = () => {
     setOpen(false);
   };
-
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setTel(value)
+  };
   return (
     <ThemeProvider theme={theme}>
       <React.Fragment>
@@ -159,6 +163,31 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
           <form onSubmit={handleForm} className="form">
             <DialogContent>
               <Grid container spacing={2}>
+              <Grid xs={12} item>
+                  <TextField
+                    variant="outlined"
+                    label="เบอร์โทรศัพท์"
+                    fullWidth
+                    multiline
+                    required
+                    size="small"
+                    value={tel}
+                    sx={{ mt: 1, mb: 1 }}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+                      if (/^\d*$/.test(input) || input === "") {
+                        // ถ้า input เป็นสตริงว่างหรือตัวเลขที่มากกว่าหรือเท่ากับ 0
+                        if (
+                          input === "" ||
+                          (parseInt(input) >= 0 )
+                        ) {
+                          handleInputChange(e);
+                        }
+                      }
+                    }}
+                  />
+                </Grid>
                 <Grid xs={12} item>
                   <TextField
                     variant="outlined"
@@ -233,6 +262,7 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
                 </Grid>
                 <Grid xs={12} sm={6} item>
                   <TextField
+                    disabled
                     variant="outlined"
                     label="รหัสไปรษณีย์"
                     value={zipCode || ""}

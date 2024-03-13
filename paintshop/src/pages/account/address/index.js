@@ -71,8 +71,6 @@ export default function Address() {
         tel: doc.data().tel,
         addresses: doc.data().addresses || [],
       }));
-      console.log("ทดสอบรหัสผู้ใช้", uid);
-      console.log("ทดสอบuser", user);
       setUserData(user);
     }
   };
@@ -90,6 +88,13 @@ export default function Address() {
   };
   const handleFormSubmitSuccess = () => {
     fetchAllData();
+  };
+  const handlePhoneNumberChange = (e) => {
+    const input = e.target.value;
+    // ถ้า input เป็นตัวเลขหรือเป็นสตริงว่าง
+    if (/^\d*$/.test(input) || input === "") {
+      setTel(input);
+    }
   };
   return (
     <ThemeProvider theme={theme}>
@@ -201,7 +206,7 @@ export default function Address() {
                                     >
                                       {item.name}
                                     </TableCell>
-                                    <TableCell>{item.tel}</TableCell>
+                                    <TableCell>{address.tel}</TableCell>
                                     <TableCell>
                                       {address.address} อำเภอ {address.amphure}{" "}
                                       ตำบล {address.tambon} จังหวัด{" "}

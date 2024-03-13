@@ -7,6 +7,7 @@ import BuyProvider from "@/context/BuyContext";
 import OrderProvider from "@/context/OrderContext";
 import ColorProvider from "@/context/ColorContext";
 import ClaimProvider from "@/context/ClaimContext";
+import CartProvider from "@/context/CartContext";
 export default function App({ Component, pageProps }) {
   return (
     <AuthContextProvider>
@@ -17,7 +18,9 @@ export default function App({ Component, pageProps }) {
               <BuyProvider>
                 <OrderProvider>
                   <ClaimProvider>
-                    <Component {...pageProps} />
+                    <CartProvider>
+                      <Component {...pageProps} />
+                    </CartProvider>
                   </ClaimProvider>
                 </OrderProvider>
               </BuyProvider>

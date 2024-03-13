@@ -38,173 +38,62 @@ const Puller = styled("div")(({ theme }) => ({
 }));
 
 function SwipeableEdgeDrawer(props) {
+  const { productPrice, totalAllPrice, totalShippingCost ,groupedCartArray,addressData,selectedAddressIndex} = props;
   const shippingCost = 50;
   const router = useRouter();
   const [documentData, setDocumentData] = React.useState(null);
   const [cartData, setCartData] = React.useState(null);
   const [productData, setProductData] = React.useState(null);
-  const [productData2, setProductData2] = React.useState(null);
   const [colorData, setColorData] = React.useState(null);
   const [total, setTotal] = React.useState(0);
   const [producttotal, setProducttotal] = React.useState(0);
-  const [totalQuantity1, setTotalQuantity1] = React.useState(0);
-  const [totalQuantity2, setTotalQuantity2] = React.useState(0);
-  const [totalMaterialPrice, setTotalMaterialPrice] = React.useState(0);
-  const [totalProductPrice, setTotalProductPrice] = React.useState(0);
-  const [materialData, setMaterialData] = React.useState(null);
-  const [materialTotal, setMaterialTotal] = React.useState(0);
+  const [totalQuantity, setTotalQuantity] = React.useState(0);
   const user = useAuthContext();
   const handleConfirmOrder = () => {
-    const productIDs = groupedProductData.map((item) => item.product_id?.id);
-    const cartID = documentData.map((item) => item.id);
+    // รวบรวมข้อมูลสินค้าและวัสดุเข้าไปใน productDetails
+    const productDetails = [];
+
+    // เก็บข้อมูลสินค้า
+    if (groupedCartArray) {
+      groupedCartArray.forEach((item) => {
+        productDetails.push({
+          product_id: item.product_id?.id,
+          amount: item.amount,
+          size: item.size,
+          price: item.price,
+          color_id: item.color_id?.id || null,
+        });
+      });
+    }
+    const cartID = [];
+    if (cartData) {
+      cartData
+        .filter((c) => c.user_id === user.user.uid)
+        .map((item) => cartID.push(item.id));
+    }
+
+    const addressDetails = addressData.map((item) => ({
+      address: item.addresses[selectedAddressIndex].address,
+      amphure: item.addresses[selectedAddressIndex].amphure,
+      tambon: item.addresses[selectedAddressIndex].tambon,
+      province: item.addresses[selectedAddressIndex].province,
+      zipcode: item.addresses[selectedAddressIndex].zipcode,
+    }));
+
     router.push({
       pathname: "/cart/QR",
       query: {
-        total,
-        productIDs: JSON.stringify(productIDs),
+        totalAllPrice,
+        productDetails: JSON.stringify(productDetails),
         cartId: JSON.stringify(cartID),
+        addressDetails: JSON.stringify(addressDetails),
       },
     });
   };
   const format = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
-  const [groupedProductData, setGroupedProductData] = React.useState(null);
-  const [groupedMaterialData, setGroupedMaterialData] = React.useState(null);
-  //ดึงข้อมูล
-  const [searchTerm, setSearchTerm] = React.useState("");
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch("");
-  }, []);
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    // console.log(documentData);
-  }, [documentData]);
-  const debouncedSearchMaterial = debounce(async (term) => {
-    const uid = user.user.uid;
-    try {
-      const collectionName = "cart";
-      const field = "user_id";
-      const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter(
-        (doc) => doc.user_id === uid && doc.isMaterial === true
-      );
-      const productIds = filteredResults.map((doc) => doc.product_id?.id);
-      const productDetails = await getProductDetails(productIds);
-      setProductData2(productDetails);
-      setMaterialData(filteredResults);
-      const groupedMaterials = {};
-      filteredResults.forEach((doc) => {
-        const key = `${doc.product_id.id}_${doc.price}`;
-        if (!groupedMaterials[key]) {
-          groupedMaterials[key] = {
-            ...doc,
-          };
-        } else {
-          groupedMaterials[key].amount += 1;
-        }
-      });
 
-      setGroupedMaterialData(Object.values(groupedMaterials));
-    } catch (error) {
-      console.error("Error searching data:", error);
-    }
-  }, 500);
-  const debouncedSearchUser = debounce(async (term) => {
-    const uid = user.user.uid;
-    console.log("Fetched data:", {
-      documentData,
-      productData,
-      colorData,
-      groupedProductData,
-    });
-    try {
-      const collectionName = "cart";
-      const field = "user_id";
-      const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter((doc) => doc.user_id == uid);
-      const productIds = filteredResults.map((doc) => doc.product_id?.id);
-      const colorIds = filteredResults.map((doc) => doc.color_id?.id);
-      console.log("Product IDs:", productIds);
-      console.log("Color IDs:", colorIds);
-      const productDetails = await getProductDetails(productIds);
-      const colorDetails = await getColorDetails(colorIds);
-      setColorData(colorDetails);
-      setProductData(productDetails);
-      setDocumentData(filteredResults);
-
-      const groupedProducts = {};
-      filteredResults.forEach((doc) => {
-        const key = `${doc.color_id.id}_${doc.product_id.id}_${doc.price}`;
-        if (!groupedProducts[key]) {
-          groupedProducts[key] = {
-            ...doc,
-            amount: 1,
-          };
-        } else {
-          groupedProducts[key].amount += 1;
-        }
-      });
-
-      setGroupedProductData(Object.values(groupedProducts));
-    } catch (error) {
-      console.error("Error searching data:", error);
-    }
-  }, 500);
-
-  // กำหนดเวลา debounce ที่คุณต้องการ
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-    debouncedSearchUser(term);
-    debouncedSearchMaterial(term);
-  };
-  //ดึงสี
-
-  // บวก ลบ
-  const [amount, setAmount] = React.useState(0);
-
-  React.useEffect(() => {
-    if (cartData) {
-      const totalAmount = cartData.reduce((acc, item) => acc + item.amount, 0);
-      setAmount(totalAmount);
-    }
-  }, [cartData]);
-
-  React.useEffect(() => {
-    if (groupedProductData && groupedProductData.length > 0) {
-      let totalQuantity = 0;
-      let producttotal = 0;
-      groupedProductData.forEach((item) => {
-        totalQuantity += item.amount;
-        producttotal += item.amount * item.price;
-      });
-      const total = producttotal + shippingCost;
-      setTotalQuantity1(totalQuantity);
-      setProducttotal(producttotal);
-      setTotalProductPrice(producttotal);
-      setTotal(total);
-    }
-  }, [groupedProductData]);
-
-  React.useEffect(() => {
-    if (groupedMaterialData && groupedMaterialData.length > 0) {
-      let totalQuantity = 0;
-      let materialtotal = 0;
-      groupedMaterialData.forEach((item) => {
-        totalQuantity += item.amount;
-        materialtotal += item.amount * item.price;
-      });
-      const total = materialtotal + shippingCost;
-      setTotalQuantity2(totalQuantity);
-      setMaterialTotal(materialtotal);
-      setTotalMaterialPrice(materialtotal);
-      setTotal(total);
-    }
-  }, [groupedMaterialData]);
-  const productPrice = totalMaterialPrice + totalProductPrice;
-  const totalAllPrice = totalMaterialPrice + totalProductPrice + shippingCost;
-  const totalAllquan = totalQuantity1 + totalQuantity2;
   const { window } = props;
   const [open, setOpen] = React.useState(true);
 
@@ -271,7 +160,7 @@ function SwipeableEdgeDrawer(props) {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography> ยอดรวมสินค้า ({totalAllquan} ชิ้น)</Typography>
+                <Typography> ยอดรวมสินค้า </Typography>
                 <Typography sx={{ fontWeight: "bold" }}>
                   ฿{format(productPrice)}
                 </Typography>
@@ -279,7 +168,7 @@ function SwipeableEdgeDrawer(props) {
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography> ค่าจัดส่ง </Typography>
                 <Typography sx={{ fontWeight: "bold" }}>
-                  ฿{shippingCost}
+                  ฿{totalShippingCost}
                 </Typography>
               </Box>
             </Grid>
@@ -299,7 +188,7 @@ function SwipeableEdgeDrawer(props) {
                 sx={{ p: 1, bgcolor: "#FE616A" }}
                 onClick={handleConfirmOrder}
               >
-                ชำระเงิน
+                ยืนยันคำสั่งซื้อ
               </Button>
             </Grid>
           </Grid>

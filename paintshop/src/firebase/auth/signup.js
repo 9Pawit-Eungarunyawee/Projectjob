@@ -27,13 +27,13 @@ export default async function signUp(
       email: user.email,
       name: name,
       addresses: [{
+        tel: tel,
         address: address,
         province: provinceName,
         amphure: amphureName,
         tambon: tambonName,
         zipcode: zipCode
       }],
-      tel: tel,
       profileUrl: profileUrl,
       role: "user",
     };

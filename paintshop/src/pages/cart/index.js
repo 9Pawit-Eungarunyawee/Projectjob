@@ -1,5 +1,5 @@
 import Homelayout from "@/components/homelayout";
-import * as React from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -9,8 +9,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardMedia,
-  CardActionArea,
   TableContainer,
   Table,
   TableHead,
@@ -20,62 +18,36 @@ import {
   IconButton,
   createTheme,
   ThemeProvider,
-  Icon,
   useMediaQuery,
-  Alert,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import {
-  getCart,
-  getCollection,
-  getColorDetails,
-  getProductDetails,
-} from "../../firebase/getData";
 import CartDrawer from "./drawer";
-import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { CartContext } from "@/context/CartContext";
 import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import Product from "../product";
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import { useAuthContext } from "@/context/AuthContext";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import searchUser from "@/firebase/searchData";
-import { debounce } from "lodash";
+import { getCollection } from "@/firebase/getData";
+import { ProductContext } from "@/context/ProductContext";
+import { ColorContext } from "@/context/ColorContext";
 import { deleteData } from "@/firebase/addData";
+import { useRouter } from "next/router";
+import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
-
 export default function Cart() {
-  const shippingCost = 50;
-  const router = useRouter();
-  const [documentData, setDocumentData] = React.useState(null);
-  const [isMaterial, setIsMaterial] = React.useState(false);
-  const [cartData, setCartData] = React.useState(null);
-  const [productData, setProductData] = React.useState(null);
-  const [productData2, setProductData2] = React.useState(null);
-  const [materialData, setMaterialData] = React.useState(null);
-  const [colorData, setColorData] = React.useState(null);
-  const [producttotal, setProducttotal] = React.useState(0);
-  const [total, setTotal] = React.useState(0);
-  const [totalQuantity1, setTotalQuantity1] = React.useState(0);
-  const [totalQuantity2, setTotalQuantity2] = React.useState(0);
   const user = useAuthContext();
-  const [alert, setAlert] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+  
+  const [Alert, setAlert] = useState("");
+  const [open, setOpen] = useState(false);
+  const { cartData, setCartData, fetchCartData } = useContext(CartContext);
+  const { productData, setProductData, fetchProductData } =
+    useContext(ProductContext);
+  const { colorData, setColorData, fetchColorData } = useContext(ColorContext);
   const isMobile = useMediaQuery("(max-width:600px)");
-  const handleConfirmOrder = () => {
-    router.push({
-      pathname: "/cart/selectaddress",
-    });
-  };
-  const format = (num) => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
   const theme = createTheme({
     palette: {
       primary: {
@@ -83,162 +55,65 @@ export default function Cart() {
       },
     },
   });
-  const [groupedProductData, setGroupedProductData] = React.useState(null);
-  const [groupedMaterialData, setGroupedMaterialData] = React.useState(null);
-  //ดึงข้อมูล
-  const [searchTerm, setSearchTerm] = React.useState("");
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    handleSearch("");
-  }, []);
-  React.useEffect(() => {
-    // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
-    // console.log(documentData);
-  }, [documentData]);
+
+  const groupedCartData = cartData
+    .filter((c) => c.user_id === user.user.uid)
+    .reduce((acc, item) => {
+      const key = `${item.color_id?.id}-${item.size}-${item.price}-${item.product_id?.id}`;
+      if (!acc[key]) {
+        acc[key] = { ...item, count: item.amount };
+      } else {
+        acc[key].count += item.amount;
+      }
+      return acc;
+    }, {});
+  const groupedCartArray = Object.values(groupedCartData);
+
+  let productPrice = 0;
+
+  const shippingCostPerItem = 8;
+  const thresholdQuantity = 10;
+  let totalShippingCost = 0;
+  groupedCartArray.forEach((group) => {
+    productPrice += group.price * group.count;
+    const quantity = group.count;
+    totalShippingCost += shippingCostPerItem * quantity;
+  });
+
+  const totalAllPrice = productPrice + totalShippingCost;
   const goBack = () => {
     window.history.back();
   };
-  const debouncedSearchUser = debounce(async (term) => {
-    const uid = user.user.uid;
-    console.log("Fetched data:", {
-      documentData,
-      productData,
-      colorData,
-      groupedProductData,
-    });
-    try {
-      const collectionName = "cart";
-      const field = "user_id";
-      const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter(
-        (doc) => doc.user_id == uid && doc.isMaterial === false
-      );
-      const productIds = filteredResults.map((doc) => doc.product_id?.id);
-      const colorIds = filteredResults.map((doc) => doc.color_id.id);
-      console.log("Product IDs:", productIds);
-      console.log("Color IDs:", colorIds);
-      const productDetails = await getProductDetails(productIds);
-      const colorDetails = await getColorDetails(colorIds);
-      setColorData(colorDetails);
-      setProductData(productDetails);
-      setDocumentData(filteredResults);
-
-      const groupedProducts = {};
-      filteredResults.forEach((doc) => {
-        const key = `${doc.color_id.id}_${doc.product_id.id}_${doc.price}`;
-        if (!groupedProducts[key]) {
-          groupedProducts[key] = {
-            ...doc,
-          };
-        } else {
-          groupedProducts[key].amount += 1;
-        }
-      });
-
-      setGroupedProductData(Object.values(groupedProducts));
-    } catch (error) {
-      console.error("Error searching data:", error);
+  const format = (num) => {
+    if (num !== null) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    } else {
+      return "";
     }
-  }, 500);
-
-  const debouncedSearchMaterial = debounce(async (term) => {
-    const uid = user.user.uid;
-    try {
-      const collectionName = "cart";
-      const field = "user_id";
-      const results = await searchUser(collectionName, field, term);
-      const filteredResults = results.filter(
-        (doc) => doc.user_id === uid && doc.isMaterial === true
-      );
-      const productIds = filteredResults.map((doc) => doc.product_id?.id);
-      const productDetails = await getProductDetails(productIds);
-      setProductData2(productDetails);
-      setMaterialData(filteredResults);
-      const groupedMaterials = {};
-      filteredResults.forEach((doc) => {
-        const key = `${doc.product_id.id}_${doc.price}`;
-        if (!groupedMaterials[key]) {
-          groupedMaterials[key] = {
-            ...doc,
-          };
-        } else {
-          groupedMaterials[key].amount += 1;
-        }
-      });
-
-      setGroupedMaterialData(Object.values(groupedMaterials));
-    } catch (error) {
-      console.error("Error searching data:", error);
-    }
-  }, 500);
-  console.log("test:", materialData);
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-    debouncedSearchUser(term);
-    debouncedSearchMaterial(term);
   };
-  //ดึงสี
-
-  // บวก ลบ
-  const [amount, setAmount] = React.useState(0);
-
-  React.useEffect(() => {
-    if (cartData && cartData.every((item) => item.amount !== undefined)) {
-      const totalAmount = cartData.reduce((acc, item) => acc + item.amount, 0);
-      setAmount(totalAmount);
-    }
-  }, [cartData]);
-
-  const [totalMaterialPrice, setTotalMaterialPrice] = React.useState(0);
-  const [totalProductPrice, setTotalProductPrice] = React.useState(0);
-  const [materialTotal, setMaterialTotal] = React.useState(0);
-
-  React.useEffect(() => {
-    if (groupedProductData && groupedProductData.length > 0) {
-      let totalQuantity = 0;
-      let producttotal = 0;
-      groupedProductData.forEach((item) => {
-        totalQuantity += item.amount;
-        producttotal += item.amount * item.price;
-      });
-      const total = producttotal + shippingCost;
-      setTotalQuantity1(totalQuantity);
-      setProducttotal(producttotal);
-      setTotalProductPrice(producttotal);
-      setTotal(total);
-    }
-  }, [groupedProductData]);
-
-  React.useEffect(() => {
-    if (groupedMaterialData && groupedMaterialData.length > 0) {
-      let totalQuantity = 0;
-      let materialtotal = 0;
-      groupedMaterialData.forEach((item) => {
-        totalQuantity += item.amount;
-        materialtotal += item.amount * item.price;
-      });
-      const total = materialtotal + shippingCost;
-      setTotalQuantity2(totalQuantity);
-      setMaterialTotal(materialtotal);
-      setTotalMaterialPrice(materialtotal);
-      setTotal(total);
-    }
-  }, [groupedMaterialData]);
-  const productPrice = totalMaterialPrice + totalProductPrice;
-  const totalAllPrice = totalMaterialPrice + totalProductPrice + shippingCost;
-  const totalAllquan = totalQuantity1 + totalQuantity2 ;
+  useEffect(() => {
+    fetchCartData();
+    fetchProductData();
+    fetchColorData();
+  }, []);
+  const handleConfirmOrder = () => {
+    router.push({
+      pathname: "/cart/selectaddress",
+    });
+  };
   const handleDelete = async (id) => {
     const result = await deleteData("cart", id);
 
     if (result) {
+      fetchCartData();
+      fetchProductData();
+      fetchColorData();
       setAlert(
         <Alert severity="success" onClose={handleClose}>
           ลบข้อมูลสำเร็จ
         </Alert>
       );
       setOpen(true);
-      debouncedSearchUser(searchTerm);
-      debouncedSearchMaterial(searchTerm);
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
@@ -254,7 +129,7 @@ export default function Cart() {
     }
     setOpen(false);
   };
-
+  console.log(groupedCartArray);
   return (
     <Homelayout>
       <ThemeProvider theme={theme}>
@@ -309,11 +184,9 @@ export default function Cart() {
             }}
           >
             <Box sx={{ p: 3, width: "70vw" }}>
-              <Grid container spacing={2}>
-                {documentData &&
-                documentData.length > 0 ||
-                materialData &&
-                materialData.length > 0 ? (
+              {cartData &&
+              cartData.filter((c) => c.user_id === user.user.uid).length > 0 ? (
+                <Grid container spacing={2}>
                   <>
                     <Grid item xs={12} md={9}>
                       <Typography
@@ -327,7 +200,6 @@ export default function Cart() {
                       >
                         รถเข็นของฉัน
                       </Typography>
-
                       <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                           <TableHead>
@@ -342,90 +214,71 @@ export default function Cart() {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {groupedProductData &&
-                              groupedProductData.map((item, index) => {
-                                const product = productData.find(
-                                  (p) => p.id === item.product_id.id
-                                );
+                            {groupedCartArray &&
+                              groupedCartArray.map((group, index) => {
                                 return (
-                                  <TableRow
-                                    key={index}
-                                    sx={{
-                                      "&:last-child td, &:last-child th": {
-                                        border: 0,
-                                      },
-                                    }}
-                                  >
-                                    <TableCell component="th" scope="row">
-                                      {product && (
-                                        <img
-                                          src={product.img}
-                                          alt={product.name}
-                                          width={60}
-                                          height={60}
-                                        />
+                                  <TableRow key={index}>
+                                    {productData &&
+                                      productData
+                                        .filter(
+                                          (c) => c.id === group.product_id?.id
+                                        )
+                                        .map((product, productIndex) => (
+                                          <TableCell key={productIndex}>
+                                            <img
+                                              src={product.img}
+                                              alt={product.name}
+                                              width={60}
+                                              height={60}
+                                            />
+                                          </TableCell>
+                                        ))}
+                                    {productData &&
+                                      productData
+                                        .filter(
+                                          (c) => c.id === group.product_id?.id
+                                        )
+                                        .map((product, productIndex) => (
+                                          <TableCell key={productIndex}>
+                                            {product.name}
+                                          </TableCell>
+                                        ))}
+
+                                    <TableCell>
+                                      {group.isMaterial === true ? (
+                                        <Box
+                                          sx={{
+                                            width: 50,
+                                            height: 50,
+                                            bgcolor: "transparent",
+                                          }}
+                                        ></Box>
+                                      ) : (
+                                        colorData &&
+                                        colorData
+                                          .filter(
+                                            (c) => c.id === group.color_id?.id
+                                          )
+                                          .map((color, colorIndex) => (
+                                            <Box
+                                              key={colorIndex}
+                                              sx={{
+                                                width: 50,
+                                                height: 50,
+                                                bgcolor: color.code,
+                                              }}
+                                            ></Box>
+                                          ))
                                       )}
                                     </TableCell>
+                                    <TableCell>{group.size}</TableCell>
                                     <TableCell>
-                                      {product && product.name}
+                                      ฿{format(group.price)}
                                     </TableCell>
-                                    <TableCell>
-                                      <Box
-                                        sx={{
-                                          width: 50,
-                                          height: 50,
-                                          bgcolor: colorData.find(
-                                            (color) =>
-                                              color.id === item.color_id.id
-                                          ).code,
-                                        }}
-                                      ></Box>
-                                    </TableCell>
-                                    <TableCell>{item.size}</TableCell>
-                                    <TableCell>฿{format(item.price)}</TableCell>
-                                    <TableCell>{item.amount}</TableCell>
+                                    <TableCell>{group.count}</TableCell>
                                     <TableCell>
                                       <IconButton
-                                        onClick={() => handleDelete(item.id)}
-                                      >
-                                        <DeleteOutlineIcon />
-                                      </IconButton>
-                                    </TableCell>
-                                  </TableRow>
-                                );
-                              })}
-                            {groupedMaterialData &&
-                              groupedMaterialData.map((item, index) => {
-                                const product = productData2.find(
-                                  (p) => p.id === item.product_id.id
-                                );
-                                return (
-                                  <TableRow
-                                    key={index}
-                                    sx={{
-                                      "&:last-child td, &:last-child th": {
-                                        border: 0,
-                                      },
-                                    }}
-                                  >
-                                    <TableCell>
-                                      {product && (
-                                        <img
-                                          src={product.img}
-                                          alt={product.name}
-                                          width={60}
-                                          height={60}
-                                        />
-                                      )}
-                                    </TableCell>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell>{item.size}</TableCell>
-                                    <TableCell>฿{format(item.price)}</TableCell>
-                                    <TableCell>{item.amount}</TableCell>
-                                    <TableCell>
-                                      <IconButton
-                                        onClick={() => handleDelete(item.id)}
+                                        onClick={() => handleDelete(group.id)}
                                       >
                                         <DeleteOutlineIcon />
                                       </IconButton>
@@ -439,7 +292,11 @@ export default function Cart() {
                     </Grid>
                     {isMobile ? (
                       <Grid item xs={12} md={12}>
-                        <CartDrawer />
+                        <CartDrawer
+                          productPrice={productPrice}
+                          totalAllPrice={totalAllPrice}
+                          totalShippingCost={totalShippingCost}
+                        />
                       </Grid>
                     ) : (
                       <Grid item xs={12} md={3}>
@@ -460,10 +317,7 @@ export default function Cart() {
                                 justifyContent: "space-between",
                               }}
                             >
-                              <Typography>
-                                {" "}
-                                ยอดรวมสินค้า ({totalAllquan} ชิ้น)
-                              </Typography>
+                              <Typography> ยอดรวมสินค้า</Typography>
                               <Typography sx={{ fontWeight: "bold" }}>
                                 ฿{format(productPrice)}
                               </Typography>
@@ -476,7 +330,7 @@ export default function Cart() {
                             >
                               <Typography> ค่าจัดส่ง </Typography>
                               <Typography sx={{ fontWeight: "bold" }}>
-                                ฿{shippingCost}
+                                ฿{totalShippingCost}
                               </Typography>
                             </Box>
                             <hr />
@@ -515,24 +369,24 @@ export default function Cart() {
                       </Grid>
                     )}
                   </>
-                ) : (
-                  <Grid
-                    container
-                    justifyContent="center"
-                    alignItems="center"
-                    style={{ height: "50vh" }}
-                  >
-                    <Grid item xs={12} textAlign="center">
-                      <AddShoppingCartOutlinedIcon
-                        style={{ fontSize: 80, color: "gray" }}
-                      />
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        ไม่มีสินค้าอยู่ในรถเข็น
-                      </Typography>
-                    </Grid>
+                </Grid>
+              ) : (
+                <Grid
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                  style={{ height: "50vh" }}
+                >
+                  <Grid item xs={12} textAlign="center">
+                    <AddShoppingCartOutlinedIcon
+                      style={{ fontSize: 80, color: "gray" }}
+                    />
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      ไม่มีสินค้าอยู่ในรถเข็น
+                    </Typography>
                   </Grid>
-                )}
-              </Grid>
+                </Grid>
+              )}
             </Box>
           </Container>
         </Box>

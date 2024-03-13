@@ -29,6 +29,7 @@ import styled from "@emotion/styled";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { cancelBuy, restoreBuy } from "@/firebase/addBuy";
+import { BuyContext } from "@/context/BuyContext";
 export default function Detail() {
   const theme = createTheme({
     palette: {
@@ -79,6 +80,7 @@ export default function Detail() {
   };
   const router = useRouter();
   const buy_id = JSON.parse(router.query.id);
+  const { fetchBuyData } = useContext(BuyContext);
   const [buyData, setBuyData] = useState([]);
   const [nameUser, setNameUser] = useState("");
   const [tel, setTel] = useState("");
@@ -157,7 +159,8 @@ export default function Detail() {
         </Alert>
       );
       setOpen(true);
-      fetchData()
+      fetchData();
+      fetchBuyData();
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
@@ -177,7 +180,8 @@ export default function Detail() {
         </Alert>
       );
       setOpen(true);
-      fetchData()
+      fetchData();
+      fetchBuyData();
     } else {
       setAlert(
         <Alert severity="error" onClose={handleClose}>
@@ -193,7 +197,7 @@ export default function Detail() {
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           {alert}
         </Snackbar>
-        <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5 }}>
+        <Typography variant="h4" sx={{ mt: 5, fontWeight: "600" }}>
           รายละเอียดรายการซื้อ
         </Typography>
         <Button
@@ -217,7 +221,7 @@ export default function Detail() {
               sx={{ mr: 2, mb: 2, mt: 2 }}
               onClick={handleCancel}
             >
-              ยกเลิกรายการ
+              <Typography>ยกเลิกรายการ</Typography>
             </Button>
             <Button
               variant="contained"
@@ -225,7 +229,7 @@ export default function Detail() {
               sx={{ mr: 2, mb: 2, mt: 2 }}
               onClick={() => handleEdit(buy_id)}
             >
-              แก้ไขรายการ
+              <Typography>แก้ไขรายการ</Typography>
             </Button>
           </Box>
         ) : (
@@ -236,7 +240,7 @@ export default function Detail() {
               sx={{ mr: 2, mb: 2, mt: 2 }}
               onClick={handleRestore}
             >
-              กู้คืนรายการ
+              <Typography>กู้คืนรายการ</Typography>
             </Button>
           </Box>
         )}
@@ -362,15 +366,17 @@ export default function Detail() {
                       <TableHead>
                         <TableRow>
                           <StyledTableCell align="center"></StyledTableCell>
-                          <StyledTableCell align="center">No.</StyledTableCell>
                           <StyledTableCell align="center">
-                            ชื่อสินค้า
+                            <Typography>No.</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>ชื่อสินค้า</Typography>
                           </StyledTableCell>
                           {/* <StyledTableCell align="center">
                             วันหมดอายุ
                           </StyledTableCell> */}
                           <StyledTableCell align="center">
-                            รวม(บาท)
+                            <Typography>รวม(บาท)</Typography>
                           </StyledTableCell>
                         </TableRow>
                       </TableHead>
@@ -391,10 +397,10 @@ export default function Detail() {
                                 </IconButton>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.No}
+                                <Typography>{row.No}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.product_name}
+                                <Typography>{row.product_name}</Typography>
                               </StyledTableCell>
                               {/* <StyledTableCell align="center">
                                 {row.product_exp
@@ -406,14 +412,16 @@ export default function Detail() {
                                   : ""}
                               </StyledTableCell> */}
                               <StyledTableCell align="center">
-                                {row.product_size
-                                  .map((size) => {
-                                    const sum =
-                                      parseFloat(size.amount) *
-                                      parseFloat(size.cost);
-                                    return sum;
-                                  })
-                                  .reduce((acc, curr) => acc + curr, 0)}
+                                <Typography>
+                                  {row.product_size
+                                    .map((size) => {
+                                      const sum =
+                                        parseFloat(size.amount) *
+                                        parseFloat(size.cost);
+                                      return sum;
+                                    })
+                                    .reduce((acc, curr) => acc + curr, 0)}
+                                </Typography>
                               </StyledTableCell>
                             </StyledTableRow>
                             <TableRow>
@@ -431,16 +439,20 @@ export default function Detail() {
                                       <TableHead>
                                         <TableRow>
                                           <TableCell align="center">
-                                            รูปแบบสินค้า
+                                            <Typography>
+                                              รูปแบบสินค้า
+                                            </Typography>
                                           </TableCell>
                                           <TableCell align="center">
-                                            จำนวน
+                                            <Typography>จำนวน</Typography>
                                           </TableCell>
                                           <TableCell align="center">
-                                            ราคาต่อหน่วย(บาท)
+                                            <Typography>
+                                              ราคาต่อหน่วย(บาท)
+                                            </Typography>
                                           </TableCell>
                                           <TableCell align="center">
-                                            รวม(บาท)
+                                            <Typography>รวม(บาท)</Typography>
                                           </TableCell>
                                         </TableRow>
                                       </TableHead>
@@ -448,17 +460,25 @@ export default function Detail() {
                                         {row.product_size.map((size, index) => (
                                           <TableRow key={index}>
                                             <TableCell align="center">
-                                              {size.size}
+                                              <Typography>
+                                                {size.size}
+                                              </Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                              {size.amount}
+                                              <Typography>
+                                                {size.amount}
+                                              </Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                              {size.cost}
+                                              <Typography>
+                                                {size.cost}
+                                              </Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                              {parseFloat(size.cost) *
-                                                parseFloat(size.amount)}
+                                              <Typography>
+                                                {parseFloat(size.cost) *
+                                                  parseFloat(size.amount)}
+                                              </Typography>
                                             </TableCell>
                                           </TableRow>
                                         ))}

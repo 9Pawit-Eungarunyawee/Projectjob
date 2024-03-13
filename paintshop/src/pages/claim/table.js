@@ -9,6 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
   tableCellClasses,
 } from "@mui/material";
 import { useRouter } from "next/router";
@@ -74,12 +75,24 @@ export default function TableClaim({ documentData, userData }) {
       <Table sx={{ minWidth: 700 }}>
         <TableHead>
           <TableRow>
-            <StyledTableCell align="center">No.</StyledTableCell>
-            <StyledTableCell align="center">วันที่</StyledTableCell>
-            <StyledTableCell align="center">เวลา</StyledTableCell>
-            <StyledTableCell align="center">ชื่อลูกค้า</StyledTableCell>
-            <StyledTableCell align="center">รายการคำสั่งซื้อ</StyledTableCell>
-            <StyledTableCell align="center">สถานะ</StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography>No.</Typography>
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography>วันที่</Typography>
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography>เวลา</Typography>
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography>ชื่อลูกค้า</Typography>
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography>รายการคำสั่งซื้อ</Typography>
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography>สถานะ</Typography>
+            </StyledTableCell>
             <StyledTableCell align="center"></StyledTableCell>
           </TableRow>
         </TableHead>
@@ -87,12 +100,20 @@ export default function TableClaim({ documentData, userData }) {
           {rows.map((row) => (
             <StyledTableRow key={row.No}>
               <StyledTableCell component="th" scope="row" align="center">
-                {row.No}
+                <Typography>{row.No}</Typography>
               </StyledTableCell>
-              <StyledTableCell align="center">{row.date}</StyledTableCell>
-              <StyledTableCell align="center">{row.time}</StyledTableCell>
-              <StyledTableCell align="center">{row.user_id}</StyledTableCell>
-              <StyledTableCell align="center">{row.order_id}</StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>{row.date}</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>{row.time}</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>{row.user_id}</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>{row.order_id}</Typography>
+              </StyledTableCell>
               <StyledTableCell align="center">
                 {" "}
                 <Box
@@ -107,12 +128,12 @@ export default function TableClaim({ documentData, userData }) {
                     borderRadius: "10px",
                   }}
                 >
-                  {row.status}
+                 <Typography>{row.status}</Typography>
                 </Box>
               </StyledTableCell>
               <StyledTableCell align="center">
                 <Button color="primary" onClick={() => handleCard(row.id)}>
-                  ดูรายละเอียด
+                  <Typography>ดูรายละเอียด</Typography>
                 </Button>
               </StyledTableCell>
             </StyledTableRow>

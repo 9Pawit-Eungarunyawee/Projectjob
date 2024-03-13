@@ -222,7 +222,7 @@ export default function Product() {
                 sx={{ mr: 2, mb: 2, mt: 2 }}
                 onClick={handleAdd}
               >
-                เพิ่มสินค้า(สี)
+                <Typography>เพิ่มสินค้า(สี)</Typography>
               </Button>
               <Button
                 variant="contained"
@@ -230,7 +230,7 @@ export default function Product() {
                 sx={{ mr: 2, mb: 2, mt: 2 }}
                 onClick={handleAddMaterial}
               >
-                เพิ่มสินค้า(วัสดุ)
+                <Typography>เพิ่มสินค้า(วัสดุ)</Typography>
               </Button>
               <Button
                 variant="contained"
@@ -238,7 +238,7 @@ export default function Product() {
                 sx={{ mb: 2, mt: 2 }}
                 onClick={openhistory}
               >
-                ประวัติการลบ
+                <Typography>ประวัติการลบ</Typography>
               </Button>
             </Box>
             <Box sx={{ width: "100%" }}>

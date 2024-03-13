@@ -120,14 +120,14 @@ export default function Employee() {
                   sx={{ mr: 2, mb: 2, mt: 2 }}
                   onClick={handleAdd}
                 >
-                  เพิ่มพนักงาน
+                  <Typography>เพิ่มพนักงาน</Typography>
                 </Button>
                 <Button
                   variant="contained"
                   sx={{ mr: 2, mb: 2, mt: 2 }}
                   onClick={goFomerEmp}
                 >
-                  อดีตพนักงาน
+                  <Typography>อดีตพนักงาน</Typography>
                 </Button>
               </Grid>
               <Grid item sm={8} xs={12}>

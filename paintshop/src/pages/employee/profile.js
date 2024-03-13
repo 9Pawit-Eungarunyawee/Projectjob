@@ -375,7 +375,7 @@ export default function Profile() {
                     onClick={handleClickOpen}
                     sx={{ m: 1 }}
                   >
-                    แก้ไข
+                    <Typography>แก้ไข</Typography>
                   </Button>
                   <Button
                     variant="contained"
@@ -383,7 +383,7 @@ export default function Profile() {
                     sx={{ m: 1 }}
                     onClick={handleClickFireOpen}
                   >
-                    เลิกจ้าง
+                    <Typography>เลิกจ้าง</Typography>
                   </Button>
                 </>
               )}
@@ -395,7 +395,7 @@ export default function Profile() {
                     onClick={handleClickOpen}
                     sx={{ m: 1 }}
                   >
-                    จ้างใหม่
+                    <Typography>จ้างใหม่</Typography>
                   </Button>
                 </>
               )}

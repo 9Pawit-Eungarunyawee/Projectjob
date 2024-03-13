@@ -19,6 +19,7 @@ import {
   IconButton,
   TableFooter,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Image from "next/image";
@@ -28,6 +29,7 @@ import { BuyContext } from "@/context/BuyContext";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { OrderContext } from "@/context/OrderContext";
+import LotDialog from "./lot-dialog";
 export default function TableProduct({ data, onDelete }) {
   const router = useRouter();
   const handleClick = (id, isMaterial) => {
@@ -226,7 +228,7 @@ export default function TableProduct({ data, onDelete }) {
       return acc + totalAmount;
     }, 0);
 
-    console.log("orderTotalSize", orderTotalSize);
+    // console.log("orderTotalSize", orderTotalSize);
     return orderTotalSize;
   };
 
@@ -246,18 +248,28 @@ export default function TableProduct({ data, onDelete }) {
       return acc + totalAmount;
     }, 0);
 
-    console.log(" orderTotalSize", orderTotalSize);
+    // console.log(" orderTotalSize", orderTotalSize);
     return orderTotalSize;
   };
 
   const [openRows, setOpenRows] = React.useState([]);
+  const [pid, setPId] = React.useState("");
+  const [psize, setPsize] = React.useState("");
   const handleRowToggle = (rowNo) => {
     setOpenRows((prevOpenRows) => ({
       ...prevOpenRows,
       [rowNo]: !prevOpenRows[rowNo],
     }));
   };
-
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = (id, size) => {
+    setOpen(true);
+    setPId(id);
+    setPsize(size);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
       <Dialog open={dialogopen} onClose={handleDialogClose}>
@@ -269,20 +281,37 @@ export default function TableProduct({ data, onDelete }) {
           </Button>
         </DialogActions>
       </Dialog>
+      <LotDialog open={open} onClose={handleClose} pid={pid} psize={psize} />
       <TableContainer component={Paper} sx={{ borderRadius: "25px", mb: 5 }}>
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
               <StyledTableCell align="center"></StyledTableCell>
-              <StyledTableCell align="center">No.</StyledTableCell>
-              <StyledTableCell align="center">รูปภาพ</StyledTableCell>
-              <StyledTableCell align="center">ชื่อสินค้า</StyledTableCell>
-              <StyledTableCell align="center">ขาย</StyledTableCell>
-              <StyledTableCell align="center">เหลือ</StyledTableCell>
-              <StyledTableCell align="center">สถานะสินค้า</StyledTableCell>
-              <StyledTableCell align="center">แก้ไข</StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>No.</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>รูปภาพ</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>ชื่อสินค้า</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>ชื่อสินค้า</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>เหลือ</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>สถานะสินค้า</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>แก้ไข</Typography>
+              </StyledTableCell>
               {/* <StyledTableCell align="center"></StyledTableCell> */}
-              <StyledTableCell align="center">ลบ</StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>ลบ</Typography>
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -306,7 +335,7 @@ export default function TableProduct({ data, onDelete }) {
                     </IconButton>
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row" align="center">
-                    {row.No}
+                    <Typography>{row.No}</Typography>
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {
@@ -320,16 +349,20 @@ export default function TableProduct({ data, onDelete }) {
                     }
                   </StyledTableCell>
 
-                  <StyledTableCell align="center">{row.p_name}</StyledTableCell>
                   <StyledTableCell align="center">
-                    {getProductTotalSize(row.id)}
+                    <Typography>{row.p_name}</Typography>
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    <Typography>{getProductTotalSize(row.id)}</Typography>
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {/* {getProductTotalSize(row.id)} */}
-                    {row.productSizes.reduce(
-                      (total, size) => total + size.amount,
-                      0
-                    )}
+                    <Typography>
+                      {row.productSizes.reduce(
+                        (total, size) => total + size.amount,
+                        0
+                      )}
+                    </Typography>
                   </StyledTableCell>
 
                   <StyledTableCell align="center">
@@ -343,7 +376,7 @@ export default function TableProduct({ data, onDelete }) {
                         borderRadius: "10px",
                       }}
                     >
-                      {row.status}
+                      <Typography>{row.status}</Typography>
                     </Box>
                   </StyledTableCell>
                   <StyledTableCell align="center">
@@ -382,10 +415,21 @@ export default function TableProduct({ data, onDelete }) {
                       <Table>
                         <TableHead>
                           <TableRow>
-                            <TableCell align="center">รูปแบบสินค้า</TableCell>
-                            <TableCell align="center">ขาย</TableCell>
-                            <TableCell align="center">เหลือ</TableCell>
-                            <TableCell align="center">ราคาขาย</TableCell>
+                            <TableCell align="center">
+                              <Typography>รูปแบบสินค้า</Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography>ขาย</Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography>เหลือ</Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography>ราคาขาย</Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography>ล็อต</Typography>
+                            </TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -393,17 +437,31 @@ export default function TableProduct({ data, onDelete }) {
                             row.productSizes.map((size, i) => (
                               <TableRow key={i}>
                                 <TableCell align="center">
-                                  {size.size}
+                                  <Typography>{size.size}</Typography>
                                 </TableCell>
                                 <TableCell align="center">
-                                  {getProductTotalSameSize(row.id, size.size)}
+                                  <Typography>
+                                    {getProductTotalSameSize(row.id, size.size)}
+                                  </Typography>
                                 </TableCell>
                                 <TableCell align="center">
                                   {/* {getProductTotalSameSize(row.id, size.size)} */}
-                                  {size.amount!=="" ? size.amount : 0}
+
+                                  <Typography>
+                                    {size.amount !== "" ? size.amount : 0}
+                                  </Typography>
                                 </TableCell>
                                 <TableCell align="center">
-                                  {size.price}
+                                  <Typography>{size.price}</Typography>
+                                </TableCell>
+                                <TableCell align="center">
+                                  <Button
+                                    onClick={() =>
+                                      handleClickOpen(row.id, size.size)
+                                    }
+                                  >
+                                    <Typography>ล็อต</Typography>
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             ))}

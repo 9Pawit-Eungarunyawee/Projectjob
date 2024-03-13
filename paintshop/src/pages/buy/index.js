@@ -127,7 +127,7 @@ export default function Buy() {
         <Box sx={{ display: "flex", justifyContent: { xl: "flex-end" } }}>
           <Link href="/buy/add" passHref>
             <Button variant="contained" color="success" sx={{ mr: 2, mt: 2 }}>
-              สร้างรายการซื้อ
+              <Typography>สร้างรายการซื้อ</Typography>
             </Button>
           </Link>
         </Box>

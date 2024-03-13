@@ -91,7 +91,7 @@ export default function Detail() {
     fetchData();
   }, []);
 
-  const {fetchOrderData} = useContext(OrderContext)
+  const { fetchOrderData } = useContext(OrderContext);
   const { productData } = useContext(ProductContext);
   const { userData } = useContext(UserContext);
   const { colorData } = useContext(ColorContext);
@@ -153,7 +153,7 @@ export default function Detail() {
         </Alert>
       );
       setSnackbarOpen(true);
-      fetchOrderData()
+      fetchOrderData();
       fetchData();
     } else {
       setAlert(
@@ -174,7 +174,7 @@ export default function Detail() {
         </Alert>
       );
       fetchData();
-      fetchOrderData()
+      fetchOrderData();
       setSnackbarOpen(true);
     } else {
       setAlert(
@@ -202,7 +202,7 @@ export default function Detail() {
           fetchData={fetchData}
           sellData={sellData}
         />
-        <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5}}>
+        <Typography sx={{ fontSize: "2rem", fontWeight: "600", mt: 5 }}>
           รายละเอียดรายการขาย
         </Typography>
         <Button
@@ -259,9 +259,9 @@ export default function Detail() {
                         sx={{ mr: 2, mb: 2, mt: 2 }}
                         onClick={handleConfirm}
                       >
-                        {sellData.status === "รอยืนยัน"
+                        <Typography>{sellData.status === "รอยืนยัน"
                           ? "ยืนยัน"
-                          : "ยืนยันใหม่"}
+                          : "ยืนยันใหม่"}</Typography>
                       </Button>
                     ) : (
                       <Box>
@@ -270,14 +270,14 @@ export default function Detail() {
                           sx={{ mr: 2, mb: 2, mt: 2 }}
                           onClick={handleClickOpen}
                         >
-                          แก้ไข
+                          <Typography>แก้ไข</Typography>
                         </Button>
                         <Button
                           variant="contained"
                           sx={{ mr: 2, mb: 2, mt: 2 }}
                           onClick={handleCancel}
                         >
-                          ยกเลิก
+                          <Typography>ยกเลิก</Typography>
                         </Button>
                       </Box>
                     )}
@@ -503,23 +503,29 @@ export default function Detail() {
                       <TableHead>
                         <TableRow>
                           <StyledTableCell align="center"></StyledTableCell>
-                          <StyledTableCell align="center">No.</StyledTableCell>
                           <StyledTableCell align="center">
-                            รูปภาพ
+                            <Typography>No.</Typography>
                           </StyledTableCell>
                           <StyledTableCell align="center">
-                            ชื่อสินค้า
-                          </StyledTableCell>
-                          <StyledTableCell align="center">สี</StyledTableCell>
-                          <StyledTableCell align="center">ขนาด</StyledTableCell>
-                          <StyledTableCell align="center">
-                            จำนวน
+                            <Typography>รูปภาพ</Typography>
                           </StyledTableCell>
                           <StyledTableCell align="center">
-                            ราคา(บาท)
+                            <Typography>ชื่อสินค้า</Typography>
                           </StyledTableCell>
                           <StyledTableCell align="center">
-                            รวม(บาท)
+                            <Typography>สี</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>ขนาด</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>จำนวน</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>ราคา(บาท)</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>รวม(บาท)</Typography>
                           </StyledTableCell>
                         </TableRow>
                       </TableHead>
@@ -529,34 +535,37 @@ export default function Detail() {
                             <StyledTableRow>
                               <StyledTableCell align="center"></StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.No}
+                                <Typography>{row.No}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {productData &&
-                                  productData.find(
-                                    (p) => p.id === row.product_id
-                                  ) && (
-                                    <Image
-                                      priority
-                                      src={
-                                        productData.find(
-                                          (p) => p.id === row.product_id
-                                        ).img
-                                      }
-                                      alt={row.product_id}
-                                      height="60"
-                                      width="60"
-                                    />
-                                  )}
+                                <Typography>
+                                  {productData &&
+                                    productData.find(
+                                      (p) => p.id === row.product_id
+                                    ) && (
+                                      <Image
+                                        priority
+                                        src={
+                                          productData.find(
+                                            (p) => p.id === row.product_id
+                                          ).img
+                                        }
+                                        alt={row.product_id}
+                                        height="60"
+                                        width="60"
+                                      />
+                                    )}
+                                </Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {productData &&
+                                <Typography> {productData &&
                                   productData.find(
                                     (p) => p.id === row.product_id
                                   ) &&
                                   productData.find(
                                     (p) => p.id === row.product_id
-                                  ).name}
+                                  ).name}</Typography>
+                               
                                 {/* {row.product_id} */}
                               </StyledTableCell>
                               <StyledTableCell align="center">
@@ -615,15 +624,17 @@ export default function Detail() {
                                     </Tooltip>
                                   )}
                               </StyledTableCell>
-                              <StyledTableCell align="center">{row.size}</StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.amount}
+                                <Typography>{row.size}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.price}
+                                <Typography>{row.amount}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {parseInt(row.price) * parseInt(row.amount)}
+                                <Typography>{row.price}</Typography>
+                              </StyledTableCell>
+                              <StyledTableCell align="center">
+                                <Typography>{parseInt(row.price) * parseInt(row.amount)}</Typography>
                               </StyledTableCell>
                             </StyledTableRow>
                           </Fragment>

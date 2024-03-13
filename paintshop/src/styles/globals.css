@@ -4,7 +4,8 @@
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Prompt', sans-serif;
+   
+  font-family: 'Prompt', sans-serif !important;
   background-color: #FAF8F1;
 }
 
@@ -14,9 +15,9 @@ body {
 }
 
 .MuiTypography-root{
-  font-family: 'Prompt', sans-serif;
+  font-family: 'Prompt', sans-serif !important;
 }
 
 .MuiTab-root{
-  font-family: 'Prompt', sans-serif;
+  font-family: 'Prompt', sans-serif !important;
 }

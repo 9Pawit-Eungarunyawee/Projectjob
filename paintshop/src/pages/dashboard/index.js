@@ -25,6 +25,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import BuyOverall from "./buyoverall";
+import Profit from "./profit";
 export default function Dashboard() {
   const { role } = useAuthContext();
 
@@ -78,7 +79,6 @@ export default function Dashboard() {
                     borderRadius: "25px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     p: 2,
-    
                   }}
                 >
                   <Typography variant="subtitle1">ภาพรวมยอดขาย</Typography>
@@ -95,7 +95,20 @@ export default function Dashboard() {
                   }}
                 >
                   <Typography variant="subtitle1">ภาพรวมยอดซื้อ</Typography>
-                  <BuyOverall/>
+                  <BuyOverall />
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    backgroundColor: "#fff",
+                    borderRadius: "25px",
+                    boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    p: 2,
+                  }}
+                >
+                  <Typography variant="subtitle1">ภาพรวมกำไร</Typography>
+                  <Profit />
                 </Box>
               </Grid>
               <Grid item xs={12} md={3} sx={{ width: "100%" }}>
@@ -154,7 +167,7 @@ export default function Dashboard() {
                   </Box>
                 </Box>
               </Grid>
-              
+
               {/* <Grid item xs={12}>
                 <Box
                   sx={{

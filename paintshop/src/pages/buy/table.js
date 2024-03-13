@@ -12,6 +12,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
   styled,
   tableCellClasses,
 } from "@mui/material";
@@ -120,12 +121,24 @@ export default function TableLots({ data }) {
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
-              <StyledTableCell>No.</StyledTableCell>
-              <StyledTableCell align="center">วันที่</StyledTableCell>
-              <StyledTableCell align="center">ชื่อรายการ</StyledTableCell>
-              <StyledTableCell align="center">ผู้สร้าง</StyledTableCell>
-              <StyledTableCell align="center">มูลค่า(บาท)</StyledTableCell>
-              <StyledTableCell align="center">สถานะ</StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>No.</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>วันที่</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>ชื่อรายการ</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>ผู้สร้าง</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>มูลค่า(บาท)</Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography>สถานะ</Typography>
+              </StyledTableCell>
               <StyledTableCell align="center"></StyledTableCell>
             </TableRow>
           </TableHead>
@@ -135,18 +148,20 @@ export default function TableLots({ data }) {
               : rows
             ).map((row) => (
               <StyledTableRow key={row.No}>
-                <StyledTableCell component="th" scope="row">
-                  {row.No}
+                <StyledTableCell component="th" scope="row" align="center">
+                  <Typography>{row.No}</Typography>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  {row.createAt.toDate().toLocaleString("th-TH", {
-                    dateStyle: "medium",
-                  })}
+                  <Typography>
+                    {row.createAt.toDate().toLocaleString("th-TH", {
+                      dateStyle: "medium",
+                    })}
+                  </Typography>
                 </StyledTableCell>
-                <StyledTableCell align="center">{row.name}</StyledTableCell>
-                <StyledTableCell align="center">{row.user}</StyledTableCell>
+                <StyledTableCell align="center"><Typography>{row.name}</Typography></StyledTableCell>
+                <StyledTableCell align="center"><Typography>{row.user}</Typography></StyledTableCell>
                 <StyledTableCell align="center">
-                  {row.totalCost}
+                  <Typography>{row.totalCost}</Typography>
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Box
@@ -159,12 +174,12 @@ export default function TableLots({ data }) {
                       borderRadius: "10px",
                     }}
                   >
-                    {row.status}
+                    <Typography>{row.status}</Typography>
                   </Box>
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Button onClick={() => handleCard(row.id)}>
-                    ดูรายละเอียด
+                    <Typography>ดูรายละเอียด</Typography>
                   </Button>
                 </StyledTableCell>
               </StyledTableRow>

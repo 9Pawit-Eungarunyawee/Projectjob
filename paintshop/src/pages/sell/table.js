@@ -11,6 +11,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
   tableCellClasses,
 } from "@mui/material";
 import Image from "next/image";
@@ -97,14 +98,14 @@ export default function TableSell({ documentData, userData }) {
       <Table sx={{ minWidth: 700 }}>
         <TableHead>
           <TableRow>
-            <StyledTableCell align="center">No.</StyledTableCell>
-            <StyledTableCell align="center">วันที่</StyledTableCell>
-            <StyledTableCell align="center">เวลา</StyledTableCell>
-            <StyledTableCell align="center">ชื่อลูกค้า</StyledTableCell>
-            <StyledTableCell align="center">รายการ</StyledTableCell>
-            <StyledTableCell align="center">ยอดรวม</StyledTableCell>
-            <StyledTableCell align="center">หลักฐานการชำระเงิน</StyledTableCell>
-            <StyledTableCell align="center">สถานะคำสั่งซื้อ</StyledTableCell>
+            <StyledTableCell align="center"><Typography>No.</Typography> </StyledTableCell>
+            <StyledTableCell align="center"><Typography>วันที่</Typography></StyledTableCell>
+            <StyledTableCell align="center"><Typography>เวลา</Typography></StyledTableCell>
+            <StyledTableCell align="center"><Typography>ชื่อลูกค้า</Typography></StyledTableCell>
+          
+            <StyledTableCell align="center"><Typography>ยอดรวม</Typography></StyledTableCell>
+            <StyledTableCell align="center"><Typography>หลักฐานการชำระเงิน</Typography></StyledTableCell>
+            <StyledTableCell align="center"><Typography>สถานะคำสั่งซื้อ</Typography></StyledTableCell>
             <StyledTableCell align="center"></StyledTableCell>
           </TableRow>
         </TableHead>
@@ -115,14 +116,14 @@ export default function TableSell({ documentData, userData }) {
           ).map((row) => (
             <StyledTableRow key={row.No}>
               <StyledTableCell component="th" scope="row" align="center">
-                {row.No}
+                <Typography>{row.No}</Typography>
               </StyledTableCell>
-              <StyledTableCell align="center">{row.date}</StyledTableCell>
-              <StyledTableCell align="center">{row.time}</StyledTableCell>
-              <StyledTableCell align="center">{row.name}</StyledTableCell>
-              <StyledTableCell align="center">{row.id}</StyledTableCell>
+              <StyledTableCell align="center"><Typography>{row.date}</Typography></StyledTableCell>
+              <StyledTableCell align="center"><Typography>{row.time}</Typography></StyledTableCell>
+              <StyledTableCell align="center"><Typography>{row.name}</Typography></StyledTableCell>
+              
               <StyledTableCell align="center">
-                {row.total_price}
+                <Typography>{row.total_price}</Typography>
               </StyledTableCell>
               <StyledTableCell align="center">
                 {
@@ -148,12 +149,12 @@ export default function TableSell({ documentData, userData }) {
                     borderRadius: "10px",
                   }}
                 >
-                  {row.status}
+                  <Typography>{row.status}</Typography>
                 </Box>
               </StyledTableCell>
               <StyledTableCell align="center">
                 <Button color="primary" onClick={() => handleCard(row.id)}>
-                  ดูรายละเอียด
+                  <Typography>ดูรายละเอียด</Typography>
                 </Button>
               </StyledTableCell>
             </StyledTableRow>

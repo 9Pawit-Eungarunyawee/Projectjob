@@ -9,6 +9,7 @@ import {
   MenuItem,
   TextField,
   ThemeProvider,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 export default function ProfileDiaLog({
@@ -73,11 +74,11 @@ export default function ProfileDiaLog({
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" onClick={handleClose}>
-            ยกเลิก
+            <Typography>ยกเลิก</Typography>
           </Button>
           <Button variant="contained" color="success" onClick={handleSubmit}>
-          {isFormerEmployee && <>ยืนยัน</>}
-          {!isFormerEmployee && <>แก้ไขพนักงาน</>}
+          <Typography>{isFormerEmployee && <>ยืนยัน</>}
+          {!isFormerEmployee && <>แก้ไขพนักงาน</>}</Typography>
           </Button>
         </DialogActions>
       </Dialog>

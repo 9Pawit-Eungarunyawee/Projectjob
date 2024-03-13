@@ -256,7 +256,7 @@ export default function Detail() {
                       sx={{ mr: 2, mb: 2, mt: 2 }}
                       onClick={handleConfirm}
                     >
-                      ยืนยัน
+                      <Typography>ยืนยัน</Typography>
                     </Button>
                   ) : (
                     ""
@@ -267,7 +267,7 @@ export default function Detail() {
                       sx={{ mr: 2, mb: 2, mt: 2 }}
                       onClick={handleCancel}
                     >
-                      ยกเลิก
+                      <Typography>ยกเลิก</Typography>
                     </Button>
                   ) : (
                     ""
@@ -279,14 +279,14 @@ export default function Detail() {
                         sx={{ mr: 2, mb: 2, mt: 2 }}
                         onClick={handleConfirm}
                       >
-                        ยืนยัน
+                        <Typography>ยืนยัน</Typography>
                       </Button>
                       <Button
                         variant="contained"
                         sx={{ mr: 2, mb: 2, mt: 2 }}
                         onClick={handleCancel}
                       >
-                        ยกเลิก
+                        <Typography>ยกเลิก</Typography>
                       </Button>
                     </Box>
                   ) : (
@@ -298,7 +298,7 @@ export default function Detail() {
             <Grid item xs={12} lg={6}>
               <Box
                 sx={{
-                  minHeight: "40vh",
+                  minHeight: "35vh",
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
@@ -311,14 +311,7 @@ export default function Detail() {
                 >
                   ข้อมูล
                 </Typography>
-                <Box sx={{ display: { sm: "flex" }, m: 2 }}>
-                  <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
-                    <Typography variant="text">ชื่อรายการ:</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="data">{claim_id}</Typography>
-                  </Box>
-                </Box>
+                
                 <Box sx={{ display: { sm: "flex" }, m: 2 }}>
                   <Box sx={{ width: { xs: "100%", sm: "35%" } }}>
                     <Typography variant="text">วันที่:</Typography>
@@ -364,7 +357,7 @@ export default function Detail() {
                     display: "none",
                   },
                   overflowY: "scroll",
-                  height: "40vh",
+                  height: "35vh",
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
@@ -437,7 +430,7 @@ export default function Detail() {
             <Grid item xs={12}>
               <Box
                 sx={{
-                  mb:5,
+                  mb: 5,
                   bgcolor: "#fff",
                   borderBottom: "1px solid #ccc",
                   borderRadius: "10px",
@@ -459,23 +452,29 @@ export default function Detail() {
                       <TableHead>
                         <TableRow>
                           <StyledTableCell align="center"></StyledTableCell>
-                          <StyledTableCell align="center">No.</StyledTableCell>
                           <StyledTableCell align="center">
-                            รูปภาพ
+                            <Typography>No.</Typography>
                           </StyledTableCell>
                           <StyledTableCell align="center">
-                            ชื่อสินค้า
-                          </StyledTableCell>
-                          <StyledTableCell align="center">สี</StyledTableCell>
-                          <StyledTableCell align="center">ขนาด</StyledTableCell>
-                          <StyledTableCell align="center">
-                            จำนวน
+                            <Typography>รูปภาพ</Typography>
                           </StyledTableCell>
                           <StyledTableCell align="center">
-                            ราคา(บาท)
+                            <Typography>ชื่อสินค้า</Typography>
                           </StyledTableCell>
                           <StyledTableCell align="center">
-                            รวม(บาท)
+                            <Typography>สี</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>ขนาด</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>จำนวน</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>ราคา(บาท)</Typography>
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            <Typography>รวม(บาท)</Typography>
                           </StyledTableCell>
                         </TableRow>
                       </TableHead>
@@ -485,34 +484,38 @@ export default function Detail() {
                             <StyledTableRow>
                               <StyledTableCell align="center"></StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.No}
+                                <Typography>{row.No}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {productData &&
-                                  productData.find(
-                                    (p) => p.id === row.product_id
-                                  ) && (
-                                    <Image
-                                      priority
-                                      src={
-                                        productData.find(
-                                          (p) => p.id === row.product_id
-                                        ).img
-                                      }
-                                      alt={row.product_id}
-                                      height="60"
-                                      width="60"
-                                    />
-                                  )}
+                                <Typography>
+                                  {productData &&
+                                    productData.find(
+                                      (p) => p.id === row.product_id
+                                    ) && (
+                                      <Image
+                                        priority
+                                        src={
+                                          productData.find(
+                                            (p) => p.id === row.product_id
+                                          ).img
+                                        }
+                                        alt={row.product_id}
+                                        height="60"
+                                        width="60"
+                                      />
+                                    )}
+                                </Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {productData &&
-                                  productData.find(
-                                    (p) => p.id === row.product_id
-                                  ) &&
-                                  productData.find(
-                                    (p) => p.id === row.product_id
-                                  ).name}
+                                <Typography>
+                                  {productData &&
+                                    productData.find(
+                                      (p) => p.id === row.product_id
+                                    ) &&
+                                    productData.find(
+                                      (p) => p.id === row.product_id
+                                    ).name}
+                                </Typography>
                                 {/* {row.product_id} */}
                               </StyledTableCell>
                               <StyledTableCell align="center">
@@ -572,16 +575,18 @@ export default function Detail() {
                                   )}
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.size}
+                                <Typography>{row.size}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.amount}
+                                <Typography>{row.amount}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {row.price}
+                                <Typography>{row.price}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                {parseInt(row.price) * parseInt(row.amount)}
+                                <Typography>
+                                  {parseInt(row.price) * parseInt(row.amount)}
+                                </Typography>
                               </StyledTableCell>
                             </StyledTableRow>
                           </Fragment>
@@ -593,7 +598,8 @@ export default function Detail() {
                     <Box
                       sx={{
                         display: { sm: "flex" },
-                        m: 2,
+                        mt: 2,
+                        mb: 2,
                         justifyContent: {
                           xs: "space-between",
                           md: "flex-start",
@@ -610,7 +616,7 @@ export default function Detail() {
                     <Box
                       sx={{
                         display: { sm: "flex" },
-              
+
                         justifyContent: {
                           xs: "space-between",
                           md: "flex-start",

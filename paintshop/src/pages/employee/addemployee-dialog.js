@@ -109,14 +109,14 @@ export default function AddEmployeeDialog({
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" onClick={handleClose}>
-            ยกเลิก
+            <Typography>ยกเลิก</Typography>
           </Button>
           <Button
             variant="contained"
             color="success"
             onClick={() => handleForm(item.id)}
           >
-            เพิ่ม
+            <Typography>เพิ่ม</Typography>
           </Button>
         </DialogActions>
       </Dialog>

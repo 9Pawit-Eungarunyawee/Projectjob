@@ -1,12 +1,13 @@
 import { getCollection } from "@/firebase/getData";
 import { createContext, useEffect, useState } from "react";
+import { useAuthContext } from "./AuthContext";
 
 export const CartContext = createContext();
 
 export default function CartProvider({ children }) {
   const [cartData, setCartData] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const user = useAuthContext();
   useEffect(() => {
     fetchCartData();
   }, []);
@@ -25,9 +26,13 @@ export default function CartProvider({ children }) {
       setLoading(false);
     }
   };
-
+  const cartItemCount = cartData.filter(
+    (c) => c.user_id === user.user.uid
+  ).length;
   return (
-    <CartContext.Provider value={{ cartData, setCartData ,fetchCartData}}>
+    <CartContext.Provider
+      value={{ cartData, setCartData, fetchCartData, cartItemCount }}
+    >
       {children}
     </CartContext.Provider>
   );

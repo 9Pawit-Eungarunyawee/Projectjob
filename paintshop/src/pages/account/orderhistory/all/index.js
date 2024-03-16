@@ -148,6 +148,7 @@ export default function Prepare() {
                     fontWeight: "bold",
                     color: "#018294",
                     fontSize: 20,
+                    display: "flex", justifyContent: "flex-end"
                   }}
                 >
                   ฿{format(order.total_price)}
@@ -221,7 +222,7 @@ export default function Prepare() {
                           sm={3}
                           sx={{
                             display: "flex",
-                            justifyContent: "center",
+                            justifyContent: "flex-end",
                             alignItems: "center",
                           }}
                         >

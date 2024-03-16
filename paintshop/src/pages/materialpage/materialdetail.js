@@ -211,17 +211,7 @@ export default function Materialdetail() {
                     color: "inherit",
                     "&:hover": { textDecoration: "underline" },
                   }}
-                  href="/catalog"
-                >
-                  แคตตาล็อก
-                </Link>
-                <Link
-                  style={{ textDecoration: "none", color: "inherit" }}
-                  sx={{
-                    color: "inherit",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                  href={`/productpage?catalogData=${router.query.catalogData}`}
+                  href={`/materialpage`}
                 >
                   วัสดุภัณฑ์
                 </Link>

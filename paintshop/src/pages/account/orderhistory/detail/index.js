@@ -9,11 +9,13 @@ import {
   Box,
   Tab,
   Tabs,
+  useMediaQuery,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import OrderDetail from "./detail"
+import OrderDetail from "./detail";
+import { useTheme } from "@mui/material/styles";
 const styles = {
   Active: {
     "&.Mui-selected": {
@@ -62,6 +64,8 @@ export default function Detail() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <>
       <Homelayout>
@@ -92,15 +96,8 @@ export default function Detail() {
               </div>
             </Box>
           </Container>
-          <Container
-            maxWidth={false}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              bgcolor: "white",
-            }}
-          >
-            <Box sx={{ p: 3, width: "70vw" }}>
+          {isMobile ? (
+            <Container maxWidth="lg" sx={{ bgcolor: "white", p: 2 }}>
               <Grid container spacing={2}>
                 <Grid item sm={3} xs={12}>
                   <Accordionlayout />
@@ -109,8 +106,28 @@ export default function Detail() {
                   <OrderDetail />
                 </Grid>
               </Grid>
-            </Box>
-          </Container>
+            </Container>
+          ) : (
+            <Container
+              maxWidth={false}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                bgcolor: "white",
+              }}
+            >
+              <Box sx={{ p: 3, width: "70vw" }}>
+                <Grid container spacing={2}>
+                  <Grid item sm={3} xs={12}>
+                    <Accordionlayout />
+                  </Grid>
+                  <Grid item sm={9} xs={12}>
+                    <OrderDetail />
+                  </Grid>
+                </Grid>
+              </Box>
+            </Container>
+          )}
         </Box>
       </Homelayout>
     </>

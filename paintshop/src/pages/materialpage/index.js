@@ -67,9 +67,7 @@ export default function Materialpage() {
       const results = await searchData(collectionName, field, term);
       const filteredResults = results.filter(
         (doc) =>
-          doc.isMaterial === true &&
-          doc.status === true &&
-          doc.delete === null
+          doc.isMaterial === true && doc.status === true && doc.delete === null
       );
 
       setDocumentData(filteredResults);
@@ -113,16 +111,6 @@ export default function Materialpage() {
                   href="/homepage"
                 >
                   หน้าแรก
-                </Link>
-                <Link
-                  style={{ textDecoration: "none", color: "inherit" }}
-                  sx={{
-                    color: "inherit",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                  href="/catalog"
-                >
-                  แคตตาล็อก
                 </Link>
                 <Typography color="text.primary">วัสดุภัณฑ์</Typography>
               </Breadcrumbs>
@@ -199,7 +187,7 @@ export default function Materialpage() {
                                   textAlign: "left",
                                 }}
                               >
-                                {item.name} 
+                                {item.name}
                               </Typography>
                               <Box
                                 sx={{

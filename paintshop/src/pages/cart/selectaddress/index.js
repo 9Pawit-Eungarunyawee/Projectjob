@@ -34,6 +34,7 @@ import { getColorDetails, getProductDetails } from "@/firebase/getData";
 import { CartContext } from "@/context/CartContext";
 import { ProductContext } from "@/context/ProductContext";
 import { ColorContext } from "@/context/ColorContext";
+import { useTheme } from "@mui/material/styles";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -51,7 +52,8 @@ export default function Selectaddress() {
   const router = useRouter();
   const user = useAuthContext();
   const isMobile = useMediaQuery("(max-width:600px)");
-
+  const themes = useTheme();
+  const isMobile2 = useMediaQuery(themes.breakpoints.down("sm"));
   React.useEffect(() => {
     fetchCartData();
     fetchProductData();
@@ -129,7 +131,7 @@ export default function Selectaddress() {
 
   let productPrice = 0;
 
-  const shippingCostPerItem = 8;
+  const shippingCostPerItem = 32;
   const thresholdQuantity = 10;
   let totalShippingCost = 0;
   groupedCartArray.forEach((group) => {

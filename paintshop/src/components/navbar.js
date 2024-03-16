@@ -32,12 +32,12 @@ import { useRouter } from "next/navigation";
 import { getUser } from "@/firebase/getData";
 import { debounce } from "lodash";
 import searchUser from "@/firebase/searchData";
+import { CartContext } from "@/context/CartContext";
 
 let settings = ["โปรไฟล์", "ออกจากระบบ"];
 
 export default function Navbar() {
   const [userData, setUserData] = React.useState(null);
-  const [cartItemCount, setCartItemCount] = React.useState(0);
   const { role, user } = useAuthContext();
   if (role == "admin") {
     settings = ["โปรไฟล์", "แดชบอร์ด", "ออกจากระบบ"];
@@ -53,6 +53,7 @@ export default function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [documentData, setDocumentData] = React.useState(null);
+  const { cartItemCount } = React.useContext(CartContext);
   React.useEffect(() => {
     fetchAllData();
   }, []);
@@ -102,10 +103,6 @@ export default function Navbar() {
     // ทำสิ่งที่คุณต้องการกับ searchResults ที่ได้
     handleSearch("");
   }, []);
-  React.useEffect(() => {
-    const cartItems = documentData ? documentData.length : 0;
-    setCartItemCount(cartItems);
-  }, [documentData]);
   const goBack = () => {
     window.history.back();
   };
@@ -141,7 +138,6 @@ export default function Navbar() {
       }
     }
   };
-
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -184,22 +180,32 @@ export default function Navbar() {
     <ThemeProvider theme={theme}>
       <AppBar position="static" sx={{ background: "white" }}>
         <Toolbar>
-          <Image
-            src={Logo}
-            alt="logo"
-            style={{
-              objectFit: "cover",
-              width: "4vw",
-              height: "100%",
-            }}
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-          />
           {isMatch ? (
             <>
               <DrawerComp />
+              <Image
+                src={Logo}
+                alt="logo"
+                style={{
+                  objectFit: "contain",
+                  width: "20vw",
+                  height: "100%",
+                }}
+                sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+              />
             </>
           ) : (
             <>
+              <Image
+                src={Logo}
+                alt="logo"
+                style={{
+                  objectFit: "contain",
+                  width: "4vw",
+                  height: "100%",
+                }}
+                sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+              />
               <Link
                 style={{ color: "black" }}
                 href="/homepage"
@@ -237,12 +243,16 @@ export default function Navbar() {
               >
                 <Box
                   sx={
-                    activeLink === "/materialpage" ? styles.activeLink : styles.Box
+                    activeLink === "/materialpage"
+                      ? styles.activeLink
+                      : styles.Box
                   }
                 >
                   <Button
                     style={
-                      router.pathname === "/materialpage" ? styles.activeLink : {}
+                      router.pathname === "/materialpage"
+                        ? styles.activeLink
+                        : {}
                     }
                     color="inherit"
                   >
@@ -271,8 +281,7 @@ export default function Navbar() {
                   </Button>
                 </Box>
               </Link>
-              <Box color="black" sx={{ marginLeft: "auto" }}>
-              </Box>
+              <Box color="black" sx={{ marginLeft: "auto" }}></Box>
               <Link href={"/cart"}>
                 <IconButton color="black">
                   <Badge badgeContent={cartItemCount} color="error">

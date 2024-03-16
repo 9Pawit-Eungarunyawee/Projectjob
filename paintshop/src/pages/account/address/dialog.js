@@ -145,7 +145,11 @@ export default function Addressdialog({ onFormSubmitSuccess }) {
   };
   const handleInputChange = (e) => {
     const value = e.target.value;
-    setTel(value)
+    // ตรวจสอบค่าที่รับเข้ามาว่าเป็นตัวเลขหรือไม่
+    if (/^\d*$/.test(value) || value === "") {
+      // ถ้าเป็นตัวเลขหรือเป็นสตริงว่างให้อนุญาตให้กำหนดค่า
+      setTel(value);
+    }
   };
   return (
     <ThemeProvider theme={theme}>

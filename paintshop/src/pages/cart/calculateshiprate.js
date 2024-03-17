@@ -1,21 +1,43 @@
-// calculateShippingRate.js
+import { getCollection } from "@/firebase/getData";
+import { useEffect, useState } from "react";
 
-// สร้างฟังก์ชัน calculateShippingRate และทำการ export ออกมา
 export default function calculateShippingRate(weight) {
-    let shipRate = 0;
-  
-    if (weight <= 1) {
-      shipRate = 67;
-    } else if (weight <= 4) {
-      shipRate = 120;
-    } else if (weight <= 10) {
-      shipRate = 220;
-    } else if (weight <= 19) {
-      shipRate = 310;
-    } else {
-      shipRate = 400;
+  const [shippingData, setShippingData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [shipRateCost, setShipRateCost] = useState([]);
+
+  const fetchShippingData = async () => {
+    const collectionName = "shipments";
+    const { result, error } = await getCollection(collectionName);
+    if (error) {
+      console.error("Error fetching document:", error);
+    } else if (result) {
+      const data = result.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setShippingData(data);
+      setLoading(false);
     }
-  
-    return shipRate;
-  }
-  
+  };
+
+  useEffect(() => {
+    fetchShippingData();
+  }, []);
+
+  useEffect(() => {
+    if (shippingData.length > 0) {
+      const sortedData = shippingData.sort((a, b) => a.kg - b.kg);
+
+      const closestItem = sortedData.find((item) => weight <= item.kg);
+
+      if (closestItem) {
+        setShipRateCost(closestItem.shippingCost);
+      } else {
+        setShipRateCost(400);
+      }
+    }
+  }, [shippingData, weight]);
+
+  return shipRateCost;
+}

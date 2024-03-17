@@ -171,11 +171,11 @@ export default function History() {
               <Table sx={{ minWidth: 700 }}>
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell align="center">No.</StyledTableCell>
-                    <StyledTableCell align="center">รูปภาพ</StyledTableCell>
-                    <StyledTableCell align="center">ชื่อสินค้า</StyledTableCell>
-                    <StyledTableCell align="center">วันที่ลบ</StyledTableCell>
-                    <StyledTableCell align="center">ผู้ลบ</StyledTableCell>
+                    <StyledTableCell align="center"><Typography>No.</Typography></StyledTableCell>
+                    <StyledTableCell align="center"><Typography>รูปภาพ</Typography></StyledTableCell>
+                    <StyledTableCell align="center"><Typography>ชื่อสินค้า</Typography></StyledTableCell>
+                    <StyledTableCell align="center"><Typography>วันที่ลบ</Typography></StyledTableCell>
+                    <StyledTableCell align="center"><Typography>ผู้ลบ</Typography></StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
                   </TableRow>
                 </TableHead>
@@ -187,7 +187,7 @@ export default function History() {
                         scope="row"
                         align="center"
                       >
-                        {row.No}
+                        <Typography>{row.No}</Typography>
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {
@@ -200,24 +200,24 @@ export default function History() {
                           />
                         }
                       </StyledTableCell>
-                      <StyledTableCell align="center">{row.p_name}</StyledTableCell>
+                      <StyledTableCell align="center"><Typography>{row.p_name}</Typography></StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.pdelete.deleteAt
+                        <Typography>{row.pdelete.deleteAt
                           ? row.pdelete.deleteAt
                               .toDate()
                               .toLocaleString("th-TH", {
                                 dateStyle: "full",
                                 timeStyle: "medium",
                               })
-                          : ""}
+                          : ""}</Typography>
                       </StyledTableCell>
-                      <StyledTableCell align="center">{row.pdelete.deleteBy}</StyledTableCell>
+                      <StyledTableCell align="center"><Typography>{row.pdelete.deleteBy}</Typography></StyledTableCell>
                       <StyledTableCell align="center">
                         <Button
                           color="primary"
                           onClick={() => handleRestoreData(row.id)}
                         >
-                          กู้คืน
+                          <Typography>กู้คืน</Typography>
                         </Button>
                       </StyledTableCell>
                       {/* <StyledTableCell align="center">

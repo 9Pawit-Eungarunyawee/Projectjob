@@ -229,7 +229,7 @@ export default function TableProduct({ data, onDelete }) {
     }, 0);
 
     // console.log("orderTotalSize", orderTotalSize);
-    return orderTotalSize;
+    return orderTotalSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   const getProductTotalSameSize = (id, sizeName) => {
@@ -249,7 +249,7 @@ export default function TableProduct({ data, onDelete }) {
     }, 0);
 
     // console.log(" orderTotalSize", orderTotalSize);
-    return orderTotalSize;
+    return orderTotalSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   const [openRows, setOpenRows] = React.useState([]);
@@ -297,7 +297,7 @@ export default function TableProduct({ data, onDelete }) {
                 <Typography>ชื่อสินค้า</Typography>
               </StyledTableCell>
               <StyledTableCell align="center">
-                <Typography>ชื่อสินค้า</Typography>
+                <Typography>ขาย</Typography>
               </StyledTableCell>
               <StyledTableCell align="center">
                 <Typography>เหลือ</Typography>
@@ -361,7 +361,7 @@ export default function TableProduct({ data, onDelete }) {
                       {row.productSizes.reduce(
                         (total, size) => total + size.amount,
                         0
-                      )}
+                      ).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     </Typography>
                   </StyledTableCell>
 
@@ -448,11 +448,11 @@ export default function TableProduct({ data, onDelete }) {
                                   {/* {getProductTotalSameSize(row.id, size.size)} */}
 
                                   <Typography>
-                                    {size.amount !== "" ? size.amount : 0}
+                                    {(size.amount !== "" ? size.amount : 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                   </Typography>
                                 </TableCell>
                                 <TableCell align="center">
-                                  <Typography>{size.price}</Typography>
+                                  <Typography>{size.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
                                 </TableCell>
                                 <TableCell align="center">
                                   <Button

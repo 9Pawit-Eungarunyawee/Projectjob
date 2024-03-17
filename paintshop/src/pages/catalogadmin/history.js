@@ -160,20 +160,20 @@ export default function History() {
               <Table sx={{ minWidth: 700 }}>
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell align="center">No.</StyledTableCell>
-                    <StyledTableCell align="center">รูปภาพ</StyledTableCell>
+                    <StyledTableCell align="center"><Typography>No.</Typography></StyledTableCell>
+                    <StyledTableCell align="center"><Typography>รูปภาพ</Typography></StyledTableCell>
                     <StyledTableCell align="center">
-                      ชื่อแคตตาล็อก
+                      <Typography>ชื่อแคตตาล็อก</Typography>
                     </StyledTableCell>
-                    <StyledTableCell align="center">วันที่ลบ</StyledTableCell>
-                    <StyledTableCell align="center">ผู้ลบ</StyledTableCell>
+                    <StyledTableCell align="center"><Typography>วันที่ลบ</Typography></StyledTableCell>
+                    <StyledTableCell align="center"><Typography>ผู้ลบ</Typography></StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {rows.map((row) => (
                     <StyledTableRow key={row.id}>
-                      <StyledTableCell align="center">{row.No}</StyledTableCell>
+                      <StyledTableCell align="center"><Typography>{row.No}</Typography></StyledTableCell>
                       <StyledTableCell align="center">
                         {
                           <Image
@@ -186,16 +186,16 @@ export default function History() {
                         }
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.c_name}
+                        <Typography>{row.c_name}</Typography>
                       </StyledTableCell>
-                      <StyledTableCell align="center">{row.deleteAt}</StyledTableCell>
-                      <StyledTableCell align="center">{row.deleteBy}</StyledTableCell>
+                      <StyledTableCell align="center"><Typography>{row.deleteAt}</Typography></StyledTableCell>
+                      <StyledTableCell align="center"><Typography>{row.deleteBy}</Typography></StyledTableCell>
                       <StyledTableCell align="center">
                       <Button
                           color="primary"
                           onClick={() => handleRestoreData(row.id)}
                         >
-                          กู้คืน
+                          <Typography>กู้คืน</Typography>
                         </Button>
                       </StyledTableCell>
                     </StyledTableRow>

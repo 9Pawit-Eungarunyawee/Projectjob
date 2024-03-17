@@ -108,7 +108,7 @@ export default function Catalogadmin() {
               onClick={handleAdd}
               sx={{ mr: 2, mb: 2, mt: 2 }}
             >
-              เพิ่มแค็ตตาล็อก
+              <Typography>เพิ่มแค็ตตาล็อก</Typography>
             </Button>
             <Button
               variant="contained"
@@ -116,7 +116,7 @@ export default function Catalogadmin() {
               onClick={goHistory}
               sx={{ mb: 2, mt: 2 }}
             >
-              ประวัติการลบ
+              <Typography>ประวัติการลบ</Typography>
             </Button>
           </Box>
           <Box

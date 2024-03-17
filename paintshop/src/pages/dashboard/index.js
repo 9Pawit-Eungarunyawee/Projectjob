@@ -4,6 +4,7 @@ import Layout from "@/components/layout";
 import {
   Grid,
   IconButton,
+  TextField,
   ThemeProvider,
   Tooltip,
   Typography,
@@ -59,7 +60,12 @@ export default function Dashboard() {
       },
     },
   });
-
+  const currentDate = new Date();
+  const oneMonthAgo = new Date(currentDate);
+  oneMonthAgo.setMonth(currentDate.getMonth() - 1);
+  const formattedDate = currentDate.toISOString().slice(0, 10); // ตัด milliseconds ออก
+  const [overallDateEnd, setOverallDateEnd] = useState(formattedDate);
+  const [overallDateStart, setOverallDateStart] = useState(oneMonthAgo.toISOString().slice(0, 10));
   // console.log("dashboard::",role)
   if (role == "employee") {
     return null;
@@ -81,44 +87,49 @@ export default function Dashboard() {
                     p: 2,
                   }}
                 >
-                  <Typography variant="subtitle1">ภาพรวมยอดขาย</Typography>
-                  <Overall />
+                  <Typography variant="subtitle1">ภาพรวม</Typography>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <TextField
+                      variant="outlined"
+                      value={overallDateStart}
+                      onChange={(e) => setOverallDateStart(e.target.value)}
+                      label="เลือกวันที่เริ่ม"
+                      required
+                      size="small"
+                      sx={{ mt: 1, mb: 1 }}
+                      type="date"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                    <Typography sx={{ m: 1 }}>ถึง</Typography>
+                    <TextField
+                      variant="outlined"
+                      value={overallDateEnd}
+                      onChange={(e) => setOverallDateEnd(e.target.value)}
+                      label="เลือกวันที่สิ้นสุด"
+                      required
+                      size="small"
+                      sx={{ mt: 1, mb: 1 }}
+                      type="date"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Box>
+
+                  <Overall overallDateStart={overallDateStart} overallDateEnd={overallDateEnd}/>
                 </Box>
               </Grid>
-              <Grid item xs={12}>
+
+              <Grid item xs={12} sm={4} md={3} sx={{ width: "100%" }}>
                 <Box
                   sx={{
                     backgroundColor: "#fff",
                     borderRadius: "25px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     p: 2,
-                  }}
-                >
-                  <Typography variant="subtitle1">ภาพรวมยอดซื้อ</Typography>
-                  <BuyOverall />
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    backgroundColor: "#fff",
-                    borderRadius: "25px",
-                    boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    p: 2,
-                  }}
-                >
-                  <Typography variant="subtitle1">ภาพรวมกำไร</Typography>
-                  <Profit />
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={3} sx={{ width: "100%" }}>
-                <Box
-                  sx={{
-                    backgroundColor: "#fff",
-                    borderRadius: "25px",
-                    boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    p: 2,
-                    minHeight: "40vh",
+                    height: { xs: "40vh",sm:"30vh", md: "40vh" },
                   }}
                 >
                   <Box>
@@ -152,14 +163,14 @@ export default function Dashboard() {
                   </Box>
                 </Box>
               </Grid> */}
-              <Grid item xs={12} md={9}>
+              <Grid item xs={12} sm={8} md={9}>
                 <Box
                   sx={{
                     backgroundColor: "#fff",
                     borderRadius: "25px",
                     boxShadow: "4px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     p: 2,
-                    height: "40vh",
+                    height: { xs: "30vh", md: "40vh" },
                   }}
                 >
                   <Box sx={{ height: "100%" }}>

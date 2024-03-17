@@ -74,7 +74,7 @@ export default function Add() {
         // product_exp: format(product.product_exp.toDate(), "yyyy-MM-dd"),
       }));
       setProducts(newProducts);
-      setCreateAt(format(Data.createAt.toDate(), "yyyy-MM-dd"));
+      setCreateAt(format(Data.createAt.toDate(), "yyyy-MM-dd'T'HH:mm"));
       setName(Data.name);
       setDiscount(Data.discount);
       setShippingCost(Data.shippingCost);
@@ -281,7 +281,7 @@ export default function Add() {
                 required
                 size="small"
                 sx={{ mt: 1, mb: 1 }}
-                type="date"
+                type="datetime-local"
               />
               <Typography sx={{ mt: 1 }}>สินค้า:</Typography>
               {products.map((product, index) => (

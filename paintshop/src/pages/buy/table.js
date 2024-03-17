@@ -161,7 +161,7 @@ export default function TableLots({ data }) {
                 <StyledTableCell align="center"><Typography>{row.name}</Typography></StyledTableCell>
                 <StyledTableCell align="center"><Typography>{row.user}</Typography></StyledTableCell>
                 <StyledTableCell align="center">
-                  <Typography>{row.totalCost}</Typography>
+                  <Typography>{row.totalCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Box

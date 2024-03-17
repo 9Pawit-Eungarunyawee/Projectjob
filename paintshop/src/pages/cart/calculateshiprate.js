@@ -5,15 +5,15 @@ export default function calculateShippingRate(weight) {
     let shipRate = 0;
   
     if (weight <= 1) {
-      shipRate = 20;
+      shipRate = 67;
     } else if (weight <= 4) {
-      shipRate = 40;
+      shipRate = 120;
     } else if (weight <= 10) {
-      shipRate = 100;
+      shipRate = 220;
     } else if (weight <= 19) {
-      shipRate = 190;
+      shipRate = 310;
     } else {
-      shipRate = 200;
+      shipRate = 400;
     }
   
     return shipRate;

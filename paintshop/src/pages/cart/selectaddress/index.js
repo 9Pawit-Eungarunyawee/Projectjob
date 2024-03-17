@@ -35,6 +35,7 @@ import { CartContext } from "@/context/CartContext";
 import { ProductContext } from "@/context/ProductContext";
 import { ColorContext } from "@/context/ColorContext";
 import { useTheme } from "@mui/material/styles";
+import { calculateShippingRate } from "../calculateshiprate";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -112,7 +113,7 @@ export default function Selectaddress() {
         productDetails: JSON.stringify(productDetails),
         cartId: JSON.stringify(cartID),
         addressDetails: JSON.stringify(addressDetails),
-        totalShippingCost:JSON.stringify(totalShippingCost),
+        totalShippingCost: JSON.stringify(totalShippingCost),
       },
     });
   };
@@ -130,15 +131,32 @@ export default function Selectaddress() {
   const groupedCartArray = Object.values(groupedCartData);
 
   let productPrice = 0;
+  let totalWeight = 0;
 
-  const shippingCostPerItem = 32;
-  const thresholdQuantity = 10;
-  let totalShippingCost = 0;
+  const shippingRates = groupedCartArray.map((item) => {
+    let weight = 0;
+    let size = item.size;
+
+    // ตรวจสอบขนาดของสินค้าและกำหนดน้ำหนักตามเงื่อนไข
+    if (size === "1/4 แกลลอน") {
+      weight = 1;
+    } else if (size === "1 แกลลอน") {
+      weight = 4;
+    } else if (size === "2.5 แกลลอน") {
+      weight = 10;
+    } else if (size === "5 แกลลอน") {
+      weight = 19;
+    } else {
+      weight = 1;
+    }
+    totalWeight += weight * item.count;
+  });
+  const shippingRate = calculateShippingRate(totalWeight);
   groupedCartArray.forEach((group) => {
     productPrice += group.price * group.count;
     const quantity = group.count;
-    totalShippingCost += shippingCostPerItem * quantity;
   });
+  let totalShippingCost = shippingRate;
 
   const totalAllPrice = productPrice + totalShippingCost;
   React.useEffect(() => {

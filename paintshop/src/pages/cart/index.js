@@ -123,6 +123,7 @@ export default function Cart() {
       pathname: "/cart/selectaddress",
     });
   };
+
   const handleDelete = async (id) => {
     const result = await deleteData("cart", id);
 

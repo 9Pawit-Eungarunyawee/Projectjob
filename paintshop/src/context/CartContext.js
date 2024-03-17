@@ -26,12 +26,9 @@ export default function CartProvider({ children }) {
       setLoading(false);
     }
   };
-  const cartItemCount = cartData.filter(
-    (c) => c.user_id === user.user.uid
-  ).length;
   return (
     <CartContext.Provider
-      value={{ cartData, setCartData, fetchCartData, cartItemCount }}
+      value={{ cartData, setCartData, fetchCartData }}
     >
       {children}
     </CartContext.Provider>

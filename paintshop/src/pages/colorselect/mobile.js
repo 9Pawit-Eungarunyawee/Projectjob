@@ -9,6 +9,9 @@ import {
   Box,
   Tab,
   Tabs,
+  Card,
+  CardActionArea,
+  CardContent,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";

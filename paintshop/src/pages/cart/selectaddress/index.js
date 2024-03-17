@@ -35,7 +35,7 @@ import { CartContext } from "@/context/CartContext";
 import { ProductContext } from "@/context/ProductContext";
 import { ColorContext } from "@/context/ColorContext";
 import { useTheme } from "@mui/material/styles";
-import { calculateShippingRate } from "../calculateshiprate";
+import calculateShippingRate from "../calculateshiprate";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");

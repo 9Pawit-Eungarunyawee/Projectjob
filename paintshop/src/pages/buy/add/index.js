@@ -250,7 +250,7 @@ export default function Add() {
                 required
                 size="small"
                 sx={{ mt: 1, mb: 1 }}
-                type="date"
+                type="datetime-local"
               />
               <Typography sx={{ mt: 1 }}>สินค้า:</Typography>
               {products.map((product, index) => (

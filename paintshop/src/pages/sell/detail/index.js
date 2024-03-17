@@ -628,13 +628,13 @@ export default function Detail() {
                                 <Typography>{row.size}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                <Typography>{row.amount}</Typography>
+                                <Typography>{row.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                <Typography>{row.price}</Typography>
+                                <Typography>{row.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
                               </StyledTableCell>
                               <StyledTableCell align="center">
-                                <Typography>{parseInt(row.price) * parseInt(row.amount)}</Typography>
+                                <Typography>{(parseInt(row.price) * parseInt(row.amount)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
                               </StyledTableCell>
                             </StyledTableRow>
                           </Fragment>
@@ -678,7 +678,7 @@ export default function Detail() {
                       </Box>
                       <Box>
                         <Typography variant="data">
-                          {sellData.total_price} บาท
+                          {sellData.total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} บาท
                         </Typography>
                       </Box>
                     </Box>

@@ -1,7 +1,20 @@
 import { BuyContext } from "@/context/BuyContext";
 import { Box, Grid, Typography } from "@mui/material";
 import { useContext } from "react";
-
+const months = [
+  "มกราคม",
+  "กุมภาพันธ์",
+  "มีนาคม",
+  "เมษายน",
+  "พฤษภาคม",
+  "มิถุนายน",
+  "กรกฎาคม",
+  "สิงหาคม",
+  "กันยายน",
+  "ตุลาคม",
+  "พฤศจิกายน",
+  "ธันวาคม"
+];
 export default function BuyOverall() {
   const { buyData } = useContext(BuyContext);
 
@@ -9,7 +22,7 @@ export default function BuyOverall() {
   const today = new Date();
 
   // Get current month
-  const currentMonth = today.getMonth() + 1;
+  const currentMonth = today.getMonth();
 
   // Get current year
   const currentYear = today.getFullYear();
@@ -18,7 +31,7 @@ export default function BuyOverall() {
     const buyDate = new Date(buy.createAt.toDate());
     return (
       buyDate.getDate() === today.getDate() &&
-      buyDate.getMonth() + 1 === currentMonth &&
+      buyDate.getMonth() === currentMonth &&
       buyDate.getFullYear() === currentYear &&
       buy.status === "สำเร็จ"
     );
@@ -27,7 +40,7 @@ export default function BuyOverall() {
   const buysThisMonth = buyData.filter((buy) => {
     const buyDate = new Date(buy.createAt.toDate());
     return (
-      buyDate.getMonth() + 1 === currentMonth &&
+      buyDate.getMonth()=== currentMonth &&
       buyDate.getFullYear() === currentYear &&
       buy.status === "สำเร็จ"
     );
@@ -58,7 +71,7 @@ export default function BuyOverall() {
         <Box sx={{ bgcolor: "#CFA4D2", borderRadius: "14px", p: 1 ,boxShadow: "rgba(0, 0, 0, 0.18) 0px 2px 4px"}}>
           <Box sx={{ ml: 1 }}>
             <Typography variant="h6">ยอดซื้อวันนี้ (บาท)</Typography>
-            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalBuysToday}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalBuysToday.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
           </Box>
         </Box>
       </Grid>
@@ -66,7 +79,7 @@ export default function BuyOverall() {
         <Box sx={{ bgcolor: "#FFB7B2", borderRadius: "14px", p: 1 ,boxShadow: "rgba(0, 0, 0, 0.18) 0px 2px 4px"}}>
           <Box sx={{ ml: 1 }}>
             <Typography variant="h6">ยอดซื้อเดือนนี้ (บาท)</Typography>
-            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalBuysThisMonth}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalBuysThisMonth.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
           </Box>
         </Box>
       </Grid>
@@ -74,7 +87,7 @@ export default function BuyOverall() {
         <Box sx={{ bgcolor: "#B5EAD7", borderRadius: "14px", p: 1 ,boxShadow: "rgba(0, 0, 0, 0.18) 0px 2px 4px"}}>
           <Box sx={{ ml: 1 }}>
             <Typography variant="h6">ยอดซื้อปีนี้ (บาท)</Typography>
-            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalBuysThisYear}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalBuysThisYear.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
           </Box>
         </Box>
       </Grid>

@@ -2,7 +2,20 @@ import { BuyContext } from "@/context/BuyContext";
 import { OrderContext } from "@/context/OrderContext";
 import { Box, Grid, Typography } from "@mui/material";
 import { useContext } from "react";
-
+const months = [
+    "มกราคม",
+    "กุมภาพันธ์",
+    "มีนาคม",
+    "เมษายน",
+    "พฤษภาคม",
+    "มิถุนายน",
+    "กรกฎาคม",
+    "สิงหาคม",
+    "กันยายน",
+    "ตุลาคม",
+    "พฤศจิกายน",
+    "ธันวาคม"
+  ];
 export default function Profit() {
   const { buyData } = useContext(BuyContext);
   const { orderData } = useContext(OrderContext);
@@ -10,7 +23,7 @@ export default function Profit() {
   const today = new Date();
 
   // Get current month
-  const currentMonth = today.getMonth() + 1;
+  const currentMonth = today.getMonth();
 
   // Get current year
   const currentYear = today.getFullYear();
@@ -19,7 +32,7 @@ export default function Profit() {
     const buyDate = new Date(buy.createAt.toDate());
     return (
       buyDate.getDate() === today.getDate() &&
-      buyDate.getMonth() + 1 === currentMonth &&
+      buyDate.getMonth() === currentMonth &&
       buyDate.getFullYear() === currentYear &&
       buy.status === "สำเร็จ"
     );
@@ -28,7 +41,7 @@ export default function Profit() {
   const buysThisMonth = buyData.filter((buy) => {
     const buyDate = new Date(buy.createAt.toDate());
     return (
-      buyDate.getMonth() + 1 === currentMonth &&
+      buyDate.getMonth()=== currentMonth &&
       buyDate.getFullYear() === currentYear &&
       buy.status === "สำเร็จ"
     );
@@ -57,7 +70,7 @@ export default function Profit() {
     const orderDate = new Date(order.createAt.toDate());
     return (
       orderDate.getDate() === today.getDate() &&
-      orderDate.getMonth() + 1 === currentMonth &&
+      orderDate.getMonth() === currentMonth &&
       orderDate.getFullYear() === currentYear &&
       order.status === "จัดส่งสำเร็จ"
     );
@@ -66,7 +79,7 @@ export default function Profit() {
   const ordersThisMonth = orderData.filter((order) => {
     const orderDate = new Date(order.createAt.toDate());
     return (
-      orderDate.getMonth() + 1 === currentMonth &&
+      orderDate.getMonth() === currentMonth &&
       orderDate.getFullYear() === currentYear &&
       order.status === "จัดส่งสำเร็จ"
     );
@@ -98,7 +111,7 @@ export default function Profit() {
         <Box sx={{ bgcolor: "#CFA4D2", borderRadius: "14px", p: 1 ,boxShadow: "rgba(0, 0, 0, 0.18) 0px 2px 4px"}}>
           <Box sx={{ ml: 1 }}>
             <Typography variant="h6">กำไรวันนี้ (บาท) </Typography>
-            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalSalesToday-totalBuysToday}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: "600" }}>{(totalSalesToday-totalBuysToday).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
           </Box>
         </Box>
       </Grid>
@@ -106,7 +119,7 @@ export default function Profit() {
         <Box sx={{ bgcolor: "#FFB7B2", borderRadius: "14px", p: 1 ,boxShadow: "rgba(0, 0, 0, 0.18) 0px 2px 4px"}}>
           <Box sx={{ ml: 1 }}>
             <Typography variant="h6">กำไรเดือนนี้ (บาท)</Typography>
-            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalSalesThisMonth-totalBuysThisMonth}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: "600" }}>{(totalSalesThisMonth-totalBuysThisMonth).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
           </Box>
         </Box>
       </Grid>
@@ -114,7 +127,7 @@ export default function Profit() {
         <Box sx={{ bgcolor: "#B5EAD7", borderRadius: "14px", p: 1 ,boxShadow: "rgba(0, 0, 0, 0.18) 0px 2px 4px"}}>
           <Box sx={{ ml: 1 }}>
             <Typography variant="h6">กำไรปีนี้(บาท) </Typography>
-            <Typography variant="h4" sx={{ fontWeight: "600" }}>{totalSalesThisYear-totalBuysThisYear}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: "600" }}>{(totalSalesThisYear-totalBuysThisYear).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
           </Box>
         </Box>
       </Grid>

@@ -123,7 +123,7 @@ export default function TableSell({ documentData, userData }) {
               <StyledTableCell align="center"><Typography>{row.name}</Typography></StyledTableCell>
               
               <StyledTableCell align="center">
-                <Typography>{row.total_price}</Typography>
+                <Typography>{row.total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
               </StyledTableCell>
               <StyledTableCell align="center">
                 {

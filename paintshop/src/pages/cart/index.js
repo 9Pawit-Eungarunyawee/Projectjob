@@ -34,6 +34,7 @@ import { deleteData } from "@/firebase/addData";
 import { useRouter } from "next/router";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import { useTheme } from "@mui/material/styles";
+import { calculateShippingRate } from "./calculateshiprate";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -73,20 +74,38 @@ export default function Cart() {
   const groupedCartArray = Object.values(groupedCartData);
 
   let productPrice = 0;
+  let totalWeight = 0;
 
-  const shippingCostPerItem = 32;
-  const thresholdQuantity = 10;
-  let totalShippingCost = 0;
+  const shippingRates = groupedCartArray.map((item) => {
+    let weight = 0;
+    let size = item.size;
+
+    // ตรวจสอบขนาดของสินค้าและกำหนดน้ำหนักตามเงื่อนไข
+    if (size === "1/4 แกลลอน") {
+      weight = 1;
+    } else if (size === "1 แกลลอน") {
+      weight = 4;
+    } else if (size === "2.5 แกลลอน") {
+      weight = 10;
+    } else if (size === "5 แกลลอน") {
+      weight = 19;
+    } else {
+      weight = 1;
+    }
+    totalWeight += weight * item.count;
+  });
+  const shippingRate = calculateShippingRate(totalWeight);
   groupedCartArray.forEach((group) => {
     productPrice += group.price * group.count;
     const quantity = group.count;
-    totalShippingCost += shippingCostPerItem * quantity;
   });
+  let totalShippingCost = shippingRate;
 
   const totalAllPrice = productPrice + totalShippingCost;
   const goBack = () => {
     window.history.back();
   };
+
   const format = (num) => {
     if (num !== null) {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -141,7 +160,8 @@ export default function Cart() {
             <Container
               maxWidth="lg"
               sx={{
-                bgcolor: "#FAF8F1",p:2
+                bgcolor: "#FAF8F1",
+                p: 2,
               }}
             >
               <div role="presentation" onClick={handleClick}>
@@ -584,8 +604,9 @@ export default function Cart() {
                                 }}
                               >
                                 <Typography> ค่าจัดส่ง </Typography>
+
                                 <Typography sx={{ fontWeight: "bold" }}>
-                                  ฿{totalShippingCost}
+                                  ฿{format(totalShippingCost)}
                                 </Typography>
                               </Box>
                               <hr />

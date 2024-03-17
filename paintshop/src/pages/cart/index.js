@@ -34,7 +34,7 @@ import { deleteData } from "@/firebase/addData";
 import { useRouter } from "next/router";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import { useTheme } from "@mui/material/styles";
-import { calculateShippingRate } from "./calculateshiprate";
+import calculateShippingRate from "./calculateshiprate";
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");

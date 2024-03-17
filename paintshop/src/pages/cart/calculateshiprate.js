@@ -1,7 +1,7 @@
 // calculateShippingRate.js
 
 // สร้างฟังก์ชัน calculateShippingRate และทำการ export ออกมา
-export function calculateShippingRate(weight) {
+export default function calculateShippingRate(weight) {
     let shipRate = 0;
   
     if (weight <= 1) {
